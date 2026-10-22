@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Entrenador de fuerza en casa · v0.05</title>
+<title>Entrenador de fuerza en casa · v0.06</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#18212f;--muted:#647184;--accent:#176b57;--accent2:#e0f2ec;--line:#dce3e9;--warn:#fff3d8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -15,7 +15,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 <main>
 <header class="top">
   <h1>Entrenador de fuerza en casa</h1>
-  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.05</p>
+  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.06</p>
 </header>
 
 <section class="panel" id="setup">
@@ -32,7 +32,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 </section>
 
 <section class="panel hidden" id="library">
-  <div class="eyebrow">Personalizar sesión · v0.05</div>
+  <div class="eyebrow">Personalizar sesión · v0.06</div>
   <h2>Elige ejercicios y cantidades</h2>
   <p class="muted">Marca los ejercicios que quieras hacer, escribe tus repeticiones o segundos por serie y selecciona el número de series.</p>
   <p class="small muted">Puedes eliminar cualquier ejercicio con «Eliminar de biblioteca». Si estaba en tu sesión guardada, también se quitará de ella.</p>
@@ -165,6 +165,7 @@ function makePicker(){
 }
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
 function updateHome(){
+ $('begin').disabled=savedConfig.length===0;
  $('homeSeries').textContent=seriesGoal;
  $('homeCount').textContent=savedConfig.length;
  if(!savedConfig.length){$('homeIntro').textContent='Aún no hay una sesión guardada. Entra en «Personalizar sesión» para elegir ejercicios y cantidades.';$('homeExercises').innerHTML='<p class="muted">Todavía no has guardado ejercicios. Pulsa «Personalizar sesión» para preparar tu rutina.</p>';return;}
@@ -215,7 +216,7 @@ $('saveSession').addEventListener('click',()=>{
  savedConfig=chosen;updateHome();$('library').classList.add('hidden');$('setup').classList.remove('hidden');
 });
 $('begin').addEventListener('click',()=>{
- if(!savedConfig.length){$('homeIntro').textContent='Primero personaliza y guarda al menos un ejercicio para poder iniciar la sesión.';return;}
+ if(!savedConfig.length)return;
  selectedExercises=savedConfig.map(e=>({...e}));completed=Array(selectedExercises.length).fill(0);visited=Array(selectedExercises.length).fill(false);idx=0;active=false;
  $('setup').classList.add('hidden');$('summary').classList.add('hidden');$('workout').classList.remove('hidden');render();
 });
