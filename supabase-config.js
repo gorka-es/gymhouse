@@ -4,5 +4,5 @@
  */
 window.DEPORTE_SUPABASE_CONFIG = Object.freeze({
   url: 'https://vzkkacoznxaarqwolxpk.supabase.co',
-  publishableKey: 'sb_publishable_atNu5ahA0gQO6XhBHeRWZw_OS8qahJJ'
+  publishableKey: 'sb_publishable_HVoTkm_jKzlAhXSTk80zCw_fR1_n87s'
 });
