@@ -1,157 +1,35 @@
-# Entrenador de fuerza en casa
+# DEPORTE — Entrenador de fuerza en casa v0.0.8
 
-**Versión actual:** `v0.07`
+## Objetivo de esta versión
+Primera versión conectada a Supabase: acceso personal con correo y contraseña y carga de la biblioteca de ejercicios desde `public.ejercicios`. No guarda rutinas, sesiones ni series en Supabase todavía.
 
-Aplicación web sencilla, en español y en un único archivo HTML, para
-preparar y seguir una sesión de fuerza en casa como complemento del
-entrenamiento de ciclismo. No necesita instalación, servidor ni conexión
-a Internet para funcionar una vez descargado el archivo.
+## Archivos
+- `entrenador_fuerza_full_body_v0.0.8.html`: interfaz de la aplicación.
+- `supabase-config.js`: URL del proyecto y clave publicable.
+- `supabase-connection.js`: inicialización de Supabase Auth y lectura de ejercicios.
 
-## Funcionalidades
+Los tres archivos deben estar en la misma carpeta.
 
--   **Pantalla de inicio** con la sesión guardada y dos acciones:
-    `Iniciar` y `Personalizar sesión`.
--   **Botón Iniciar con control de disponibilidad:** permanece
-    desactivado mientras no haya al menos un ejercicio en la sesión
-    guardada.
--   **Personalización de la sesión:**
-    -   Seleccionar los ejercicios que se quieren realizar.
-    -   Configurar entre 1 y 5 series por ejercicio.
-    -   Introducir de 1 a **50 repeticiones** por serie para ejercicios
-        por repeticiones.
-    -   Introducir de 1 a **300 segundos** por serie para ejercicios por
-        tiempo.
-    -   Añadir ejercicios nuevos escribiendo su nombre.
-    -   Eliminar ejercicios de la biblioteca con confirmación. Si el
-        ejercicio eliminado estaba en la sesión guardada, también se
-        retira de esa sesión.
-    -   Guardar los cambios y volver a la pantalla de inicio.
--   **Guía de entrenamiento** con descripción, instrucciones de
-    ejecución y descanso orientativo.
--   **Interfaz sin imágenes ni dibujos de ejercicios**, para mantener
-    una presentación más sencilla.
--   **Seguimiento de series** y resumen final de los ejercicios y las
-    series completadas.
--   **Resumen copiable** para compartir el resultado del entrenamiento
-    con el entrenador.
--   Interfaz adaptable a pantallas de móvil y ordenador.
+## Configuración necesaria
+1. Abre `supabase-config.js`.
+2. Sustituye `PEGA_AQUI_LA_URL_DEL_PROYECTO` por la URL de tu proyecto Supabase.
+3. Sustituye `PEGA_AQUI_LA_CLAVE_PUBLISHABLE_O_ANON` por la publishable key (o la clave `anon` heredada).
+4. No introduzcas nunca una `service_role` o `secret` key en archivos del navegador.
+5. En Supabase Auth, utiliza la cuenta personal que ya creaste. No es necesario habilitar el acceso anónimo ni el registro público.
+6. Abre la aplicación desde un servidor HTTPS o servidor local. Para evitar problemas con `file://`, no la pruebes abriendo el HTML directamente desde el disco.
 
-## Ejercicios incluidos
+## Prueba de conexión
+- Al abrir la aplicación, si existe una sesión guardada, intentará cargar los ejercicios.
+- Si no existe, introduce tu correo y contraseña.
+- El mensaje de estado debe confirmar que se han cargado 7 ejercicios.
+- Si falla, el mensaje mostrará el error. Comprueba primero la URL/clave, después Auth y finalmente RLS/permisos de `ejercicios`.
 
-La biblioteca inicial contiene ejercicios de fuerza general y
-estabilidad, entre ellos:
+## Qué se ha comprobado en esta entrega
+- Los archivos incluyen la librería `supabase-js` v2 y separan configuración y lógica de conexión.
+- La interfaz obtiene el catálogo desde `public.ejercicios`, y mantiene las guías de ejecución locales para los ejercicios conocidos.
+- La carga real contra tu proyecto aún debe verificarse en tu navegador una vez pegues las credenciales públicas de tu proyecto; no se han incluido credenciales en estos archivos.
 
--   Sentadillas
--   Flexiones
--   Zancadas hacia atrás
--   Puente de glúteo a una pierna
--   Plancha frontal
--   Dead bug
--   Elevaciones de gemelos
-
-También se pueden añadir otros ejercicios desde la sección de
-personalización. La aplicación prepara instrucciones específicas para
-los nombres que reconoce y una ficha genérica para los demás; revisa
-siempre que las indicaciones sean apropiadas para el ejercicio añadido.
-
-La plancha se trata como ejercicio por tiempo. Los demás ejercicios se
-configuran por repeticiones, incluidos los ejercicios nuevos que no se
-reconozcan como plancha.
-
-## Cómo ejecutar la aplicación
-
-### Opción 1: abrir localmente
-
-1.  Descarga o clona este repositorio.
-2.  Abre `index.html` directamente con un navegador moderno (Chrome,
-    Firefox, Edge o Safari).
-
-Si el archivo de la aplicación conserva un nombre versionado, por
-ejemplo `entrenador_fuerza_full_body_v0.07.html`, puedes abrirlo
-directamente. Para que GitHub Pages muestre la aplicación como página
-principal, coloca la versión que quieras publicar en la raíz del
-repositorio con el nombre `index.html`.
-
-No requiere dependencias, compilación ni instalación.
-
-### Opción 2: publicar con GitHub Pages
-
-1.  Sube `README.md` y el archivo HTML de la aplicación al repositorio.
-2.  Para que GitHub Pages lo sirva como página principal, coloca la
-    aplicación en la raíz con el nombre `index.html`.
-3.  En GitHub, abre **Settings → Pages** y configura la publicación
-    desde la rama y carpeta donde hayas guardado los archivos.
-4.  Guarda la configuración y abre la URL que GitHub Pages indique.
-
-## Uso básico
-
-1.  En la pantalla de inicio, selecciona **Personalizar sesión**.
-2.  Marca los ejercicios que quieras incluir.
-3.  Escribe la cantidad por serie: de 1 a 50 repeticiones o de 1 a 300
-    segundos en ejercicios por tiempo.
-4.  Selecciona entre 1 y 5 series.
-5.  Para añadir un ejercicio, escribe su nombre y pulsa **Añadir
-    ejercicio**.
-6.  Para retirar un ejercicio de la biblioteca, pulsa **Eliminar de
-    biblioteca** y confirma la acción.
-7.  Pulsa **Guardar sesión** para volver a inicio con la configuración
-    actualizada.
-8.  Pulsa **Iniciar** para comenzar. El botón solo estará habilitado si
-    la sesión guardada contiene al menos un ejercicio.
-9.  Sigue las indicaciones de cada ejercicio y registra las series
-    realizadas.
-10. Al terminar, copia el resumen si quieres compartirlo.
-
-## Limitaciones conocidas
-
--   **La configuración no se conserva al cerrar o recargar la página.**
-    La sesión y los cambios en la biblioteca viven en la memoria de la
-    página; vuelve a configurarlos después de recargar.
--   La aplicación es una guía básica, no sustituye la valoración de un
-    profesional sanitario o del entrenamiento.
--   Al añadir un ejercicio con un nombre no reconocido, la ficha de
-    instrucciones es genérica y debe revisarse antes de utilizarla.
--   Los ejercicios añadidos se consideran ejercicios por repeticiones
-    salvo que el nombre permita reconocerlos como plancha.
-
-## Estructura del proyecto
-
-Versión autónoma en un solo archivo HTML:
-
-``` text
-.
-├── index.html
-└── README.md
-```
-
-El HTML contiene el marcado, los estilos CSS y la lógica JavaScript. No
-hay paquetes externos ni un proceso de construcción.
-
-## Historial de versiones
-
--   `v0.07`: se limita la cantidad por serie a 50 repeticiones o 300
-    segundos en ejercicios por tiempo; se eliminan las imágenes y
-    dibujos de los ejercicios.
--   `v0.06`: el botón **Iniciar** permanece desactivado si no hay
-    ejercicios en la sesión guardada; se elimina la alerta redundante
-    que pedía elegir un ejercicio al iniciar.
--   `v0.05`: permite eliminar ejercicios de la biblioteca desde la
-    pantalla de personalización.
--   `v0.04`: separa la pantalla de inicio de la personalización y
-    permite añadir ejercicios nuevos.
--   Versiones anteriores: guía de ejercicios, configuración de series y
-    cantidades, seguimiento del entrenamiento y resumen final.
-
-## Seguridad y uso responsable
-
--   Prioriza la técnica controlada y evita entrenar hasta el fallo.
--   Detén el ejercicio si aparece dolor o si no puedes mantener una
-    técnica adecuada.
--   Ajusta los ejercicios y la carga a tu nivel y a las recomendaciones
-    de tu entrenador.
-
-## Licencia
-
-No se ha definido una licencia para este proyecto. Si lo publicas para
-que otras personas lo reutilicen o modifiquen, añade un archivo
-`LICENSE` con la licencia que elijas.
+## Límites intencionados
+- No se guardan rutinas ni entrenamientos.
+- La biblioteca remota es de solo lectura desde la interfaz en esta versión; no se borran ni crean ejercicios en Supabase.
+- Los datos de configuración de la sesión siguen siendo temporales en la página, como en la versión anterior.

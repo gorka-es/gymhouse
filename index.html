@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Entrenador de fuerza en casa · v0.07</title>
+<title>Entrenador de fuerza en casa · v0.0.8</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#18212f;--muted:#647184;--accent:#176b57;--accent2:#e0f2ec;--line:#dce3e9;--warn:#fff3d8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -15,8 +15,22 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 <main>
 <header class="top">
   <h1>Entrenador de fuerza en casa</h1>
-  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.07</p>
+  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.0.8 · CONECTADA A SUPABASE</p>
 </header>
+
+<section class="panel" id="connectionPanel" aria-labelledby="connectionTitle">
+  <div class="eyebrow">Conexión segura</div>
+  <h2 id="connectionTitle">Acceso personal</h2>
+  <p class="muted">Inicia sesión con tu cuenta de Supabase para cargar la biblioteca de ejercicios.</p>
+  <form id="loginForm">
+    <label class="label" for="loginEmail">Correo electrónico</label>
+    <input id="loginEmail" type="email" autocomplete="username" required style="width:100%;max-width:480px;padding:11px 12px;border:2px solid #aebbc5;border-radius:10px;font:inherit;margin-bottom:12px">
+    <label class="label" for="loginPassword">Contraseña</label>
+    <input id="loginPassword" type="password" autocomplete="current-password" required style="width:100%;max-width:480px;padding:11px 12px;border:2px solid #aebbc5;border-radius:10px;font:inherit;margin-bottom:12px">
+    <div class="row"><button class="primary" id="loginButton" type="submit">Iniciar sesión</button><button class="secondary hidden" id="logoutButton" type="button">Cerrar sesión</button></div>
+  </form>
+  <p class="small muted" id="connectionStatus" aria-live="polite">Preparando conexión…</p>
+</section>
 
 <section class="panel" id="setup">
   <div class="eyebrow">Pantalla de inicio</div>
@@ -32,7 +46,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 </section>
 
 <section class="panel hidden" id="library">
-  <div class="eyebrow">Personalizar sesión · v0.07</div>
+  <div class="eyebrow">Personalizar sesión · v0.0.8</div>
   <h2>Elige ejercicios y cantidades</h2>
   <p class="muted">Marca los ejercicios que quieras hacer, escribe tus repeticiones (máximo 50) o segundos por serie (máximo 300) y selecciona el número de series.</p>
   <p class="small muted">Puedes eliminar cualquier ejercicio con «Eliminar de biblioteca». Si estaba en tu sesión guardada, también se quitará de ella.</p>
@@ -106,7 +120,10 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 </section>
 <p class="footer">Prioriza la técnica y deja algunas repeticiones en reserva. Si aparece dolor o la técnica se deteriora, detente.</p>
 </main>
-<script>const exercises = [
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-connection.js"></script>
+<script>const exerciseGuides = [
  {name:"Sentadillas",type:"Principal",dose:"10 repeticiones por serie",desc:"Trabaja piernas y glúteos manteniendo el tronco estable.",cues:["Pies aproximadamente a la anchura de los hombros.","Lleva la cadera atrás y flexiona las rodillas de forma controlada.","Mantén toda la planta del pie apoyada y las rodillas alineadas con los pies.","Sube empujando el suelo, sin rebotes."],rest:"Descanso orientativo: 2–3 min entre series.",svg:"squat"},
  {name:"Flexiones",type:"Principal",dose:"10 repeticiones por serie",desc:"Fortalece pecho, hombros, tríceps y estabilidad del tronco.",cues:["Manos algo más abiertas que los hombros.","Mantén cabeza, espalda y cadera alineadas.","Baja el pecho de forma controlada, con los codos en diagonal.","Si pierdes la técnica, apoya las rodillas o reduce las repeticiones."],rest:"Descanso orientativo: 2–3 min entre series.",svg:"push"},
  {name:"Zancadas hacia atrás",type:"Principal",dose:"8 repeticiones por pierna y serie",desc:"Ejercicio unilateral para piernas, glúteos y equilibrio.",cues:["Da un paso hacia atrás y baja verticalmente con control.","Mantén el pie delantero completamente apoyado.","La rodilla delantera sigue la dirección de los dedos del pie.","Vuelve al inicio empujando con la pierna delantera; completa ambos lados."],rest:"Una serie incluye las repeticiones de ambas piernas. Descansa 2–3 min.",svg:"lunge"},
@@ -115,6 +132,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
  {name:"Dead bug",type:"Extra · Core",dose:"6–8 repeticiones por lado y serie",desc:"Ejercicio de control abdominal coordinando brazos y piernas.",cues:["Túmbate boca arriba con brazos hacia el techo y rodillas a 90°.","Mantén la zona lumbar suavemente apoyada en el suelo.","Extiende despacio brazo y pierna contrarios sin perder la posición.","Vuelve al centro y alterna lados; reduce el recorrido si arqueas la espalda."],rest:"Una repetición por lado. Descanso orientativo: 45–60 s.",svg:"deadbug"},
  {name:"Elevaciones de gemelos (puntillas)",type:"Extra · Gemelos",dose:"12–15 repeticiones por serie",desc:"Fortalece los gemelos con un movimiento lento y controlado.",cues:["Ponte de pie, con los pies separados a la anchura de las caderas.","Sujétate ligeramente a una pared o silla estable si necesitas equilibrio.","Sube los talones, pausa un instante y baja despacio.","Evita balancearte; usa un escalón solo si es estable y seguro."],rest:"Descanso orientativo: 45–60 s.",svg:"calf"}
 ];
+let exercises = []; // Se rellena desde public.ejercicios tras iniciar sesión.
 let seriesGoal=3, idx=0, active=false;
 let selectedExercises=[], completed=[], visited=[];
 let savedConfig=[];
@@ -183,6 +201,7 @@ $('exercisePicker').addEventListener('click',event=>{
  const id=button.dataset.deleteExerciseId;
  const exercise=exercises.find(e=>(e.id||e.name)===id);
  if(!exercise)return;
+ $('addExerciseStatus').textContent='La biblioteca de Supabase es de solo lectura en esta versión; no se ha eliminado ningún ejercicio.';return;
  const ok=window.confirm(`¿Quieres eliminar «${exercise.name}» de la biblioteca? Se quitará también de la sesión guardada si estaba incluida.`);
  if(!ok)return;
  exercises.splice(exercises.indexOf(exercise),1);
@@ -194,6 +213,7 @@ $('exercisePicker').addEventListener('click',event=>{
 });
 $('cancelCustomize').addEventListener('click',()=>{$('library').classList.add('hidden');$('setup').classList.remove('hidden');$('exercisePicker').innerHTML='';updateHome();});
 $('addExercise').addEventListener('click',()=>{
+ $('addExerciseStatus').textContent='En esta versión la biblioteca se carga desde Supabase. La creación de ejercicios se incorporará en una versión posterior.'; return;
  const name=$('newExerciseName').value.trim();
  if(!name){$('addExerciseStatus').textContent='Escribe primero el nombre del ejercicio.';return;}
  if(exercises.some(e=>e.name.toLocaleLowerCase('es')===name.toLocaleLowerCase('es'))){$('addExerciseStatus').textContent='Ya existe un ejercicio con ese nombre.';return;}
@@ -237,7 +257,51 @@ function showSummary(){
 }
 $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('report').value);$('copyStatus').textContent='Resumen copiado. Ya puedes pegarlo en el chat con tu entrenador.';}catch(e){$('report').focus();$('report').select();$('copyStatus').textContent='Selecciona el texto y pulsa Ctrl+C (o Copiar en el móvil).';}});
 $('restart').addEventListener('click',()=>{$('summary').classList.add('hidden');$('setup').classList.remove('hidden');$('workout').classList.add('hidden');$('library').classList.add('hidden');$('copyStatus').textContent='';updateHome();});
-makePicker();updateHome();
+async function bootConnectedApp(){
+ const status=$('connectionStatus');
+ $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden');
+ try {
+   const session = await DeporSupabase.getSession();
+   if (!session) { status.textContent='Introduce tu correo y contraseña para conectarte.'; return; }
+   await loadDatabaseExercises();
+ } catch (err) {
+   status.textContent='No se pudo comprobar la sesión: '+friendlyError(err);
+ }
+}
+function friendlyError(err){
+ const msg=String(err?.message||err||'Error desconocido');
+ if(/Invalid login credentials/i.test(msg)) return 'Correo o contraseña incorrectos.';
+ if(/Failed to fetch|NetworkError|fetch/i.test(msg)) return 'No se pudo conectar. Comprueba la conexión a Internet y la URL de Supabase.';
+ if(/PEGA_AQUI|configurar/i.test(msg)) return 'Falta configurar la URL y la clave publicable en supabase-config.js.';
+ return msg;
+}
+async function loadDatabaseExercises(){
+ const status=$('connectionStatus'); status.textContent='Sesión iniciada. Cargando ejercicios…';
+ try {
+   const rows=await DeporSupabase.getExercises();
+   if(!rows.length) throw new Error('La consulta se ha conectado, pero no ha devuelto ejercicios. Revisa los datos y las políticas RLS.');
+   exercises=rows.map(row=>{
+     const guide=exerciseGuides.find(g=>g.name.toLocaleLowerCase('es')===String(row.nombre).toLocaleLowerCase('es')) || inferExercise(row.nombre);
+     return {...guide,id:String(row.id),dbId:row.id,name:row.nombre,unitType:row.tipo==='tiempo'?'time':'repetitions',custom:!exerciseGuides.some(g=>g.name.toLocaleLowerCase('es')===String(row.nombre).toLocaleLowerCase('es'))};
+   });
+   savedConfig=[]; selectedExercises=[]; completed=[]; visited=[];
+   makePicker(); updateHome();
+   $('setup').classList.remove('hidden'); $('loginForm').classList.add('hidden'); $('logoutButton').classList.remove('hidden');
+   status.textContent=`Conexión correcta. ${rows.length} ejercicios cargados desde Supabase.`;
+ } catch(err){ status.textContent='Error al cargar ejercicios: '+friendlyError(err); }
+}
+$('loginForm').addEventListener('submit',async event=>{
+ event.preventDefault(); const button=$('loginButton'); const status=$('connectionStatus');
+ button.disabled=true; status.textContent='Iniciando sesión…';
+ try { await DeporSupabase.signIn($('loginEmail').value.trim(),$('loginPassword').value); $('loginPassword').value=''; await loadDatabaseExercises(); }
+ catch(err){status.textContent='No se pudo iniciar sesión: '+friendlyError(err);}
+ finally{button.disabled=false;}
+});
+$('logoutButton').addEventListener('click',async()=>{
+ try {await DeporSupabase.signOut(); exercises=[]; savedConfig=[]; makePicker(); updateHome(); $('setup').classList.add('hidden'); $('connectionPanel').classList.remove('hidden'); $('logoutButton').classList.add('hidden'); $('loginButton').classList.remove('hidden'); $('loginForm').classList.remove('hidden'); $('connectionStatus').textContent='Sesión cerrada.';}
+ catch(err){$('connectionStatus').textContent='No se pudo cerrar sesión: '+friendlyError(err);}
+});
+bootConnectedApp();
 </script>
 </body>
 </html>
