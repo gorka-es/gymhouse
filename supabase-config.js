@@ -3,6 +3,6 @@
  * Solo usa la publishable key (o anon heredada), NUNCA service_role/secret.
  */
 window.DEPORTE_SUPABASE_CONFIG = Object.freeze({
-  url: 'https://vzkkacoznxaarqwolxpk.supabase.co/rest/v1/',
+  url: 'https://vzkkacoznxaarqwolxpk.supabase.co',
   publishableKey: 'sb_publishable_atNu5ahA0gQO6XhBHeRWZw_OS8qahJJ'
 });
