@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Entrenador de fuerza en casa · v0.0.8</title>
+<title>Entrenador de fuerza en casa · v0.0.9-dev</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#18212f;--muted:#647184;--accent:#176b57;--accent2:#e0f2ec;--line:#dce3e9;--warn:#fff3d8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -15,7 +15,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 <main>
 <header class="top">
   <h1>Entrenador de fuerza en casa</h1>
-  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.0.8 · CONECTADA A SUPABASE</p>
+  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.0.9-dev · CONECTADA A SUPABASE</p>
 </header>
 
 <section class="panel" id="connectionPanel" aria-labelledby="connectionTitle">
@@ -46,7 +46,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 </section>
 
 <section class="panel hidden" id="library">
-  <div class="eyebrow">Personalizar sesión · v0.0.8</div>
+  <div class="eyebrow">Personalizar sesión · v0.0.9-dev</div>
   <h2>Elige ejercicios y cantidades</h2>
   <p class="muted">Marca los ejercicios que quieras hacer, escribe tus repeticiones (máximo 50) o segundos por serie (máximo 300) y selecciona el número de series.</p>
   <p class="small muted">Puedes eliminar cualquier ejercicio con «Eliminar de biblioteca». Si estaba en tu sesión guardada, también se quitará de ella.</p>
@@ -103,18 +103,39 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 <section class="panel hidden" id="summary">
   <div class="eyebrow">Sesión terminada</div>
   <h2>Resumen del entrenamiento</h2>
-  <p class="muted">Copia este resumen y pégaselo al entrenador. Se mostrarán solo los ejercicios elegidos y sus cantidades personalizadas.</p>
+  <p class="muted">Revisa el resumen y guarda la sesión en tu historial. Las cantidades son los objetivos configurados; la aplicación registra cuántas series se completaron.</p>
   <div class="statrow">
     <div class="stat"><span class="muted small">Ejercicios visitados</span><strong id="sumExercises">0/7</strong></div>
     <div class="stat"><span class="muted small">Series completadas</span><strong id="sumSets">0</strong></div>
     <div class="stat"><span class="muted small">Series previstas</span><strong id="sumTarget">0</strong></div>
   </div>
   <div id="summaryList"></div>
+  <div class="panel" style="margin:18px 0;background:#f7faf9">
+    <h3>Guardar sesión</h3>
+    <p class="small muted">Puedes guardar la sesión como completada aunque queden series pendientes, o registrarla como incompleta indicando un motivo.</p>
+    <div class="row">
+      <button class="primary" id="saveCompleted">Guardar entrenamiento</button>
+      <button class="secondary" id="showIncomplete">Finalizar como sesión incompleta</button>
+    </div>
+    <div id="incompletePanel" class="hidden" style="margin-top:14px">
+      <label class="label" for="incompleteReason">¿Por qué quedó incompleta?</label>
+      <div class="choices" id="reasonChoices">
+        <button type="button" class="choice" data-reason="falta_tiempo">Falta de tiempo</button>
+        <button type="button" class="choice" data-reason="fatiga">Fatiga o cansancio</button>
+        <button type="button" class="choice" data-reason="molestias">Molestias físicas</button>
+        <button type="button" class="choice" data-reason="dificultad">Dificultad con los ejercicios</button>
+        <button type="button" class="choice" data-reason="interrupcion">Interrupción externa</button>
+        <button type="button" class="choice" data-reason="otro">Otro motivo</button>
+      </div>
+      <button class="primary" id="confirmIncomplete" disabled style="margin-top:12px">Guardar sesión incompleta</button>
+    </div>
+    <p id="saveStatus" class="small" aria-live="polite"></p>
+  </div>
   <label class="label" for="report" style="margin-top:18px">Texto para enviar al entrenador</label>
   <textarea id="report" readonly></textarea>
   <div class="row" style="margin-top:12px">
     <button class="primary" id="copy">Copiar resumen</button>
-    <button class="secondary" id="restart">Nueva sesión</button>
+    <button class="secondary" id="restart">Volver al inicio</button>
   </div>
   <p class="small muted" id="copyStatus" aria-live="polite"></p>
 </section>
@@ -133,7 +154,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
  {name:"Elevaciones de gemelos (puntillas)",type:"Extra · Gemelos",dose:"12–15 repeticiones por serie",desc:"Fortalece los gemelos con un movimiento lento y controlado.",cues:["Ponte de pie, con los pies separados a la anchura de las caderas.","Sujétate ligeramente a una pared o silla estable si necesitas equilibrio.","Sube los talones, pausa un instante y baja despacio.","Evita balancearte; usa un escalón solo si es estable y seguro."],rest:"Descanso orientativo: 45–60 s.",svg:"calf"}
 ];
 let exercises = []; // Se rellena desde public.ejercicios tras iniciar sesión.
-let seriesGoal=3, idx=0, active=false;
+let seriesGoal=3, idx=0, active=false, workoutStartedAt=null;
 let selectedExercises=[], completed=[], visited=[];
 let savedConfig=[];
 let nextCustomId=1;
@@ -236,7 +257,7 @@ $('saveSession').addEventListener('click',()=>{
 });
 $('begin').addEventListener('click',()=>{
  if(!savedConfig.length)return;
- selectedExercises=savedConfig.map(e=>({...e}));completed=Array(selectedExercises.length).fill(0);visited=Array(selectedExercises.length).fill(false);idx=0;active=false;
+ selectedExercises=savedConfig.map(e=>({...e}));completed=Array(selectedExercises.length).fill(0);visited=Array(selectedExercises.length).fill(false);idx=0;active=false;workoutStartedAt=new Date().toISOString();workoutSaved=false;saveInProgress=false;$('saveStatus').textContent='';$('saveCompleted').disabled=false;$('showIncomplete').classList.remove('hidden');$('incompletePanel').classList.add('hidden');selectedIncompleteReason='';document.querySelectorAll('[data-reason]').forEach(b=>b.classList.remove('selected'));$('confirmIncomplete').disabled=true;
  $('setup').classList.add('hidden');$('summary').classList.add('hidden');$('workout').classList.remove('hidden');render();
 });
 function render(){
@@ -256,6 +277,36 @@ function showSummary(){
  const date=new Date().toLocaleDateString('es-ES');const lines=[`ENTRENAMIENTO FULL BODY EN CASA — ${date}`,`Series previstas por ejercicio: ${seriesGoal}`,`Total: ${totalDone}/${totalTarget} series completadas`,'',...selectedExercises.map((e,i)=>`- ${e.name}: ${e.quantity} ${e.unit}${e.unit==='repeticiones'?' '+e.hint:''}; ${completed[i]}/${seriesGoal} series completadas${completed[i]<seriesGoal?` (${seriesGoal-completed[i]} pendientes)`:''}`),'','Nota: el resumen registra las series completadas en la aplicación. Añade aquí sensaciones o molestias si las hubo.'];$('report').value=lines.join('\n');
 }
 $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('report').value);$('copyStatus').textContent='Resumen copiado. Ya puedes pegarlo en el chat con tu entrenador.';}catch(e){$('report').focus();$('report').select();$('copyStatus').textContent='Selecciona el texto y pulsa Ctrl+C (o Copiar en el móvil).';}});
+let selectedIncompleteReason='';
+let saveInProgress=false;
+let workoutSaved=false;
+function setSaveControlsDisabled(disabled){['saveCompleted','showIncomplete','confirmIncomplete'].forEach(id=>{const el=$(id);if(el)el.disabled=disabled;});}
+$('showIncomplete').addEventListener('click',()=>{$('incompletePanel').classList.remove('hidden');$('saveStatus').textContent='Selecciona un motivo para continuar.';});
+document.querySelectorAll('[data-reason]').forEach(button=>button.addEventListener('click',()=>{selectedIncompleteReason=button.dataset.reason;document.querySelectorAll('[data-reason]').forEach(b=>b.classList.toggle('selected',b===button));$('confirmIncomplete').disabled=false;}));
+async function saveCurrentWorkout(state, reason=null){
+ if(saveInProgress||workoutSaved)return;
+ if(state==='incompleto'&&!reason){$('saveStatus').textContent='Selecciona un motivo antes de guardar.';return;}
+ saveInProgress=true;setSaveControlsDisabled(true);$('saveStatus').textContent='Guardando entrenamiento y series…';
+ try{
+   const payload={nombre:'Entrenamiento full body en casa',estado:state,motivo_incompleto:reason,fecha_inicio:workoutStartedAt||new Date().toISOString(),fecha_fin:new Date().toISOString(),series:[]};
+   selectedExercises.forEach((exercise,i)=>{
+     const id=Number(exercise.dbId||exercise.id);
+     if(!Number.isInteger(id)||id<=0)throw new Error('No se ha podido identificar el ejercicio «'+exercise.name+'» en la base de datos.');
+     const unit=exercise.unit||quantityUnit(exercise);
+     for(let n=1;n<=seriesGoal;n++){
+       payload.series.push({ejercicio_id:id,numero_serie:n,repeticiones:unit==='repeticiones'?Number(exercise.quantity):null,duracion_segundos:unit==='segundos'?Number(exercise.quantity):null,peso_kg:null,completada:n<=completed[i]});
+     }
+   });
+   const saved=await DeporSupabase.saveWorkout(payload);
+   workoutSaved=true;
+   $('saveStatus').textContent='Entrenamiento guardado correctamente (n.º '+saved.id+').';
+   $('saveCompleted').textContent=state==='completado'?'Entrenamiento guardado':'Guardar entrenamiento';
+   $('showIncomplete').classList.add('hidden');$('incompletePanel').classList.add('hidden');
+ }catch(err){$('saveStatus').textContent='No se pudo guardar: '+friendlyError(err);}
+ finally{saveInProgress=false;setSaveControlsDisabled(workoutSaved);if(!workoutSaved)$('confirmIncomplete').disabled=!selectedIncompleteReason;}
+}
+$('saveCompleted').addEventListener('click',()=>saveCurrentWorkout('completado'));
+$('confirmIncomplete').addEventListener('click',()=>saveCurrentWorkout('incompleto',selectedIncompleteReason));
 $('restart').addEventListener('click',()=>{$('summary').classList.add('hidden');$('setup').classList.remove('hidden');$('workout').classList.add('hidden');$('library').classList.add('hidden');$('copyStatus').textContent='';updateHome();});
 async function bootConnectedApp(){
  const status=$('connectionStatus');

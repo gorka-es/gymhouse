@@ -1,4 +1,4 @@
-/* DEPORTE · conexión Supabase v0.0.8: sesión personal y lectura del catálogo. */
+/* DEPORTE · conexión Supabase Fase 1: sesión personal, catálogo y guardado de entrenamientos. */
 (function (global) {
   'use strict';
   let client = null;
@@ -31,6 +31,13 @@
     const { error } = await getClient().auth.signOut();
     if (error) throw error;
   }
+  async function saveWorkout(payload) {
+    const session = await getSession();
+    if (!session) throw new Error('Inicia sesión antes de guardar un entrenamiento.');
+    const { data, error } = await getClient().rpc('guardar_entrenamiento', { p_entrenamiento: payload });
+    if (error) throw error;
+    return data;
+  }
   async function getExercises() {
     const session = await getSession();
     if (!session) throw new Error('Inicia sesión antes de cargar los ejercicios.');
@@ -38,5 +45,5 @@
     if (error) throw error;
     return data || [];
   }
-  global.DeporSupabase = Object.freeze({ getSession, signIn, signOut, getExercises });
+  global.DeporSupabase = Object.freeze({ getSession, signIn, signOut, getExercises, saveWorkout });
 })(window);
