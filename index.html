@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Entrenador de fuerza en casa · v0.0.9-dev</title>
+<title>Entrenador de fuerza en casa · v0.0.8</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#18212f;--muted:#647184;--accent:#176b57;--accent2:#e0f2ec;--line:#dce3e9;--warn:#fff3d8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;border-radius:20px;background:#173d36;color:white;margin-bottom:18px}.top h1{margin:0 0 6px;font-size:clamp(1.6rem,4vw,2.2rem)}.top p{margin:0;color:#d5e8e2}.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:14px 0;box-shadow:0 4px 18px #14283a0a}.hidden{display:none!important}.muted{color:var(--muted)}.label{display:block;font-weight:700;margin-bottom:8px}.choices{display:flex;gap:10px;flex-wrap:wrap}.choice{border:2px solid #aebbc5;border-radius:12px;padding:12px 18px;background:#263746;color:#fff;cursor:pointer;font-weight:800;min-width:94px}.choice:hover{background:#344b5d;border-color:#71899a}.choice.selected{background:#d5f5e8;border-color:#087653;color:#064b36;box-shadow:0 0 0 2px #08765322}button{font:inherit}.primary,.secondary,.danger{border:0;border-radius:12px;padding:12px 17px;font-weight:750;cursor:pointer}.primary{background:var(--accent);color:white}.secondary{background:#edf1f4;color:var(--ink)}.danger{background:#fce9e7;color:#8d2b23}.primary:disabled,.secondary:disabled{opacity:.4;cursor:not-allowed}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row button{flex:1;min-width:140px}.progressline{height:8px;background:#e8edf0;border-radius:99px;overflow:hidden;margin:14px 0}.progressfill{height:100%;background:var(--accent);width:0;transition:width .2s}.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:.78rem;font-weight:800;color:var(--accent)}h2{margin:5px 0 8px;font-size:1.55rem}h3{margin:0 0 8px}.exercisegrid{display:grid;grid-template-columns:1fr;gap:0;align-items:start}.cue{background:#f6f8fa;border-left:4px solid var(--accent);padding:12px 14px;border-radius:8px;margin:12px 0}.steps{padding-left:20px;margin:8px 0}.steps li{margin:5px 0}.statrow{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.stat{background:#f3f6f7;padding:10px 14px;border-radius:12px;min-width:110px}.stat strong{display:block;font-size:1.25rem}.pill{display:inline-block;border-radius:99px;padding:4px 10px;background:var(--accent2);color:var(--accent);font-size:.85rem;font-weight:800}.seriesbig{font-size:1.2rem;font-weight:800;margin:10px 0}.summaryitem{border-bottom:1px solid var(--line);padding:12px 0}.summaryitem:last-child{border-bottom:0}.pickcard{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:#fff}.pickdelete{display:flex;justify-content:flex-end;margin:10px 0 0}.pickdelete button{flex:0 1 auto;min-width:0;padding:8px 12px;font-size:.9rem}.pickdelete-note{font-size:.82rem;color:var(--muted);margin:6px 0 0}.pickhead{display:flex;gap:10px;align-items:flex-start}.pickhead input[type=checkbox]{width:21px;height:21px;margin-top:3px;accent-color:var(--accent);flex-shrink:0}.picktitle{font-weight:800}.pickmeta{font-size:.9rem;color:var(--muted)}.pickcontrols{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0 0 31px}.pickcontrols label{font-weight:700;font-size:.92rem}.pickcontrols input{width:120px;max-width:100%;padding:10px;border:2px solid #aebbc5;border-radius:10px;font:inherit;color:var(--ink);background:#fff}.pickcontrols input:focus{outline:3px solid #bde9d9;border-color:var(--accent)}.summaryitem p{margin:3px 0 0;color:var(--muted)}textarea{width:100%;min-height:190px;padding:12px;border:1px solid var(--line);border-radius:12px;font:14px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}.small{font-size:.9rem}.note{background:var(--warn);padding:12px 14px;border-radius:12px}.footer{font-size:.85rem;color:var(--muted);text-align:center;margin-top:20px}.home-list{display:grid;gap:10px;margin:14px 0}.home-item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between}.home-item strong{display:block}.home-item span{color:var(--muted);font-size:.92rem}.customform{border:2px dashed #b7c9c2;border-radius:14px;padding:16px;margin-top:20px;background:#f7faf9}.customform label{display:block;font-weight:750;margin-bottom:6px}.customform input{width:100%;max-width:480px;padding:11px 12px;border:2px solid #aebbc5;border-radius:10px;font:inherit;background:white;color:var(--ink)}.customform input:focus{outline:3px solid #bde9d9;border-color:var(--accent)}.version{font-size:.82rem;font-weight:800;color:#d5e8e2;margin-top:10px}
+main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;border-radius:20px;background:#173d36;color:white;margin-bottom:18px}.top h1{margin:0 0 6px;font-size:clamp(1.6rem,4vw,2.2rem)}.top p{margin:0;color:#d5e8e2}.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:14px 0;box-shadow:0 4px 18px #14283a0a}.hidden{display:none!important}.muted{color:var(--muted)}.label{display:block;font-weight:700;margin-bottom:8px}.choices{display:flex;gap:10px;flex-wrap:wrap}.choice{border:2px solid #aebbc5;border-radius:12px;padding:12px 18px;background:#263746;color:#fff;cursor:pointer;font-weight:800;min-width:94px}.choice:hover{background:#344b5d;border-color:#71899a}.choice.selected{background:#d5f5e8;border-color:#087653;color:#064b36;box-shadow:0 0 0 2px #08765322}button{font:inherit}.primary,.secondary,.danger{border:0;border-radius:12px;padding:12px 17px;font-weight:750;cursor:pointer}.primary{background:var(--accent);color:white}.secondary{background:#edf1f4;color:var(--ink)}.danger{background:#fce9e7;color:#8d2b23}.primary:disabled,.secondary:disabled{opacity:.4;cursor:not-allowed}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row button{flex:1;min-width:140px}.progressline{height:8px;background:#e8edf0;border-radius:99px;overflow:hidden;margin:14px 0}.progressfill{height:100%;background:var(--accent);width:0;transition:width .2s}.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:.78rem;font-weight:800;color:var(--accent)}h2{margin:5px 0 8px;font-size:1.55rem}h3{margin:0 0 8px}.exercisegrid{display:grid;grid-template-columns:1fr;gap:0;align-items:start}.cue{background:#f6f8fa;border-left:4px solid var(--accent);padding:12px 14px;border-radius:8px;margin:12px 0}.steps{padding-left:20px;margin:8px 0}.steps li{margin:5px 0}.statrow{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.stat{background:#f3f6f7;padding:10px 14px;border-radius:12px;min-width:110px}.stat strong{display:block;font-size:1.25rem}.pill{display:inline-block;border-radius:99px;padding:4px 10px;background:var(--accent2);color:var(--accent);font-size:.85rem;font-weight:800}.seriesbig{font-size:1.2rem;font-weight:800;margin:10px 0}.summaryitem{border-bottom:1px solid var(--line);padding:12px 0}.summaryitem:last-child{border-bottom:0}.pickcard{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:#fff}.pickcard.invalid{border:2px solid #c62828;background:#fffafa}.pick-error{color:#b42318;font-weight:650;margin:8px 0 0 31px}.pickdelete{display:flex;justify-content:flex-end;margin:10px 0 0}.pickdelete button{flex:0 1 auto;min-width:0;padding:8px 12px;font-size:.9rem}.pickdelete-note{font-size:.82rem;color:var(--muted);margin:6px 0 0}.pickhead{display:flex;gap:10px;align-items:flex-start}.pickhead input[type=checkbox]{width:21px;height:21px;margin-top:3px;accent-color:var(--accent);flex-shrink:0}.picktitle{font-weight:800}.pickmeta{font-size:.9rem;color:var(--muted)}.pickcontrols{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0 0 31px}.pickcontrols label{font-weight:700;font-size:.92rem}.pickcontrols input{width:120px;max-width:100%;padding:10px;border:2px solid #aebbc5;border-radius:10px;font:inherit;color:var(--ink);background:#fff}.pickcontrols input:focus{outline:3px solid #bde9d9;border-color:var(--accent)}.summaryitem p{margin:3px 0 0;color:var(--muted)}textarea{width:100%;min-height:190px;padding:12px;border:1px solid var(--line);border-radius:12px;font:14px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}.small{font-size:.9rem}.note{background:var(--warn);padding:12px 14px;border-radius:12px}.footer{font-size:.85rem;color:var(--muted);text-align:center;margin-top:20px}.home-list{display:grid;gap:10px;margin:14px 0}.home-item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between}.home-item strong{display:block}.home-item span{color:var(--muted);font-size:.92rem}.customform{border:2px dashed #b7c9c2;border-radius:14px;padding:16px;margin-top:20px;background:#f7faf9}.customform label{display:block;font-weight:750;margin-bottom:6px}.customform input{width:100%;max-width:480px;padding:11px 12px;border:2px solid #aebbc5;border-radius:10px;font:inherit;background:white;color:var(--ink)}.customform input:focus{outline:3px solid #bde9d9;border-color:var(--accent)}.version{font-size:.82rem;font-weight:800;color:#d5e8e2;margin-top:10px}
 @media(max-width:650px){.exercisegrid{grid-template-columns:1fr}.panel{padding:17px}}
 </style>
 </head>
@@ -15,7 +15,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 <main>
 <header class="top">
   <h1>Entrenador de fuerza en casa</h1>
-  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.0.9-dev · CONECTADA A SUPABASE</p>
+  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.0.8 · CONECTADA A SUPABASE</p>
 </header>
 
 <section class="panel" id="connectionPanel" aria-labelledby="connectionTitle">
@@ -46,7 +46,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 </section>
 
 <section class="panel hidden" id="library">
-  <div class="eyebrow">Personalizar sesión · v0.0.9-dev</div>
+  <div class="eyebrow">Personalizar sesión · v0.0.8</div>
   <h2>Elige ejercicios y cantidades</h2>
   <p class="muted">Marca los ejercicios que quieras hacer, escribe tus repeticiones (máximo 50) o segundos por serie (máximo 300) y selecciona el número de series.</p>
   <p class="small muted">Puedes eliminar cualquier ejercicio con «Eliminar de biblioteca». Si estaba en tu sesión guardada, también se quitará de ella.</p>
@@ -135,7 +135,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
   <textarea id="report" readonly></textarea>
   <div class="row" style="margin-top:12px">
     <button class="primary" id="copy">Copiar resumen</button>
-    <button class="secondary" id="restart">Volver al inicio</button>
+    <button class="secondary" id="restart">Nueva sesión</button>
   </div>
   <p class="small muted" id="copyStatus" aria-live="polite"></p>
 </section>
@@ -188,7 +188,7 @@ function makePicker(){
   const id=e.id||e.name; const prior=old[id]||savedConfig.find(s=>s.id===id)||{};
   const unit=quantityUnit(e), hint=quantityHint(e), checked=prior.checked!==undefined?prior.checked:savedConfig.some(s=>s.id===id);
   const qty=prior.qty!==undefined?prior.qty:(savedConfig.find(s=>s.id===id)?.quantity??'');
-  return `<article class="pickcard"><div class="pickhead"><input type="checkbox" data-exercise-id="${escapeHtml(id)}" id="pick-${escapeHtml(id)}" ${checked?'checked':''} aria-label="Seleccionar ${escapeHtml(e.name)}"><div><div class="picktitle">${escapeHtml(e.name)}</div><div class="pickmeta">${escapeHtml(e.type)} · ${escapeHtml(e.desc)}</div></div></div><div class="pickcontrols"><label for="qty-${escapeHtml(id)}">${unit==='segundos'?'Segundos':'Repeticiones'} por serie:</label><input data-quantity-id="${escapeHtml(id)}" id="qty-${escapeHtml(id)}" type="number" min="1" max="${quantityMax(e)}" step="1" inputmode="numeric" placeholder="1–${quantityMax(e)}" value="${qty??''}"><span class="pickmeta">${escapeHtml(hint)}</span></div><p class="small muted" style="margin:8px 0 0 31px">${escapeHtml(e.rest)}</p><div class="pickdelete"><button class="danger" type="button" data-delete-exercise-id="${escapeHtml(id)}" aria-label="Eliminar ${escapeHtml(e.name)} de la biblioteca">Eliminar de biblioteca</button></div></article>`;
+  return `<article class="pickcard" data-exercise-card="${escapeHtml(id)}"><div class="pickhead"><input type="checkbox" data-exercise-id="${escapeHtml(id)}" id="pick-${escapeHtml(id)}" ${checked?'checked':''} aria-label="Seleccionar ${escapeHtml(e.name)}"><div><div class="picktitle">${escapeHtml(e.name)}</div><div class="pickmeta">${escapeHtml(e.type)} · ${escapeHtml(e.desc)}</div></div></div><div class="pickcontrols"><label for="qty-${escapeHtml(id)}">${unit==='segundos'?'Segundos':'Repeticiones'} por serie:</label><input data-quantity-id="${escapeHtml(id)}" id="qty-${escapeHtml(id)}" type="number" min="1" max="${quantityMax(e)}" step="1" inputmode="numeric" placeholder="1–${quantityMax(e)}" value="${qty??''}"><span class="pickmeta">${escapeHtml(hint)}</span></div><p class="small muted" style="margin:8px 0 0 31px">${escapeHtml(e.rest)}</p><p class="pick-error hidden" data-error-for="${escapeHtml(id)}" aria-live="polite"></p><div class="pickdelete"><button class="danger" type="button" data-delete-exercise-id="${escapeHtml(id)}" aria-label="Eliminar ${escapeHtml(e.name)} de la biblioteca">Eliminar de biblioteca</button></div></article>`;
  }).join('');
 }
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
@@ -207,14 +207,43 @@ function openCustomize(){
 }
 document.querySelectorAll('[data-series]').forEach(b=>b.addEventListener('click',()=>{seriesGoal=Number(b.dataset.series);document.querySelectorAll('[data-series]').forEach(x=>x.classList.toggle('selected',x===b));}));
 $('customize').addEventListener('click',openCustomize);
+function clearExerciseError(id){
+ const card=document.querySelector(`#exercisePicker [data-exercise-card=\"${CSS.escape(id)}\"]`);
+ if(!card)return;
+ card.classList.remove('invalid');
+ const error=card.querySelector('[data-error-for]');
+ if(error){error.textContent='';error.classList.add('hidden');}
+}
+function validateExerciseQuantity(exercise, showError){
+ const id=exercise.id||exercise.name, qty=$(`qty-${id}`), card=document.querySelector(`#exercisePicker [data-exercise-card=\"${CSS.escape(id)}\"]`);
+ if(!qty||!card)return true;
+ const raw=qty.value.trim(), n=Number(raw), max=quantityMax(exercise);
+ const valid=!!raw&&Number.isInteger(n)&&n>=1&&n<=max;
+ if(valid){clearExerciseError(id);return true;}
+ if(showError){
+  card.classList.add('invalid');
+  const error=card.querySelector('[data-error-for]');
+  if(error){error.textContent=`Escribe una cantidad válida entre 1 y ${max} ${quantityUnit(exercise)==='segundos'?'segundos':'repeticiones'}.`;error.classList.remove('hidden');}
+ }
+ return false;
+}
 $('exercisePicker').addEventListener('input',event=>{
  const input=event.target.closest('input[data-quantity-id]');
  if(!input)return;
  const exercise=exercises.find(e=>(e.id||e.name)===input.dataset.quantityId);
- if(!exercise||input.value==='')return;
- const max=quantityMax(exercise), value=Number(input.value);
- if(value>max)input.value=String(max);
- if(value<0)input.value='';
+ if(!exercise)return;
+ if(input.value!==''){
+  const max=quantityMax(exercise), value=Number(input.value);
+  if(value>max)input.value=String(max);
+  if(value<0)input.value='';
+ }
+ const card=input.closest('[data-exercise-card]');
+ if(card?.classList.contains('invalid'))validateExerciseQuantity(exercise,true);
+});
+$('exercisePicker').addEventListener('change',event=>{
+ const checkbox=event.target.closest('input[type=checkbox][data-exercise-id]');
+ if(!checkbox)return;
+ if(!checkbox.checked)clearExerciseError(checkbox.dataset.exerciseId);
 });
 $('exercisePicker').addEventListener('click',event=>{
  const button=event.target.closest('[data-delete-exercise-id]');
@@ -243,15 +272,15 @@ $('addExercise').addEventListener('click',()=>{
  $('newExerciseName').value='';$('addExerciseStatus').textContent=`«${name}» añadido. La ficha está preparada; escribe las repeticiones y pulsa «Guardar sesión».`;
 });
 $('saveSession').addEventListener('click',()=>{
- const chosen=[];let issue='';
+ $('pickerError').textContent='';
+ const chosen=[];let hasInvalid=false;let firstInvalid=null;
  exercises.forEach(e=>{
-  const id=e.id||e.name, cb=$(`pick-${id}`), qty=$(`qty-${id}`); if(!cb||!cb.checked)return;
-  const raw=qty.value.trim(), n=Number(raw);
-  const max=quantityMax(e);
-  if(!raw||!Number.isInteger(n)||n<1||n>max){if(!issue)issue=`Escribe una cantidad válida entre 1 y ${max} ${quantityUnit(e)==='segundos'?'segundos':'repeticiones'} para «${e.name}».`;return;}
+  const id=e.id||e.name, cb=$(`pick-${id}`), qty=$(`qty-${id}`); if(!cb||!cb.checked){clearExerciseError(id);return;}
+  if(!validateExerciseQuantity(e,true)){hasInvalid=true;if(!firstInvalid)firstInvalid=qty;return;}
+  const n=Number(qty.value.trim());
   chosen.push({...e,quantity:n,unit:quantityUnit(e),hint:quantityHint(e),id});
  });
- if(issue){$('pickerError').textContent=issue;return;}
+ if(hasInvalid){if(firstInvalid)firstInvalid.focus();return;}
  if(!chosen.length){$('pickerError').textContent='Selecciona al menos un ejercicio para guardar la sesión.';return;}
  savedConfig=chosen;updateHome();$('library').classList.add('hidden');$('setup').classList.remove('hidden');
 });
