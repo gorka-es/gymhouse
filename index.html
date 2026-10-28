@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Entrenador de fuerza en casa · v0.0.8</title>
+<title>Entrenador de fuerza en casa · v0.1.0</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#18212f;--muted:#647184;--accent:#176b57;--accent2:#e0f2ec;--line:#dce3e9;--warn:#fff3d8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -15,7 +15,7 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 <main>
 <header class="top">
   <h1>Entrenador de fuerza en casa</h1>
-  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.0.8 · CONECTADA A SUPABASE</p>
+  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.1.0 · CONECTADA A SUPABASE</p>
 </header>
 
 <section class="panel" id="connectionPanel" aria-labelledby="connectionTitle">
@@ -32,8 +32,26 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
   <p class="small muted" id="connectionStatus" aria-live="polite">Preparando conexión…</p>
 </section>
 
-<section class="panel" id="setup">
-  <div class="eyebrow">Pantalla de inicio</div>
+<section class="panel hidden" id="principal" aria-labelledby="principalTitle">
+  <div class="eyebrow">Menú principal</div>
+  <h2 id="principalTitle">Principal</h2>
+  <p class="muted">Elige qué quieres hacer.</p>
+  <div class="row" style="margin-top:18px">
+    <button class="secondary" id="goHistory">Historial</button>
+    <button class="primary" id="goFreeWorkout">Entrenamiento libre</button>
+    <button class="secondary" id="goSessions">Sesiones</button>
+  </div>
+</section>
+
+<section class="panel hidden" id="historyPending" aria-labelledby="historyPendingTitle">
+  <div class="eyebrow">Historial</div>
+  <h2 id="historyPendingTitle">Historial pendiente</h2>
+  <p class="muted">Esta pantalla todavía no está implementada.</p>
+  <div class="row"><button class="secondary" id="historyBack">Volver a Principal</button></div>
+</section>
+
+<section class="panel hidden" id="setup">
+  <div class="eyebrow">Entrenamiento libre</div>
   <h2>Tu sesión preparada</h2>
   <p class="muted" id="homeIntro">Aquí aparecerán los ejercicios y las cantidades que guardes en «Personalizar sesión».</p>
   <div class="statrow"><div class="stat"><span class="muted small">Series por ejercicio</span><strong id="homeSeries">3</strong></div><div class="stat"><span class="muted small">Ejercicios elegidos</span><strong id="homeCount">0</strong></div></div>
@@ -41,12 +59,13 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
   <div class="row" style="margin-top:18px">
     <button class="primary" id="begin">Iniciar</button>
     <button class="secondary" id="customize">Personalizar sesión</button>
+    <button class="secondary" id="freeBack">Volver a Principal</button>
   </div>
   <div class="note small" style="margin-top:16px">Puedes cambiar los ejercicios, las repeticiones y el número de series cuando quieras. Los cambios se aplican al pulsar «Guardar sesión».</div>
 </section>
 
 <section class="panel hidden" id="library">
-  <div class="eyebrow">Personalizar sesión · v0.0.8</div>
+  <div class="eyebrow">Sesiones · Personalizar sesión · v0.1.0</div>
   <h2>Elige ejercicios y cantidades</h2>
   <p class="muted">Marca los ejercicios que quieras hacer, escribe tus repeticiones (máximo 50) o segundos por serie (máximo 300) y selecciona el número de series.</p>
   <p class="small muted">Puedes eliminar cualquier ejercicio con «Eliminar de biblioteca». Si estaba en tu sesión guardada, también se quitará de ella.</p>
@@ -200,13 +219,33 @@ function updateHome(){
  $('homeIntro').textContent='Esta es tu sesión guardada. Pulsa «Iniciar» para comenzar o «Personalizar sesión» para cambiarla.';
  $('homeExercises').innerHTML=savedConfig.map(e=>`<div class="home-item"><div><strong>${escapeHtml(e.name)}</strong><span>${escapeHtml(e.quantity+' '+e.unit+(e.unit==='repeticiones'?' '+e.hint:''))} por serie</span></div><span>${seriesGoal} ${seriesGoal===1?'serie':'series'}</span></div>`).join('');
 }
+let origenPersonalizador = 'principal';
 function openCustomize(){
- $('setup').classList.add('hidden');$('library').classList.remove('hidden');$('workout').classList.add('hidden');$('summary').classList.add('hidden');$('pickerError').textContent='';$('addExerciseStatus').textContent='';
- document.querySelectorAll('[data-series]').forEach(x=>x.classList.toggle('selected',Number(x.dataset.series)===seriesGoal));
- makePicker();
+  origenPersonalizador = $('setup').classList.contains('hidden')
+  ? 'principal'
+  : 'setup';
+  $('principal').classList.add('hidden');
+  $('historyPending').classList.add('hidden');
+  $('setup').classList.add('hidden');
+  $('library').classList.remove('hidden');
+  $('workout').classList.add('hidden');
+  $('summary').classList.add('hidden');
+  $('pickerError').textContent='';
+  $('addExerciseStatus').textContent='';
+
+  document.querySelectorAll('[data-series]').forEach(x =>
+    x.classList.toggle('selected', Number(x.dataset.series) === seriesGoal)
+  );
+
+  makePicker();
 }
 document.querySelectorAll('[data-series]').forEach(b=>b.addEventListener('click',()=>{seriesGoal=Number(b.dataset.series);document.querySelectorAll('[data-series]').forEach(x=>x.classList.toggle('selected',x===b));}));
 $('customize').addEventListener('click',openCustomize);
+$('goFreeWorkout').addEventListener('click',()=>{ $('principal').classList.add('hidden'); $('historyPending').classList.add('hidden'); $('setup').classList.remove('hidden'); updateHome(); });
+$('goSessions').addEventListener('click',openCustomize);
+$('goHistory').addEventListener('click',()=>{ $('principal').classList.add('hidden'); $('historyPending').classList.remove('hidden'); });
+$('historyBack').addEventListener('click',()=>{ $('historyPending').classList.add('hidden'); $('principal').classList.remove('hidden'); });
+$('freeBack').addEventListener('click',()=>{ $('setup').classList.add('hidden'); $('principal').classList.remove('hidden'); });
 function clearExerciseError(id){
  const card=document.querySelector(`#exercisePicker [data-exercise-card=\"${CSS.escape(id)}\"]`);
  if(!card)return;
@@ -261,7 +300,19 @@ $('exercisePicker').addEventListener('click',event=>{
  $('addExerciseStatus').textContent=`«${exercise.name}» se ha eliminado de la biblioteca.`;
  $('pickerError').textContent='';
 });
-$('cancelCustomize').addEventListener('click',()=>{$('library').classList.add('hidden');$('setup').classList.remove('hidden');$('exercisePicker').innerHTML='';updateHome();});
+$('cancelCustomize').addEventListener('click',()=>{
+  $('library').classList.add('hidden');
+  $('exercisePicker').innerHTML='';
+
+  if (origenPersonalizador === 'setup') {
+    $('principal').classList.add('hidden');
+    $('setup').classList.remove('hidden');
+    updateHome();
+  } else {
+    $('setup').classList.add('hidden');
+    $('principal').classList.remove('hidden');
+  }
+});
 $('addExercise').addEventListener('click',()=>{
  $('addExerciseStatus').textContent='En esta versión la biblioteca se carga desde Supabase. La creación de ejercicios se incorporará en una versión posterior.'; return;
  const name=$('newExerciseName').value.trim();
@@ -282,12 +333,23 @@ $('saveSession').addEventListener('click',()=>{
  });
  if(hasInvalid){if(firstInvalid)firstInvalid.focus();return;}
  if(!chosen.length){$('pickerError').textContent='Selecciona al menos un ejercicio para guardar la sesión.';return;}
- savedConfig=chosen;updateHome();$('library').classList.add('hidden');$('setup').classList.remove('hidden');
+ savedConfig = chosen;
+ updateHome();
+ $('library').classList.add('hidden');
+ $('exercisePicker').innerHTML = '';
+
+if (origenPersonalizador === 'setup') {
+  $('principal').classList.add('hidden');
+  $('setup').classList.remove('hidden');
+} else {
+  $('setup').classList.add('hidden');
+  $('principal').classList.remove('hidden');
+}
 });
 $('begin').addEventListener('click',()=>{
  if(!savedConfig.length)return;
  selectedExercises=savedConfig.map(e=>({...e}));completed=Array(selectedExercises.length).fill(0);visited=Array(selectedExercises.length).fill(false);idx=0;active=false;workoutStartedAt=new Date().toISOString();workoutSaved=false;saveInProgress=false;$('saveStatus').textContent='';$('saveCompleted').disabled=false;$('showIncomplete').classList.remove('hidden');$('incompletePanel').classList.add('hidden');selectedIncompleteReason='';document.querySelectorAll('[data-reason]').forEach(b=>b.classList.remove('selected'));$('confirmIncomplete').disabled=true;
- $('setup').classList.add('hidden');$('summary').classList.add('hidden');$('workout').classList.remove('hidden');render();
+ $('principal').classList.add('hidden');$('setup').classList.add('hidden');$('summary').classList.add('hidden');$('workout').classList.remove('hidden');render();
 });
 function render(){
  const e=selectedExercises[idx];if(!e)return;
@@ -336,10 +398,10 @@ async function saveCurrentWorkout(state, reason=null){
 }
 $('saveCompleted').addEventListener('click',()=>saveCurrentWorkout('completado'));
 $('confirmIncomplete').addEventListener('click',()=>saveCurrentWorkout('incompleto',selectedIncompleteReason));
-$('restart').addEventListener('click',()=>{$('summary').classList.add('hidden');$('setup').classList.remove('hidden');$('workout').classList.add('hidden');$('library').classList.add('hidden');$('copyStatus').textContent='';updateHome();});
+$('restart').addEventListener('click',()=>{$('summary').classList.add('hidden');$('setup').classList.remove('hidden');$('principal').classList.add('hidden');$('historyPending').classList.add('hidden');$('workout').classList.add('hidden');$('library').classList.add('hidden');$('copyStatus').textContent='';updateHome();});
 async function bootConnectedApp(){
  const status=$('connectionStatus');
- $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden');
+ $('principal').classList.add('hidden'); $('historyPending').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden');
  try {
    const session = await DeporSupabase.getSession();
    if (!session) { status.textContent='Introduce tu correo y contraseña para conectarte.'; return; }
@@ -366,7 +428,7 @@ async function loadDatabaseExercises(){
    });
    savedConfig=[]; selectedExercises=[]; completed=[]; visited=[];
    makePicker(); updateHome();
-   $('setup').classList.remove('hidden'); $('loginForm').classList.add('hidden'); $('logoutButton').classList.remove('hidden');
+   $('principal').classList.remove('hidden'); $('setup').classList.add('hidden'); $('loginForm').classList.add('hidden'); $('logoutButton').classList.remove('hidden');
    status.textContent=`Conexión correcta. ${rows.length} ejercicios cargados desde Supabase.`;
  } catch(err){ status.textContent='Error al cargar ejercicios: '+friendlyError(err); }
 }
@@ -378,7 +440,7 @@ $('loginForm').addEventListener('submit',async event=>{
  finally{button.disabled=false;}
 });
 $('logoutButton').addEventListener('click',async()=>{
- try {await DeporSupabase.signOut(); exercises=[]; savedConfig=[]; makePicker(); updateHome(); $('setup').classList.add('hidden'); $('connectionPanel').classList.remove('hidden'); $('logoutButton').classList.add('hidden'); $('loginButton').classList.remove('hidden'); $('loginForm').classList.remove('hidden'); $('connectionStatus').textContent='Sesión cerrada.';}
+ try {await DeporSupabase.signOut(); exercises=[]; savedConfig=[]; makePicker(); updateHome(); $('principal').classList.add('hidden'); $('historyPending').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden'); $('connectionPanel').classList.remove('hidden'); $('logoutButton').classList.add('hidden'); $('loginButton').classList.remove('hidden'); $('loginForm').classList.remove('hidden'); $('connectionStatus').textContent='Sesión cerrada.';}
  catch(err){$('connectionStatus').textContent='No se pudo cerrar sesión: '+friendlyError(err);}
 });
 bootConnectedApp();
