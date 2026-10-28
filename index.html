@@ -43,12 +43,19 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
   </div>
 </section>
 
-<section class="panel hidden" id="historyPending" aria-labelledby="historyPendingTitle">
-  <div class="eyebrow">Historial</div>
-  <h2 id="historyPendingTitle">Historial pendiente</h2>
-  <p class="muted">Esta pantalla todavía no está implementada.</p>
-  <div class="row"><button class="secondary" id="historyBack">Volver a Principal</button></div>
+<section class="panel hidden" id="historyPage">
+  <div class="eyebrow">Entrenamientos</div>
+  <h2>Historial</h2>
+  <p class="muted">Aquí aparecerá el listado de entrenamientos.</p>
+
+  <div class="row">
+    <button class="secondary" id="historyBack">Volver</button>
+  </div>
 </section>
+
+<button class="secondary" id="goSummaryDay">
+  Resumen día entrenado
+</button>
 
 <section class="panel hidden" id="setup">
   <div class="eyebrow">Entrenamiento libre</div>
@@ -243,8 +250,24 @@ document.querySelectorAll('[data-series]').forEach(b=>b.addEventListener('click'
 $('customize').addEventListener('click',openCustomize);
 $('goFreeWorkout').addEventListener('click',()=>{ $('principal').classList.add('hidden'); $('historyPending').classList.add('hidden'); $('setup').classList.remove('hidden'); updateHome(); });
 $('goSessions').addEventListener('click',openCustomize);
-$('goHistory').addEventListener('click',()=>{ $('principal').classList.add('hidden'); $('historyPending').classList.remove('hidden'); });
-$('historyBack').addEventListener('click',()=>{ $('historyPending').classList.add('hidden'); $('principal').classList.remove('hidden'); });
+$('goHistory').addEventListener('click', () => {
+  $('principal').classList.add('hidden');
+  $('historyPage').classList.remove('hidden');
+});
+
+$('historyBack').addEventListener('click', () => {
+  $('historyPage').classList.add('hidden');
+  $('principal').classList.remove('hidden');
+});
+
+$('goSummaryDay').addEventListener('click', () => {
+  $('principal').classList.add('hidden');
+  $('summaryDayPage').classList.remove('hidden');
+});
+$('summaryDayBack').addEventListener('click', () => {
+  $('summaryDayPage').classList.add('hidden');
+  $('principal').classList.remove('hidden');
+});
 $('freeBack').addEventListener('click',()=>{ $('setup').classList.add('hidden'); $('principal').classList.remove('hidden'); });
 function clearExerciseError(id){
  const card=document.querySelector(`#exercisePicker [data-exercise-card=\"${CSS.escape(id)}\"]`);
