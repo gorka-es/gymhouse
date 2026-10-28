@@ -75,6 +75,21 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
     font-size: 0.68rem;
   }
 }
+.workout-history-icon {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: #48d597;
+  background: #183728;
+}
+.workout-history-icon svg {
+  width: 26px;
+  height: 26px;
+}
 </style>
 </head>
 <body>
@@ -543,7 +558,6 @@ async function loadWorkoutHistory() {
   try {
     const workouts = await DeporSupabase.getWorkouts();
     list.replaceChildren();
-
     if (workouts.length === 0) {
       const empty = document.createElement('p');
       empty.className = 'muted';
@@ -551,27 +565,37 @@ async function loadWorkoutHistory() {
       list.appendChild(empty);
       return;
     }
-
     workouts.forEach(workout => {
       // Tarjeta del entrenamiento
       const card = document.createElement('div');
       card.className = 'workout-history-card';
-
+      // Icono de mancuerna
+      const iconBox = document.createElement('div');
+      iconBox.className = 'workout-history-icon';
+      iconBox.innerHTML = `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <g fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="m6.5 6.5 11 11"/>
+            <path d="m4 9 5-5"/>
+            <path d="m15 20 5-5"/>
+            <path d="m3 7 4-4 3 3-4 4z"/>
+            <path d="m14 18 4-4 3 3-4 4z"/>
+          </g>
+        </svg>
+      `;
       // Nombre y fecha
       const info = document.createElement('div');
       info.className = 'workout-history-info';
-
       const name = document.createElement('p');
       name.className = 'workout-history-name';
       name.textContent =
         workout.nombre || 'Entrenamiento sin nombre';
-
       const date = document.createElement('p');
       date.className = 'workout-history-date';
-
       if (workout.fecha_inicio) {
         const parsedDate = new Date(workout.fecha_inicio);
-
         date.textContent = Number.isNaN(parsedDate.getTime())
           ? 'Fecha no disponible'
           : parsedDate.toLocaleString('es-ES', {
@@ -605,7 +629,7 @@ async function loadWorkoutHistory() {
       chevron.className = 'workout-history-chevron';
       chevron.setAttribute('aria-hidden', 'true');
       chevron.textContent = '›';
-      card.append(info, status, chevron);
+      card.append(iconBox, info, status, chevron);
       list.appendChild(card);
     });
   } catch (error) {
