@@ -45,5 +45,18 @@
     if (error) throw error;
     return data || [];
   }
-  global.DeporSupabase = Object.freeze({ getSession, signIn, signOut, getExercises, saveWorkout });
+  async function getWorkouts() {
+  const session = await getSession();
+  if (!session) {
+    throw new Error('Inicia sesión para consultar el historial.');
+  }
+  const { data, error } = await getClient()
+    .from('entrenamientos')
+    .select('id,nombre,fecha_inicio')
+    .eq('user_id', session.user.id)
+    .order('fecha_inicio', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+  global.DeporSupabase = Object.freeze({ getSession, signIn, signOut, getExercises, saveWorkout, getWorkouts });
 })(window);

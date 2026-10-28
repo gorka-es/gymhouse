@@ -47,7 +47,9 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
   <div class="eyebrow">Entrenamientos</div>
   <h2>Historial</h2>
   <p class="muted">Aquí aparecerá el listado de entrenamientos.</p>
-
+  <div id="workoutList">
+    <p class="muted">Cargando entrenamientos...</p>
+  </div>
   <div class="row">
     <button class="secondary" id="historyBack">Volver</button>
   </div>
@@ -259,6 +261,7 @@ $('goSessions').addEventListener('click',openCustomize);
 $('goHistory').addEventListener('click', () => {
   $('principal').classList.add('hidden');
   $('historyPage').classList.remove('hidden');
+  loadWorkoutHistory();
 });
 
 $('historyBack').addEventListener('click', () => {
@@ -468,6 +471,26 @@ $('logoutButton').addEventListener('click',async()=>{
  try {await DeporSupabase.signOut(); exercises=[]; savedConfig=[]; makePicker(); updateHome(); $('principal').classList.add('hidden'); $('historyPending').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden'); $('connectionPanel').classList.remove('hidden'); $('logoutButton').classList.add('hidden'); $('loginButton').classList.remove('hidden'); $('loginForm').classList.remove('hidden'); $('connectionStatus').textContent='Sesión cerrada.';}
  catch(err){$('connectionStatus').textContent='No se pudo cerrar sesión: '+friendlyError(err);}
 });
+async function loadWorkoutHistory() {
+  const list = $('workoutList');
+  list.textContent = 'Cargando entrenamientos...';
+  try {
+    const workouts = await DeporSupabase.getWorkouts();
+    list.replaceChildren();
+    if (workouts.length === 0) {
+      list.textContent = 'Todavía no hay entrenamientos guardados.';
+      return;
+    }
+    workouts.forEach(workout => {
+      const item = document.createElement('p');
+      item.textContent = workout.nombre;
+      list.appendChild(item);
+    });
+  } catch (error) {
+    console.error('Error al cargar el historial:', error);
+    list.textContent = 'No se pudo cargar el historial. Comprueba la conexión.';
+  }
+}
 bootConnectedApp();
 </script>
 </body>
