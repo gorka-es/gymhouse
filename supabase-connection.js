@@ -52,7 +52,7 @@
   }
   const { data, error } = await getClient()
     .from('entrenamientos')
-    .select('id,nombre,fecha_inicio')
+    .select('id,nombre,fecha_inicio,fecha_fin,estado')
     .eq('user_id', session.user.id)
     .order('fecha_inicio', { ascending: false });
   if (error) throw error;
