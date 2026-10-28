@@ -53,9 +53,15 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
   </div>
 </section>
 
-<button class="secondary" id="goSummaryDay">
-  Resumen día entrenado
-</button>
+<section class="panel hidden" id="summaryDayPage">
+  <div class="eyebrow">Resumen</div>
+  <h2>Resumen día entrenado</h2>
+  <p class="muted">Aquí aparecerá el resumen del día entrenado.</p>
+
+  <div class="row">
+    <button class="secondary" id="summaryDayBack">Volver</button>
+  </div>
+</section>
 
 <section class="panel hidden" id="setup">
   <div class="eyebrow">Entrenamiento libre</div>
@@ -260,10 +266,6 @@ $('historyBack').addEventListener('click', () => {
   $('principal').classList.remove('hidden');
 });
 
-$('goSummaryDay').addEventListener('click', () => {
-  $('principal').classList.add('hidden');
-  $('summaryDayPage').classList.remove('hidden');
-});
 $('summaryDayBack').addEventListener('click', () => {
   $('summaryDayPage').classList.add('hidden');
   $('principal').classList.remove('hidden');
