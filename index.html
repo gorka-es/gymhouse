@@ -7,8 +7,345 @@
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#18212f;--muted:#647184;--accent:#176b57;--accent2:#e0f2ec;--line:#dce3e9;--warn:#fff3d8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;border-radius:20px;background:#173d36;color:white;margin-bottom:18px}.top h1{margin:0 0 6px;font-size:clamp(1.6rem,4vw,2.2rem)}.top p{margin:0;color:#d5e8e2}.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:14px 0;box-shadow:0 4px 18px #14283a0a}.hidden{display:none!important}.muted{color:var(--muted)}.label{display:block;font-weight:700;margin-bottom:8px}.choices{display:flex;gap:10px;flex-wrap:wrap}.choice{border:2px solid #aebbc5;border-radius:12px;padding:12px 18px;background:#263746;color:#fff;cursor:pointer;font-weight:800;min-width:94px}.choice:hover{background:#344b5d;border-color:#71899a}.choice.selected{background:#d5f5e8;border-color:#087653;color:#064b36;box-shadow:0 0 0 2px #08765322}button{font:inherit}.primary,.secondary,.danger{border:0;border-radius:12px;padding:12px 17px;font-weight:750;cursor:pointer}.primary{background:var(--accent);color:white}.secondary{background:#edf1f4;color:var(--ink)}.danger{background:#fce9e7;color:#8d2b23}.primary:disabled,.secondary:disabled{opacity:.4;cursor:not-allowed}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row button{flex:1;min-width:140px}.progressline{height:8px;background:#e8edf0;border-radius:99px;overflow:hidden;margin:14px 0}.progressfill{height:100%;background:var(--accent);width:0;transition:width .2s}.eyebrow{text-transform:uppercase;letter-spacing:.08em;font-size:.78rem;font-weight:800;color:var(--accent)}h2{margin:5px 0 8px;font-size:1.55rem}h3{margin:0 0 8px}.exercisegrid{display:grid;grid-template-columns:1fr;gap:0;align-items:start}.cue{background:#f6f8fa;border-left:4px solid var(--accent);padding:12px 14px;border-radius:8px;margin:12px 0}.steps{padding-left:20px;margin:8px 0}.steps li{margin:5px 0}.statrow{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.stat{background:#f3f6f7;padding:10px 14px;border-radius:12px;min-width:110px}.stat strong{display:block;font-size:1.25rem}.pill{display:inline-block;border-radius:99px;padding:4px 10px;background:var(--accent2);color:var(--accent);font-size:.85rem;font-weight:800}.seriesbig{font-size:1.2rem;font-weight:800;margin:10px 0}.summaryitem{border-bottom:1px solid var(--line);padding:12px 0}.summaryitem:last-child{border-bottom:0}.pickcard{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:#fff}.pickcard.invalid{border:2px solid #c62828;background:#fffafa}.pick-error{color:#b42318;font-weight:650;margin:8px 0 0 31px}.pickdelete{display:flex;justify-content:flex-end;margin:10px 0 0}.pickdelete button{flex:0 1 auto;min-width:0;padding:8px 12px;font-size:.9rem}.pickdelete-note{font-size:.82rem;color:var(--muted);margin:6px 0 0}.pickhead{display:flex;gap:10px;align-items:flex-start}.pickhead input[type=checkbox]{width:21px;height:21px;margin-top:3px;accent-color:var(--accent);flex-shrink:0}.picktitle{font-weight:800}.pickmeta{font-size:.9rem;color:var(--muted)}.pickcontrols{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:12px 0 0 31px}.pickcontrols label{font-weight:700;font-size:.92rem}.pickcontrols input{width:120px;max-width:100%;padding:10px;border:2px solid #aebbc5;border-radius:10px;font:inherit;color:var(--ink);background:#fff}.pickcontrols input:focus{outline:3px solid #bde9d9;border-color:var(--accent)}.summaryitem p{margin:3px 0 0;color:var(--muted)}textarea{width:100%;min-height:190px;padding:12px;border:1px solid var(--line);border-radius:12px;font:14px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}.small{font-size:.9rem}.note{background:var(--warn);padding:12px 14px;border-radius:12px}.footer{font-size:.85rem;color:var(--muted);text-align:center;margin-top:20px}.home-list{display:grid;gap:10px;margin:14px 0}.home-item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between}.home-item strong{display:block}.home-item span{color:var(--muted);font-size:.92rem}.customform{border:2px dashed #b7c9c2;border-radius:14px;padding:16px;margin-top:20px;background:#f7faf9}.customform label{display:block;font-weight:750;margin-bottom:6px}.customform input{width:100%;max-width:480px;padding:11px 12px;border:2px solid #aebbc5;border-radius:10px;font:inherit;background:white;color:var(--ink)}.customform input:focus{outline:3px solid #bde9d9;border-color:var(--accent)}.version{font-size:.82rem;font-weight:800;color:#d5e8e2;margin-top:10px}
-@media(max-width:650px){.exercisegrid{grid-template-columns:1fr}.panel{padding:17px}}
+main{max-width:920px;margin:0 auto;padding:24px 16px 48px}
+.top{
+  padding:24px;
+  border-radius:20px;
+  background:#173d36;
+  color:white;
+  margin-bottom:18px
+}
+.top h1{
+  margin:0 0 6px;
+  font-size:clamp(1.6rem,4vw,2.2rem)
+}
+.top p{
+  margin:0;
+  color:#d5e8e2
+}
+.panel{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px;
+  margin:14px 0;
+  box-shadow:0 4px 18px #14283a0a
+}
+.hidden{
+  display:none!important
+}
+.muted{
+  color:var(--muted)
+}
+.label{
+  display:block;
+  font-weight:700;
+  margin-bottom:8px
+}
+.choices{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap
+}
+.choice{
+  border:2px solid #aebbc5;
+  border-radius:12px;
+  padding:12px 18px;
+  background:#263746;
+  color:#fff;
+  cursor:pointer;
+  font-weight:800;
+  min-width:94px
+}
+.choice:hover{
+  background:#344b5d;
+  border-color:#71899a
+}
+.choice.selected{
+  background:#d5f5e8;
+  border-color:#087653;
+  color:#064b36;
+  box-shadow:0 0 0 2px #08765322
+}
+button{
+  font:inherit
+}
+.primary,.secondary,.danger{
+  border:0;
+  border-radius:12px;
+  padding:12px 17px;
+  font-weight:750;
+  cursor:pointer
+}
+.primary{
+  background:var(--accent);
+  color:white
+}
+.secondary{
+  background:#edf1f4;
+  color:var(--ink)
+}
+.danger{
+  background:#fce9e7;
+  color:#8d2b23
+}
+.primary:disabled,.secondary:disabled{
+  opacity:.4;
+  cursor:not-allowed
+}
+.row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center
+}
+.row button{
+  flex:1;
+  min-width:140px
+}
+.progressline{
+  height:8px;
+  background:#e8edf0;
+  border-radius:99px;
+  overflow:hidden;
+  margin:14px 0
+}
+.progressfill{
+  height:100%;
+  background:var(--accent);
+  width:0;
+  transition:width .2s
+}
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:.78rem;
+  font-weight:800;
+  color:var(--accent)
+}
+h2{
+  margin:5px 0 8px;
+  font-size:1.55rem
+}
+h3{
+  margin:0 0 8px
+}
+.exercisegrid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0;align-items:start
+}
+.cue{
+  background:#f6f8fa;
+  border-left:4px solid var(--accent);
+  padding:12px 14px;
+  border-radius:8px;
+  margin:12px 0
+}
+.steps{
+  padding-left:20px;
+  margin:8px 0
+}
+.steps li{
+  margin:5px 0
+}
+.statrow{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:16px 0
+}
+.stat{
+  background:#f3f6f7;
+  padding:10px 14px;
+  border-radius:12px;
+  min-width:110px
+}
+.stat strong{
+  display:block;
+  font-size:1.25rem
+}
+.pill{
+  display:inline-block;
+  border-radius:99px;
+  padding:4px 10px;
+  background:var(--accent2);
+  color:var(--accent);
+  font-size:.85rem;
+  font-weight:800
+}
+.seriesbig{
+  font-size:1.2rem;
+  font-weight:800;
+  margin:10px 0
+}
+.summaryitem{
+  border-bottom:1px solid var(--line);
+  padding:12px 0
+}
+.summaryitem:last-child{
+  border-bottom:0
+}
+.pickcard{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  margin:12px 0;
+  background:#fff
+}
+.pickcard.invalid{
+  border:2px solid #c62828;
+  background:#fffafa
+}
+.pick-error{
+  color:#b42318;
+  font-weight:650;
+  margin:8px 0 0 31px
+}
+.pickdelete{
+  display:flex;
+  justify-content:flex-end;
+  margin:10px 0 0
+}
+.pickdelete button{
+  flex:0 1 auto;
+  min-width:0;
+  padding:8px 12px;
+  font-size:.9rem
+}
+.pickdelete-note{
+  font-size:.82rem;
+  color:var(--muted);
+  margin:6px 0 0
+}
+.pickhead{
+  display:flex;
+  gap:10px;
+  align-items:flex-start
+}
+.pickhead input[type=checkbox]{
+  width:21px;
+  height:21px;
+  margin-top:3px;
+  accent-color:var(--accent);
+  flex-shrink:0
+}
+.picktitle{
+  font-weight:800
+}
+.pickmeta{
+  font-size:.9rem;
+  color:var(--muted)
+}
+.pickcontrols{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;margin:12px 0 0 31px
+}
+.pickcontrols label{
+  font-weight:700;
+  font-size:.92rem
+}
+.pickcontrols input{
+  width:120px;
+  max-width:100%;
+  padding:10px;
+  border:2px solid #aebbc5;
+  border-radius:10px;
+  font:inherit;
+  color:var(--ink);
+  background:#fff
+}
+.pickcontrols input:focus{
+  outline:3px solid #bde9d9;
+  border-color:var(--accent)
+}
+.summaryitem p{
+  margin:3px 0 0;
+  color:var(--muted)
+}
+textarea{
+  width:100%;
+  min-height:190px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  font:14px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace
+}
+.small{
+  font-size:.9rem
+}
+.note{
+  background:var(--warn);
+  padding:12px 14px;
+  border-radius:12px
+}
+.footer{
+  font-size:.85rem;
+  color:var(--muted);
+  text-align:center;
+  margin-top:20px
+}
+.home-list{
+  display:grid;
+  gap:10px;
+  margin:14px 0
+}
+.home-item{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px 14px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between
+}
+.home-item strong{
+  display:block
+}
+.home-item span{
+  color:var(--muted);
+  font-size:.92rem
+}
+.customform{
+  border:2px dashed #b7c9c2;
+  border-radius:14px;
+  padding:16px;
+  margin-top:20px;
+  background:#f7faf9
+}
+.customform label{
+  display:block;
+  font-weight:750;
+  margin-bottom:6px
+}
+.customform input{
+  width:100%;
+  max-width:480px;
+  padding:11px 12px;
+  border:2px solid #aebbc5;
+  border-radius:10px;
+  font:inherit;
+  background:white;
+  color:var(--ink)
+}
+.customform input:focus{
+  outline:3px solid #bde9d9;
+  border-color:var(--accent)
+}
+.version{
+  font-size:.82rem;
+  font-weight:800;
+  color:#d5e8e2;
+  margin-top:10px
+}
+@media(max-width:650px){
+  .exercisegrid{
+    grid-template-columns:1fr
+  }
+  .panel{padding:17px}
+}
 /* DEPORTE · Tarjetas del historial */
 .workout-history-list {
   display: flex;
@@ -25,6 +362,11 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
   border: 1px solid #303030;
   border-radius: 14px;
   min-width: 0;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
 }
 .workout-history-info {
   flex: 1;
@@ -90,6 +432,9 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
   width: 26px;
   height: 26px;
 }
+#connectionStatus {
+  display: none;
+}
 </style>
 </head>
 <body>
@@ -140,11 +485,12 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
   <div class="eyebrow">Resumen</div>
   <h2>Resumen día entrenado</h2>
   <p class="muted">Aquí aparecerá el resumen del día entrenado.</p>
-
+  <div id="summaryDayDetails"></div>
   <div class="row">
     <button class="secondary" id="summaryDayBack">Volver</button>
   </div>
 </section>
+
 
 <section class="panel hidden" id="setup">
   <div class="eyebrow">Entrenamiento libre</div>
@@ -259,7 +605,8 @@ main{max-width:920px;margin:0 auto;padding:24px 16px 48px}.top{padding:24px;bord
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 <script src="supabase-connection.js"></script>
-<script>const exerciseGuides = [
+<script>
+const exerciseGuides = [
  {name:"Sentadillas",type:"Principal",dose:"10 repeticiones por serie",desc:"Trabaja piernas y glúteos manteniendo el tronco estable.",cues:["Pies aproximadamente a la anchura de los hombros.","Lleva la cadera atrás y flexiona las rodillas de forma controlada.","Mantén toda la planta del pie apoyada y las rodillas alineadas con los pies.","Sube empujando el suelo, sin rebotes."],rest:"Descanso orientativo: 2–3 min entre series.",svg:"squat"},
  {name:"Flexiones",type:"Principal",dose:"10 repeticiones por serie",desc:"Fortalece pecho, hombros, tríceps y estabilidad del tronco.",cues:["Manos algo más abiertas que los hombros.","Mantén cabeza, espalda y cadera alineadas.","Baja el pecho de forma controlada, con los codos en diagonal.","Si pierdes la técnica, apoya las rodillas o reduce las repeticiones."],rest:"Descanso orientativo: 2–3 min entre series.",svg:"push"},
  {name:"Zancadas hacia atrás",type:"Principal",dose:"8 repeticiones por pierna y serie",desc:"Ejercicio unilateral para piernas, glúteos y equilibrio.",cues:["Da un paso hacia atrás y baja verticalmente con control.","Mantén el pie delantero completamente apoyado.","La rodilla delantera sigue la dirección de los dedos del pie.","Vuelve al inicio empujando con la pierna delantera; completa ambos lados."],rest:"Una serie incluye las repeticiones de ambas piernas. Descansa 2–3 min.",svg:"lunge"},
@@ -354,7 +701,7 @@ $('historyBack').addEventListener('click', () => {
 });
 $('summaryDayBack').addEventListener('click', () => {
   $('summaryDayPage').classList.add('hidden');
-  $('principal').classList.remove('hidden');
+  $('historyPage').classList.remove('hidden');
 });
 $('freeBack').addEventListener('click',()=>{ $('setup').classList.add('hidden'); $('principal').classList.remove('hidden'); });
 function clearExerciseError(id){
@@ -564,6 +911,76 @@ $('logoutButton').addEventListener('click',async()=>{
  try {await DeporSupabase.signOut(); exercises=[]; savedConfig=[]; makePicker(); updateHome(); $('principal').classList.add('hidden'); $('historyPage').classList.add('hidden');$('summaryDayPage').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden'); $('connectionPanel').classList.remove('hidden'); $('logoutButton').classList.add('hidden'); $('loginButton').classList.remove('hidden'); $('loginForm').classList.remove('hidden'); $('connectionStatus').textContent='Sesión cerrada.';}
  catch(err){$('connectionStatus').textContent='No se pudo cerrar sesión: '+friendlyError(err);}
 });
+async function showWorkoutSummary(workoutId) {
+  const summaryPage = $('summaryDayPage');
+  const historyPage = $('historyPage');
+  historyPage.classList.add('hidden');
+  summaryPage.classList.remove('hidden');
+  const title = summaryPage.querySelector('h2');
+  const description = summaryPage.querySelector('p.muted');
+  title.textContent = 'Cargando entrenamiento...';
+  description.textContent = 'Consultando los datos guardados.';
+  try {
+    const result = await DeporSupabase.getWorkoutDetails(workoutId);
+    const workout = result.workout;
+    const series = result.series;
+title.textContent = workout.nombre;
+description.textContent =
+  `Estado: ${workout.estado} · Series registradas: ${series.length}`;
+const details = $('summaryDayDetails');
+details.replaceChildren();
+if (series.length === 0) {
+  const emptyMessage = document.createElement('p');
+  emptyMessage.className = 'muted';
+  emptyMessage.textContent = 'Este entrenamiento no tiene series registradas.';
+  details.appendChild(emptyMessage);
+} else {
+  const exercises = new Map();
+  series.forEach(item => {
+    const key = String(item.ejercicio_id);
+    if (!exercises.has(key)) {
+      exercises.set(key, {
+        nombre: item.ejercicio_nombre,
+        series: []
+      });
+    }
+    exercises.get(key).series.push(item);
+  });
+  exercises.forEach(exercise => {
+    const section = document.createElement('div');
+    section.className = 'workout-history-card';
+    section.style.display = 'block';
+    section.style.marginTop = '12px';
+    const heading = document.createElement('h3');
+    heading.textContent = exercise.nombre;
+    section.appendChild(heading);
+    exercise.series.forEach(item => {
+      const line = document.createElement('p');
+      line.className = 'muted';
+      const values = [];
+      if (item.repeticiones !== null && item.repeticiones !== undefined) {
+        values.push(`${item.repeticiones} repeticiones`);
+      }
+      if (item.duracion_segundos !== null && item.duracion_segundos !== undefined) {
+        values.push(`${item.duracion_segundos} segundos`);
+      }
+      if (item.peso_kg !== null && item.peso_kg !== undefined) {
+        values.push(`${item.peso_kg} kg`);
+      }
+      values.push(item.completada ? 'Completada' : 'No completada');
+      line.textContent = `Serie ${item.numero_serie}: ${values.join(' · ')}`;
+      section.appendChild(line);
+    });
+    details.appendChild(section);
+  });
+}
+  } catch (error) {
+    console.error('Error al cargar el entrenamiento:', error);
+    title.textContent = 'No se pudo cargar el entrenamiento';
+    description.textContent =
+      error.message || 'Comprueba la conexión con Supabase.';
+  }
+}
 async function loadWorkoutHistory() {
   const list = $('workoutList');
   list.className = 'workout-history-list';
@@ -580,7 +997,8 @@ async function loadWorkoutHistory() {
     }
     workouts.forEach(workout => {
       // Tarjeta del entrenamiento
-      const card = document.createElement('div');
+      const card = document.createElement('button');
+      card.type = 'button';
       card.className = 'workout-history-card';
       // Icono de mancuerna
       const iconBox = document.createElement('div');
@@ -643,6 +1061,9 @@ async function loadWorkoutHistory() {
       chevron.setAttribute('aria-hidden', 'true');
       chevron.textContent = '›';
       card.append(iconBox, info, status, chevron);
+      card.addEventListener('click', () => {
+        showWorkoutSummary(workout.id);
+      });
       list.appendChild(card);
     });
   } catch (error) {

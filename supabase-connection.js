@@ -58,5 +58,47 @@
   if (error) throw error;
   return data || [];
 }
-  global.DeporSupabase = Object.freeze({ getSession, signIn, signOut, getExercises, saveWorkout, getWorkouts });
+async function getWorkoutDetails(workoutId) {
+  const session = await getSession();
+  if (!session) {
+    throw new Error('Inicia sesión para consultar el entrenamiento.');
+  }
+  const { data: workout, error: workoutError } = await getClient()
+    .from('entrenamientos')
+    .select('id,nombre,estado,fecha_inicio,fecha_fin,motivo_incompleto')
+    .eq('id', workoutId)
+    .eq('user_id', session.user.id)
+    .single();
+  if (workoutError) throw workoutError;
+  const { data: series, error: seriesError } = await getClient()
+    .from('entrenamiento_series')
+    .select('id,ejercicio_id,numero_serie,repeticiones,duracion_segundos,peso_kg,completada')
+    .eq('entrenamiento_id', workoutId)
+    .order('ejercicio_id', { ascending: true })
+    .order('numero_serie', { ascending: true });
+  if (seriesError) throw seriesError;
+  const exerciseIds = [...new Set((series || []).map(s => s.ejercicio_id))];
+  let exercises = [];
+  if (exerciseIds.length) {
+    const { data, error } = await getClient()
+      .from('ejercicios')
+      .select('id,nombre,tipo')
+      .in('id', exerciseIds);
+
+    if (error) throw error;
+    exercises = data || [];
+  }
+  const exerciseNames = new Map(
+    exercises.map(exercise => [String(exercise.id), exercise.nombre])
+  );
+  return {
+    workout,
+    series: (series || []).map(item => ({
+      ...item,
+      ejercicio_nombre:
+        exerciseNames.get(String(item.ejercicio_id)) || 'Ejercicio sin nombre'
+    }))
+  };
+}
+  global.DeporSupabase = Object.freeze({ getSession, signIn, signOut, getExercises, saveWorkout, getWorkouts, getWorkoutDetails});
 })(window);
