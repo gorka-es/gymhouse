@@ -358,14 +358,14 @@ textarea{
   align-items: center;
   gap: 12px;
   padding: 16px 14px;
-  background: #101010;
-  border: 1px solid #303030;
+  background: #ffffff;
+  border: 1px solid var(--line);
   border-radius: 14px;
   min-width: 0;
   width: 100%;
   text-align: left;
   font: inherit;
-  color: inherit;
+  color: var(--ink);
   cursor: pointer;
 }
 .workout-history-info {
@@ -374,14 +374,14 @@ textarea{
 }
 .workout-history-name {
   margin: 0 0 6px;
-  color: #f4f4f5;
+  color: var(--ink);
   font-size: 0.98rem;
   font-weight: 750;
   overflow-wrap: anywhere;
 }
 .workout-history-date {
   margin: 0;
-  color: #a3a3a3;
+  color: var(--muted);
   font-size: 0.84rem;
 }
 .workout-history-status {
@@ -395,15 +395,15 @@ textarea{
   white-space: nowrap;
 }
 .workout-history-status.completed {
-  color: #22c55e;
-  background: #10351f;
+  color: #176b45;
+  background: #e1f4e9;
 }
 .workout-history-status.incomplete {
-  color: #fbbf24;
-  background: #3a2b12;
+  color: #805b08;
+  background: #fff1cc;
 }
 .workout-history-chevron {
-  color: #a3a3a3;
+  color: var(--muted);
   font-size: 1.25rem;
   flex-shrink: 0;
 }
@@ -425,8 +425,8 @@ textarea{
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  color: #48d597;
-  background: #183728;
+  color: #176b45;
+  background: #e1f4e9;
 }
 .workout-history-icon svg {
   width: 26px;
