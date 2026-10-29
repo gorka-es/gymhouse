@@ -924,57 +924,85 @@ async function showWorkoutSummary(workoutId) {
     const result = await DeporSupabase.getWorkoutDetails(workoutId);
     const workout = result.workout;
     const series = result.series;
-title.textContent = workout.nombre;
-description.textContent =
-  `Estado: ${workout.estado} · Series registradas: ${series.length}`;
-const details = $('summaryDayDetails');
-details.replaceChildren();
-if (series.length === 0) {
-  const emptyMessage = document.createElement('p');
-  emptyMessage.className = 'muted';
-  emptyMessage.textContent = 'Este entrenamiento no tiene series registradas.';
-  details.appendChild(emptyMessage);
-} else {
-  const exercises = new Map();
-  series.forEach(item => {
-    const key = String(item.ejercicio_id);
-    if (!exercises.has(key)) {
-      exercises.set(key, {
-        nombre: item.ejercicio_nombre,
-        series: []
-      });
-    }
-    exercises.get(key).series.push(item);
-  });
-  exercises.forEach(exercise => {
-    const section = document.createElement('div');
-    section.className = 'workout-history-card';
-    section.style.display = 'block';
-    section.style.marginTop = '12px';
-    const heading = document.createElement('h3');
-    heading.textContent = exercise.nombre;
-    section.appendChild(heading);
-    exercise.series.forEach(item => {
-      const line = document.createElement('p');
-      line.className = 'muted';
-      const values = [];
-      if (item.repeticiones !== null && item.repeticiones !== undefined) {
-        values.push(`${item.repeticiones} repeticiones`);
+    title.textContent = workout.nombre;
+    description.textContent = `Estado: ${workout.estado} · Series registradas: ${series.length}`;
+    const details = $('summaryDayDetails');
+    details.replaceChildren();
+    if (series.length === 0) {
+      const emptyMessage = document.createElement('p');
+      emptyMessage.className = 'muted';
+      emptyMessage.textContent = 'Este entrenamiento no tiene series registradas.';
+      details.appendChild(emptyMessage);
+    } else {
+    const exercises = new Map();
+    series.forEach(item => {
+      const key = String(item.ejercicio_id);
+      if (!exercises.has(key)) {
+        exercises.set(key, {
+          nombre: item.ejercicio_nombre,
+          series: []
+        });
       }
-      if (item.duracion_segundos !== null && item.duracion_segundos !== undefined) {
-        values.push(`${item.duracion_segundos} segundos`);
-      }
-      if (item.peso_kg !== null && item.peso_kg !== undefined) {
-        values.push(`${item.peso_kg} kg`);
-      }
-      values.push(item.completada ? 'Completada' : 'No completada');
-      line.textContent = `Serie ${item.numero_serie}: ${values.join(' · ')}`;
-      section.appendChild(line);
+      exercises.get(key).series.push(item);
     });
-    details.appendChild(section);
-  });
-}
-  } catch (error) {
+    exercises.forEach(exercise => {
+      const section = document.createElement('div');
+      section.className = 'workout-history-card';
+      section.style.display = 'block';
+      section.style.marginTop = '12px';
+      const heading = document.createElement('h3');
+      heading.textContent = exercise.nombre;
+      section.appendChild(heading); 
+      let exerciseNumber = 0;
+      exercises.forEach(exercise => {
+        exerciseNumber++;
+        const section = document.createElement('div');
+        section.className = 'workout-history-card';
+        section.style.display = 'block';
+        section.style.marginTop = '12px';
+        const heading = document.createElement('h3');
+        heading.textContent = `${exerciseNumber}. ${exercise.nombre}`;
+        heading.style.margin = '0 0 10px';
+        section.appendChild(heading);
+        const completedCount = exercise.series.filter(
+          item => item.completada
+        ).length;
+        const summary = document.createElement('p');
+        summary.className = 'muted';
+        summary.textContent = `Series completadas: ${completedCount}`;
+        summary.style.margin = '0 0 8px';
+        section.appendChild(summary);
+        exercise.series.forEach(item => {
+          const row = document.createElement('div');
+          row.style.display = 'flex';
+          row.style.justifyContent = 'space-between';
+          row.style.alignItems = 'center';
+          row.style.gap = '12px';
+          row.style.padding = '6px 0';
+          const seriesName = document.createElement('span');
+          seriesName.textContent = `Serie ${item.numero_serie}`;
+          const seriesValue = document.createElement('span');
+          seriesValue.style.textAlign = 'right';
+          const values = [];
+          if (item.repeticiones !== null && item.repeticiones !== undefined) {
+            values.push(`${item.repeticiones} repeticiones`);
+          }
+          if (item.duracion_segundos !== null && item.duracion_segundos !== undefined) {
+            values.push(`${item.duracion_segundos} segundos`);
+          }
+          if (item.peso_kg !== null && item.peso_kg !== undefined) {
+            values.push(`${item.peso_kg} kg`);
+          }
+          seriesValue.textContent = values.join(' · ') || 'Sin datos registrados';
+          row.append(seriesName, seriesValue);
+          section.appendChild(row);
+        });
+        details.appendChild(section);
+      });
+      details.appendChild(section);
+    });
+  }
+} catch (error) {
     console.error('Error al cargar el entrenamiento:', error);
     title.textContent = 'No se pudo cargar el entrenamiento';
     description.textContent =
