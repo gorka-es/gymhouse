@@ -1,6 +1,6 @@
 # Entrenador de fuerza en casa
 
-**Versión actual:** `v0.1.0`
+**Versión actual:** `v0.2.0`
 
 Aplicación web en español para preparar y seguir sesiones de fuerza en casa como complemento del entrenamiento de ciclismo. Utiliza Supabase para la autenticación, la carga de la biblioteca de ejercicios y el almacenamiento de los entrenamientos realizados.
 
@@ -23,6 +23,10 @@ La aplicación se publica como web y necesita conexión a Internet para iniciar 
 - **Registro de entrenamientos incompletos**, cuando una sesión termina antes de completarse y se registra el motivo correspondiente.
 - **Interfaz sin imágenes ni dibujos de ejercicios**, para mantener una presentación sencilla.
 - Interfaz adaptable a pantallas de móvil y ordenador.
+- **Historial de entrenamientos:** consulta los entrenamientos guardados en Supabase, con su fecha, estado y nombre.
+- **Detalle de entrenamientos históricos:** consulta los ejercicios y las series registradas en cada entrenamiento, incluidas repeticiones, duración, peso y estado de finalización cuando esos datos estén disponibles.
+- **Resumen visual por ejercicio:** muestra cada ejercicio en una tarjeta independiente, con el número de ejercicio, las series completadas y el detalle de cada serie.
+- **Interfaz del historial y del resumen:** tarjetas, tipografía y estados visuales coherentes con la identidad gráfica general de la aplicación.
 
 La biblioteca de ejercicios remota es de solo lectura desde la interfaz de esta versión.
 
@@ -106,8 +110,7 @@ Los nombres exactos de los botones pueden variar si cambia la interfaz. La bibli
 
 ## Limitaciones conocidas
 
-- **El Historial de entrenamientos todavía no está implementado como listado consultable.** La pantalla de Historial es provisional en esta versión.
-- **El detalle de un entrenamiento histórico está pendiente.** La pantalla `RESUMEN_DIA_ENTRENADO` se incorporará en una versión posterior.
+- El historial y el detalle de los entrenamientos consultan los datos guardados en Supabase y requieren una sesión válida y los permisos RLS correspondientes.
 - No se crean ni se eliminan ejercicios en Supabase desde la interfaz.
 - Las guías de ejecución de los ejercicios conocidos se mantienen en el código de la aplicación, no en la tabla remota.
 - La aplicación necesita conectividad con Supabase para iniciar sesión, cargar el catálogo remoto y guardar los entrenamientos.
@@ -135,6 +138,7 @@ Sustituye el marcador del archivo HTML por su nombre real en el repositorio. No 
 
 ## Historial de versiones
 
+- **`v0.2.0`**: incorpora el historial de entrenamientos guardados en Supabase y la consulta de sus detalles, con ejercicios y series registradas. Mejora el diseño de las tarjetas del historial y del resumen de cada entrenamiento, con una presentación más clara y coherente con la identidad visual de la aplicación.
 - **`v0.1.0`**: reorganiza la navegación en una pantalla Principal con accesos a Historial, Entrenamiento libre y Sesiones. Mantiene el entrenamiento libre y la personalización, e incorpora el guardado de entrenamientos y series en Supabase, incluidos los entrenamientos incompletos. El listado del Historial y el detalle de entrenamientos históricos quedan pendientes.
 - **`v0.0.8`**: incorpora el acceso personal mediante correo y contraseña con Supabase Auth y carga la biblioteca de ejercicios desde `public.ejercicios`.
 - **`v0.0.7`**: limita la cantidad por serie a 50 repeticiones o 300 segundos en ejercicios por tiempo; elimina las imágenes y dibujos de los ejercicios.
