@@ -321,23 +321,27 @@ function openCustomize(){
   ? 'principal'
   : 'setup';
   $('principal').classList.add('hidden');
-  $('historyPending').classList.add('hidden');
+  $('historyPage').classList.add('hidden');
+  $('summaryDayPage').classList.add('hidden');
   $('setup').classList.add('hidden');
   $('library').classList.remove('hidden');
   $('workout').classList.add('hidden');
   $('summary').classList.add('hidden');
   $('pickerError').textContent='';
   $('addExerciseStatus').textContent='';
-
   document.querySelectorAll('[data-series]').forEach(x =>
     x.classList.toggle('selected', Number(x.dataset.series) === seriesGoal)
   );
-
   makePicker();
 }
 document.querySelectorAll('[data-series]').forEach(b=>b.addEventListener('click',()=>{seriesGoal=Number(b.dataset.series);document.querySelectorAll('[data-series]').forEach(x=>x.classList.toggle('selected',x===b));}));
 $('customize').addEventListener('click',openCustomize);
-$('goFreeWorkout').addEventListener('click',()=>{ $('principal').classList.add('hidden'); $('historyPending').classList.add('hidden'); $('setup').classList.remove('hidden'); updateHome(); });
+$('goFreeWorkout').addEventListener('click',()=>{ 
+  $('principal').classList.add('hidden'); 
+  $('historyPage').classList.add('hidden'); 
+  $('summaryDayPage').classList.add('hidden');
+  $('setup').classList.remove('hidden'); 
+  updateHome(); });
 $('goSessions').addEventListener('click',openCustomize);
 $('goHistory').addEventListener('click', () => {
   $('principal').classList.add('hidden');
@@ -505,10 +509,20 @@ async function saveCurrentWorkout(state, reason=null){
 }
 $('saveCompleted').addEventListener('click',()=>saveCurrentWorkout('completado'));
 $('confirmIncomplete').addEventListener('click',()=>saveCurrentWorkout('incompleto',selectedIncompleteReason));
-$('restart').addEventListener('click',()=>{$('summary').classList.add('hidden');$('setup').classList.remove('hidden');$('principal').classList.add('hidden');$('historyPending').classList.add('hidden');$('workout').classList.add('hidden');$('library').classList.add('hidden');$('copyStatus').textContent='';updateHome();});
+$('restart').addEventListener('click',()=>{
+  $('summary').classList.add('hidden');
+  $('setup').classList.remove('hidden');
+  $('principal').classList.add('hidden');
+  $('historyPage').classList.add('hidden');
+  $('summaryDayPage').classList.add('hidden');
+  $('workout').classList.add('hidden');
+  $('library').classList.add('hidden');
+  $('copyStatus').textContent='';
+  updateHome();
+});
 async function bootConnectedApp(){
  const status=$('connectionStatus');
- $('principal').classList.add('hidden'); $('historyPending').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden');
+ $('principal').classList.add('hidden');$('historyPage').classList.add('hidden');$('summaryDayPage').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden');
  try {
    const session = await DeporSupabase.getSession();
    if (!session) { status.textContent='Introduce tu correo y contraseña para conectarte.'; return; }
@@ -547,14 +561,13 @@ $('loginForm').addEventListener('submit',async event=>{
  finally{button.disabled=false;}
 });
 $('logoutButton').addEventListener('click',async()=>{
- try {await DeporSupabase.signOut(); exercises=[]; savedConfig=[]; makePicker(); updateHome(); $('principal').classList.add('hidden'); $('historyPending').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden'); $('connectionPanel').classList.remove('hidden'); $('logoutButton').classList.add('hidden'); $('loginButton').classList.remove('hidden'); $('loginForm').classList.remove('hidden'); $('connectionStatus').textContent='Sesión cerrada.';}
+ try {await DeporSupabase.signOut(); exercises=[]; savedConfig=[]; makePicker(); updateHome(); $('principal').classList.add('hidden'); $('historyPage').classList.add('hidden');$('summaryDayPage').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden'); $('connectionPanel').classList.remove('hidden'); $('logoutButton').classList.add('hidden'); $('loginButton').classList.remove('hidden'); $('loginForm').classList.remove('hidden'); $('connectionStatus').textContent='Sesión cerrada.';}
  catch(err){$('connectionStatus').textContent='No se pudo cerrar sesión: '+friendlyError(err);}
 });
 async function loadWorkoutHistory() {
   const list = $('workoutList');
   list.className = 'workout-history-list';
   list.textContent = 'Cargando entrenamientos...';
-
   try {
     const workouts = await DeporSupabase.getWorkouts();
     list.replaceChildren();
