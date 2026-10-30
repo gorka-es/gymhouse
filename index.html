@@ -925,7 +925,17 @@ async function showWorkoutSummary(workoutId) {
     const workout = result.workout;
     const series = result.series;
     title.textContent = workout.nombre;
-    description.textContent = `Estado: ${workout.estado} · Series registradas: ${series.length}`;
+    const startDate = new Date(workout.fecha_inicio);
+    const formattedDate = startDate.toLocaleDateString('es-ES');
+    const formattedTime = startDate.toLocaleTimeString('es-ES', {
+    hour: '2-digit',
+    minute: '2-digit'
+    const exerciseCount = new Set(
+      series.map(item => String(item.ejercicio_id))
+    ).size;
+  });
+  description.textContent =
+  `Fecha: ${formattedDate} · Hora de inicio: ${formattedTime} · Estado: ${workout.estado} · Series registradas: ${series.length} · Ejercicios realizados: ${exerciseCount}`;
     const details = $('summaryDayDetails');
     details.replaceChildren();
     if (series.length === 0) {
