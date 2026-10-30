@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Entrenador de fuerza en casa · v0.2.0</title>
+<title>Entrenador de fuerza en casa · v0.2.1</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#18212f;--muted:#647184;--accent:#176b57;--accent2:#e0f2ec;--line:#dce3e9;--warn:#fff3d8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -441,7 +441,7 @@ textarea{
 <main>
 <header class="top">
   <h1>Entrenador de fuerza en casa</h1>
-  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.2.0 · CONECTADA A SUPABASE</p>
+  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.2.1 · CONECTADA A SUPABASE</p>
 </header>
 
 <section class="panel" id="connectionPanel" aria-labelledby="connectionTitle">
@@ -507,7 +507,7 @@ textarea{
 </section>
 
 <section class="panel hidden" id="library">
-  <div class="eyebrow">Sesiones · Personalizar sesión · v0.2.0</div>
+  <div class="eyebrow">Sesiones · Personalizar sesión · v0.2.1</div>
   <h2>Elige ejercicios y cantidades</h2>
   <p class="muted">Marca los ejercicios que quieras hacer, escribe tus repeticiones (máximo 50) o segundos por serie (máximo 300) y selecciona el número de series.</p>
   <p class="small muted">Puedes eliminar cualquier ejercicio con «Eliminar de biblioteca». Si estaba en tu sesión guardada, también se quitará de ella.</p>
@@ -945,14 +945,6 @@ async function showWorkoutSummary(workoutId) {
       }
       exercises.get(key).series.push(item);
     });
-    exercises.forEach(exercise => {
-      const section = document.createElement('div');
-      section.className = 'workout-history-card';
-      section.style.display = 'block';
-      section.style.marginTop = '12px';
-      const heading = document.createElement('h3');
-      heading.textContent = exercise.nombre;
-      section.appendChild(heading); 
       let exerciseNumber = 0;
       exercises.forEach(exercise => {
         exerciseNumber++;
@@ -973,31 +965,30 @@ async function showWorkoutSummary(workoutId) {
         summary.style.margin = '0 0 8px';
         section.appendChild(summary);
         exercise.series.forEach(item => {
-          const row = document.createElement('div');
-          row.style.display = 'flex';
-          row.style.justifyContent = 'space-between';
-          row.style.alignItems = 'center';
-          row.style.gap = '12px';
-          row.style.padding = '6px 0';
-          const seriesName = document.createElement('span');
-          seriesName.textContent = `Serie ${item.numero_serie}`;
-          const seriesValue = document.createElement('span');
-          seriesValue.style.textAlign = 'right';
-          const values = [];
-          if (item.repeticiones !== null && item.repeticiones !== undefined) {
-            values.push(`${item.repeticiones} repeticiones`);
-          }
-          if (item.duracion_segundos !== null && item.duracion_segundos !== undefined) {
-            values.push(`${item.duracion_segundos} segundos`);
-          }
-          if (item.peso_kg !== null && item.peso_kg !== undefined) {
-            values.push(`${item.peso_kg} kg`);
-          }
-          seriesValue.textContent = values.join(' · ') || 'Sin datos registrados';
-          row.append(seriesName, seriesValue);
-          section.appendChild(row);
-        });
-        details.appendChild(section);
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.justifyContent = 'space-between';
+        row.style.alignItems = 'center';
+        row.style.gap = '12px';
+        row.style.padding = '6px 0';
+        const seriesName = document.createElement('span');
+        seriesName.textContent = `Serie ${item.numero_serie}`;
+        const seriesValue = document.createElement('span');
+        seriesValue.style.textAlign = 'right';
+        const values = [];
+        if (item.repeticiones !== null && item.repeticiones !== undefined) {
+          values.push(`${item.repeticiones} repeticiones`);
+        }
+        if (item.duracion_segundos !== null && item.duracion_segundos !== undefined) {
+          values.push(`${item.duracion_segundos} segundos`);
+        }
+        if (item.peso_kg !== null && item.peso_kg !== undefined) {
+          values.push(`${item.peso_kg} kg`);
+        }
+        seriesValue.textContent =
+        values.join(' · ') || 'Sin datos registrados';
+        row.append(seriesName, seriesValue);
+        section.appendChild(row);
       });
       details.appendChild(section);
     });
@@ -1008,8 +999,7 @@ async function showWorkoutSummary(workoutId) {
     description.textContent =
       error.message || 'Comprueba la conexión con Supabase.';
   }
-}
-async function loadWorkoutHistory() {
+}async function loadWorkoutHistory() {
   const list = $('workoutList');
   list.className = 'workout-history-list';
   list.textContent = 'Cargando entrenamientos...';
