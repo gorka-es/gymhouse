@@ -837,7 +837,7 @@ async function saveCurrentWorkout(state, reason=null){
  if(state==='incompleto'&&!reason){$('saveStatus').textContent='Selecciona un motivo antes de guardar.';return;}
  saveInProgress=true;setSaveControlsDisabled(true);$('saveStatus').textContent='Guardando entrenamiento y series…';
  try{
-   const payload={nombre:'Entrenamiento full body en casa',estado:state,motivo_incompleto:reason,fecha_inicio:workoutStartedAt||new Date().toISOString(),fecha_fin:new Date().toISOString(),series:[]};
+   const payload={nombre:'Entrenamiento full body en casa',estado:state,motivo_incompleto:reason,series_objetivo:seriesGoal,fecha_inicio:workoutStartedAt||new Date().toISOString(),fecha_fin:new Date().toISOString(),series:[]};
    selectedExercises.forEach((exercise,i)=>{
      const id=Number(exercise.dbId||exercise.id);
      if(!Number.isInteger(id)||id<=0)throw new Error('No se ha podido identificar el ejercicio «'+exercise.name+'» en la base de datos.');
@@ -935,7 +935,7 @@ async function showWorkoutSummary(workoutId) {
       series.map(item => String(item.ejercicio_id))
     ).size;
     description.textContent =
-    `Fecha: ${formattedDate} · Hora de inicio: ${formattedTime} · Estado: ${workout.estado} · Series registradas: ${series.length} · Ejercicios realizados: ${exerciseCount}`;
+    `Fecha: ${formattedDate} · Hora de inicio: ${formattedTime} · Estado: ${workout.estado} · Series previstas por ejercicio: ${workout.series_objetivo} · Ejercicios realizados: ${exerciseCount}`;
     const details = $('summaryDayDetails');
     details.replaceChildren();
     if (series.length === 0) {

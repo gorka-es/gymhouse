@@ -65,7 +65,7 @@ async function getWorkoutDetails(workoutId) {
   }
   const { data: workout, error: workoutError } = await getClient()
     .from('entrenamientos')
-    .select('id,nombre,estado,fecha_inicio,fecha_fin,motivo_incompleto')
+    .select('id,nombre,estado,fecha_inicio,fecha_fin,motivo_incompleto,series_objetivo')
     .eq('id', workoutId)
     .eq('user_id', session.user.id)
     .single();
