@@ -934,9 +934,27 @@ async function showWorkoutSummary(workoutId) {
     const exerciseCount = new Set(
       series.map(item => String(item.ejercicio_id))
     ).size;
-    const state = String(workout.estado || 'No disponible');
-    const formattedState = state.charAt(0).toLocaleUpperCase('es') + state.slice(1);
-    description.textContent = `${formattedState} · ${formattedDate} · ${formattedTime}`;
+    const state = String(workout.estado || '')
+      .trim()
+      .toLocaleLowerCase('es');
+    const status = document.createElement('span');
+    status.className = 'workout-history-status';
+    if (['completo', 'completado'].includes(state)) {
+      status.classList.add('completed');
+      status.textContent = 'Completado';
+    } else if (state === 'incompleto') {
+      status.classList.add('incomplete');
+      status.textContent = 'Incompleto';
+    } else {
+      status.textContent = workout.estado || 'No disponible';
+    }
+    const dateTime = document.createElement('span');
+    dateTime.textContent = `${formattedDate} · ${formattedTime}`;
+    description.replaceChildren(status, dateTime);
+    description.style.display = 'flex';
+    description.style.alignItems = 'center';
+    description.style.flexWrap = 'wrap';
+    description.style.gap = '8px';
     const details = $('summaryDayDetails');
     // Estadísticas del entrenamiento
     const previousStats = $('summaryDayStats');
@@ -944,10 +962,12 @@ async function showWorkoutSummary(workoutId) {
     const stats = document.createElement('div');
     stats.id = 'summaryDayStats';
     stats.className = 'statrow';
+    stats.style.textAlign = 'center';
     stats.style.marginTop = '18px';
     stats.style.marginBottom = '18px';
     const seriesStat = document.createElement('div');
     seriesStat.className = 'stat';
+    seriesStat.style.textAlign = 'center';
     const seriesLabel = document.createElement('span');
     seriesLabel.className = 'muted small';
     seriesLabel.textContent = 'Series';
@@ -956,6 +976,7 @@ async function showWorkoutSummary(workoutId) {
     seriesStat.append(seriesLabel, seriesValue);
     const exerciseStat = document.createElement('div');
     exerciseStat.className = 'stat';
+    exerciseStat.style.textAlign = 'center';
     const exerciseLabel = document.createElement('span');
     exerciseLabel.className = 'muted small';
     exerciseLabel.textContent = 'Ejercicios';
