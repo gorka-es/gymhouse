@@ -70,6 +70,7 @@ async function getWorkoutDetails(workoutId) {
     .eq('user_id', session.user.id)
     .single();
   if (workoutError) throw workoutError;
+  console.log('ENTRENAMIENTO RECUPERADO:', workout);
   const { data: series, error: seriesError } = await getClient()
     .from('entrenamiento_series')
     .select('id,ejercicio_id,numero_serie,repeticiones,duracion_segundos,peso_kg,completada')
