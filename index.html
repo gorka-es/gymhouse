@@ -600,6 +600,21 @@ textarea{
   </div>
   <p class="small muted" id="copyStatus" aria-live="polite"></p>
 </section>
+
+<section class="panel hidden" id="sessionsPage" aria-labelledby="sessionsTitle">
+  <div class="eyebrow">Gestión de sesiones</div>
+  <h2 id="sessionsTitle">Sesiones</h2>
+  <p class="muted">Elige qué quieres hacer con tus sesiones guardadas.</p>
+  <div class="row" style="margin-top:18px">
+    <button class="primary" id="addSession">Añadir sesión</button>
+    <button class="secondary" id="editSession">Modificar sesión</button>
+    <button class="secondary" id="trainSession">Entrenar sesión</button>
+  </div>
+  <div class="row" style="margin-top:18px">
+    <button class="secondary" id="sessionsBack">Volver</button>
+  </div>
+</section>
+
 <p class="footer">Prioriza la técnica y deja algunas repeticiones en reserva. Si aparece dolor o la técnica se deteriora, detente.</p>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -689,7 +704,14 @@ $('goFreeWorkout').addEventListener('click',()=>{
   $('summaryDayPage').classList.add('hidden');
   $('setup').classList.remove('hidden'); 
   updateHome(); });
-$('goSessions').addEventListener('click',openCustomize);
+$('goSessions').addEventListener('click', () => {
+  $('principal').classList.add('hidden');
+  $('sessionsPage').classList.remove('hidden');
+});
+$('sessionsBack').addEventListener('click', () => {
+  $('sessionsPage').classList.add('hidden');
+  $('principal').classList.remove('hidden');
+});
 $('goHistory').addEventListener('click', () => {
   $('principal').classList.add('hidden');
   $('historyPage').classList.remove('hidden');
