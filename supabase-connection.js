@@ -65,11 +65,12 @@ async function getWorkoutDetails(workoutId) {
   }
   const { data: workout, error: workoutError } = await getClient()
     .from('entrenamientos')
-    .select('id,nombre,estado,fecha_inicio,fecha_fin,motivo_incompleto')
+    .select('id,nombre,estado,fecha_inicio,fecha_fin,motivo_incompleto,series_objetivo')
     .eq('id', workoutId)
     .eq('user_id', session.user.id)
     .single();
   if (workoutError) throw workoutError;
+  console.log('ENTRENAMIENTO RECUPERADO:', workout);
   const { data: series, error: seriesError } = await getClient()
     .from('entrenamiento_series')
     .select('id,ejercicio_id,numero_serie,repeticiones,duracion_segundos,peso_kg,completada')

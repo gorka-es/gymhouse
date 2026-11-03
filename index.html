@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Entrenador de fuerza en casa · v0.2.1</title>
+<title>Entrenador de fuerza en casa · v0.3.0</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#18212f;--muted:#647184;--accent:#176b57;--accent2:#e0f2ec;--line:#dce3e9;--warn:#fff3d8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -441,7 +441,7 @@ textarea{
 <main>
 <header class="top">
   <h1>Entrenador de fuerza en casa</h1>
-  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.2.1 · CONECTADA A SUPABASE</p>
+  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.3.0 · CONECTADA A SUPABASE</p>
 </header>
 
 <section class="panel" id="connectionPanel" aria-labelledby="connectionTitle">
@@ -507,7 +507,7 @@ textarea{
 </section>
 
 <section class="panel hidden" id="library">
-  <div class="eyebrow">Sesiones · Personalizar sesión · v0.2.1</div>
+  <div class="eyebrow">Sesiones · Personalizar sesión · v0.3.0</div>
   <h2>Elige ejercicios y cantidades</h2>
   <p class="muted">Marca los ejercicios que quieras hacer, escribe tus repeticiones (máximo 50) o segundos por serie (máximo 300) y selecciona el número de series.</p>
   <p class="small muted">Puedes eliminar cualquier ejercicio con «Eliminar de biblioteca». Si estaba en tu sesión guardada, también se quitará de ella.</p>
@@ -837,7 +837,7 @@ async function saveCurrentWorkout(state, reason=null){
  if(state==='incompleto'&&!reason){$('saveStatus').textContent='Selecciona un motivo antes de guardar.';return;}
  saveInProgress=true;setSaveControlsDisabled(true);$('saveStatus').textContent='Guardando entrenamiento y series…';
  try{
-   const payload={nombre:'Entrenamiento full body en casa',estado:state,motivo_incompleto:reason,fecha_inicio:workoutStartedAt||new Date().toISOString(),fecha_fin:new Date().toISOString(),series:[]};
+   const payload={nombre:'Entrenamiento full body en casa',estado:state,motivo_incompleto:reason,series_objetivo:seriesGoal,fecha_inicio:workoutStartedAt||new Date().toISOString(),fecha_fin:new Date().toISOString(),series:[]};
    selectedExercises.forEach((exercise,i)=>{
      const id=Number(exercise.dbId||exercise.id);
      if(!Number.isInteger(id)||id<=0)throw new Error('No se ha podido identificar el ejercicio «'+exercise.name+'» en la base de datos.');
@@ -928,6 +928,7 @@ async function showWorkoutSummary(workoutId) {
     const startDate = new Date(workout.fecha_inicio);
     const formattedDate = startDate.toLocaleDateString('es-ES');
     const formattedTime = startDate.toLocaleTimeString('es-ES', {
+<<<<<<< HEAD
     hour: '2-digit',
     minute: '2-digit'
     const exerciseCount = new Set(
@@ -936,7 +937,65 @@ async function showWorkoutSummary(workoutId) {
   });
   description.textContent =
   `Fecha: ${formattedDate} · Hora de inicio: ${formattedTime} · Estado: ${workout.estado} · Series registradas: ${series.length} · Ejercicios realizados: ${exerciseCount}`;
+=======
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    const exerciseCount = new Set(
+      series.map(item => String(item.ejercicio_id))
+    ).size;
+    const state = String(workout.estado || '')
+      .trim()
+      .toLocaleLowerCase('es');
+    const status = document.createElement('span');
+    status.className = 'workout-history-status';
+    if (['completo', 'completado'].includes(state)) {
+      status.classList.add('completed');
+      status.textContent = 'Completado';
+    } else if (state === 'incompleto') {
+      status.classList.add('incomplete');
+      status.textContent = 'Incompleto';
+    } else {
+      status.textContent = workout.estado || 'No disponible';
+    }
+    const dateTime = document.createElement('span');
+    dateTime.textContent = `${formattedDate} · ${formattedTime}`;
+    description.replaceChildren(status, dateTime);
+    description.style.display = 'flex';
+    description.style.alignItems = 'center';
+    description.style.flexWrap = 'wrap';
+    description.style.gap = '8px';
+>>>>>>> desarrollo
     const details = $('summaryDayDetails');
+    // Estadísticas del entrenamiento
+    const previousStats = $('summaryDayStats');
+    if (previousStats) previousStats.remove();
+    const stats = document.createElement('div');
+    stats.id = 'summaryDayStats';
+    stats.className = 'statrow';
+    stats.style.textAlign = 'center';
+    stats.style.marginTop = '18px';
+    stats.style.marginBottom = '18px';
+    const seriesStat = document.createElement('div');
+    seriesStat.className = 'stat';
+    seriesStat.style.textAlign = 'center';
+    const seriesLabel = document.createElement('span');
+    seriesLabel.className = 'muted small';
+    seriesLabel.textContent = 'Series';
+    const seriesValue = document.createElement('strong');
+    seriesValue.textContent = workout.series_objetivo ?? '—';
+    seriesStat.append(seriesLabel, seriesValue);
+    const exerciseStat = document.createElement('div');
+    exerciseStat.className = 'stat';
+    exerciseStat.style.textAlign = 'center';
+    const exerciseLabel = document.createElement('span');
+    exerciseLabel.className = 'muted small';
+    exerciseLabel.textContent = 'Ejercicios';
+    const exerciseValue = document.createElement('strong');
+    exerciseValue.textContent = exerciseCount;
+    exerciseStat.append(exerciseLabel, exerciseValue);
+    stats.append(seriesStat, exerciseStat);
+    details.before(stats);
     details.replaceChildren();
     if (series.length === 0) {
       const emptyMessage = document.createElement('p');
