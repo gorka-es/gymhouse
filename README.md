@@ -1,6 +1,6 @@
 # Entrenador de fuerza en casa
 
-**Versión actual:** `v0.2.1`
+**Versión actual:** `v0.3.0`
 
 Aplicación web en español para preparar y seguir sesiones de fuerza en casa como complemento del entrenamiento de ciclismo. Utiliza Supabase para la autenticación, la carga de la biblioteca de ejercicios y el almacenamiento de los entrenamientos realizados.
 
@@ -19,12 +19,13 @@ La aplicación se publica como web y necesita conexión a Internet para iniciar 
 - **Carga de la biblioteca de ejercicios desde Supabase**, consultando `public.ejercicios`.
 - **Guía de entrenamiento** con descripción, instrucciones de ejecución y descanso orientativo para los ejercicios reconocidos.
 - **Seguimiento de series** y resumen final de los ejercicios y las series completadas.
-- **Almacenamiento de entrenamientos en Supabase**, incluyendo los datos de las series registradas.
+- **Almacenamiento de entrenamientos en Supabase**, incluyendo los datos de las series registradas y el número de series objetivo configurado para cada entrenamiento.
 - **Registro de entrenamientos incompletos**, cuando una sesión termina antes de completarse y se registra el motivo correspondiente.
 - **Interfaz sin imágenes ni dibujos de ejercicios**, para mantener una presentación sencilla.
 - Interfaz adaptable a pantallas de móvil y ordenador.
 - **Historial de entrenamientos:** consulta los entrenamientos guardados en Supabase, con su fecha, estado y nombre.
 - **Detalle de entrenamientos históricos:** consulta los ejercicios y las series registradas en cada entrenamiento, incluidas repeticiones, duración, peso y estado de finalización cuando esos datos estén disponibles.
+- **Resumen de entrenamientos históricos:** muestra el nombre del entrenamiento, su estado, fecha y hora, el número de series objetivo y la cantidad de ejercicios distintos.
 - **Resumen visual por ejercicio:** muestra cada ejercicio en una tarjeta independiente, con el número de ejercicio, las series completadas y el detalle de cada serie.
 - **Interfaz del historial y del resumen:** tarjetas, tipografía y estados visuales coherentes con la identidad gráfica general de la aplicación.
 
@@ -87,6 +88,8 @@ Para configurar la conexión:
 
 Los entrenamientos se almacenan mediante la función de guardado configurada en Supabase. En el esquema implementado se utilizan las tablas `entrenamientos` y `entrenamiento_series`, junto con la función `guardar_entrenamiento`.
 
+La tabla `entrenamientos` incluye el campo `series_objetivo`, que almacena el número de series configurado para cada entrenamiento. Este dato se guarda al registrar la sesión y se recupera al consultar el detalle de un entrenamiento histórico.
+
 **Seguridad de las claves:** no introduzcas nunca una clave `service_role` ni una clave `secret` en archivos que se sirven al navegador. La URL del proyecto y la clave publicable están destinadas al uso en cliente; el acceso a los datos debe protegerse con las políticas de seguridad de Supabase (RLS) y los permisos apropiados.
 
 No es necesario habilitar el registro público ni el acceso anónimo para utilizar una cuenta personal ya creada.
@@ -138,6 +141,7 @@ Sustituye el marcador del archivo HTML por su nombre real en el repositorio. No 
 
 ## Historial de versiones
 
+- **`v0.3.0`**: mejora el resumen de los entrenamientos históricos. Incorpora el almacenamiento y la recuperación del número de series objetivo de cada entrenamiento en Supabase. El resumen muestra el estado, la fecha y hora, el número de series objetivo y la cantidad de ejercicios distintos, con una presentación visual mejorada.
 - **`v0.2.1`**: corrige un error en la visualización del detalle de los entrenamientos históricos que provocaba la duplicación de tarjetas de ejercicios. Ahora cada ejercicio aparece una sola vez, con su resumen de series completadas y el detalle de cada serie.
 - **`v0.2.0`**: incorpora el historial de entrenamientos guardados en Supabase y la consulta de sus detalles, con ejercicios y series registradas. Mejora el diseño de las tarjetas del historial y del resumen de cada entrenamiento, con una presentación más clara y coherente con la identidad visual de la aplicación.
 - **`v0.1.0`**: reorganiza la navegación en una pantalla Principal con accesos a Historial, Entrenamiento libre y Sesiones. Mantiene el entrenamiento libre y la personalización, e incorpora el guardado de entrenamientos y series en Supabase, incluidos los entrenamientos incompletos. El listado del Historial y el detalle de entrenamientos históricos quedan pendientes.
