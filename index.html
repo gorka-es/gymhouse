@@ -509,6 +509,15 @@ textarea{
 <section class="panel hidden" id="library">
   <div class="eyebrow">Sesiones · Personalizar sesión · v0.3.0</div>
   <h2>Elige ejercicios y cantidades</h2>
+  <div id="routineNameField" class="customform" style="margin-top:12px">
+  <label for="routineName">Nombre de la sesión</label>
+  <input
+    id="routineName"
+    type="text"
+    maxlength="80"
+    placeholder="Ej. Full Body A"
+  >
+</div>
   <p class="muted">Marca los ejercicios que quieras hacer, escribe tus repeticiones (máximo 50) o segundos por serie (máximo 300) y selecciona el número de series.</p>
   <p class="small muted">Puedes eliminar cualquier ejercicio con «Eliminar de biblioteca». Si estaba en tu sesión guardada, también se quitará de ella.</p>
   <div class="label" style="margin-top:16px">Número de series</div>
@@ -605,6 +614,7 @@ textarea{
   <div class="eyebrow">Gestión de sesiones</div>
   <h2 id="sessionsTitle">Sesiones</h2>
   <p class="muted">Elige qué quieres hacer con tus sesiones guardadas.</p>
+  <p class="small muted" id="sessionsStatus" aria-live="polite"></p>
   <div class="row" style="margin-top:18px">
     <button class="primary" id="addSession">Añadir sesión</button>
     <button class="secondary" id="editSession">Modificar sesión</button>
@@ -678,19 +688,27 @@ function updateHome(){
  $('homeExercises').innerHTML=savedConfig.map(e=>`<div class="home-item"><div><strong>${escapeHtml(e.name)}</strong><span>${escapeHtml(e.quantity+' '+e.unit+(e.unit==='repeticiones'?' '+e.hint:''))} por serie</span></div><span>${seriesGoal} ${seriesGoal===1?'serie':'series'}</span></div>`).join('');
 }
 let origenPersonalizador = 'principal';
-function openCustomize(){
-  origenPersonalizador = $('setup').classList.contains('hidden')
-  ? 'principal'
-  : 'setup';
+function openCustomize(origenForzado = null){
+  origenPersonalizador = origenForzado || (
+    $('setup').classList.contains('hidden')
+      ? 'principal'
+      : 'setup'
+  );
   $('principal').classList.add('hidden');
   $('historyPage').classList.add('hidden');
   $('summaryDayPage').classList.add('hidden');
   $('setup').classList.add('hidden');
+  $('sessionsPage').classList.add('hidden');
   $('library').classList.remove('hidden');
   $('workout').classList.add('hidden');
   $('summary').classList.add('hidden');
-  $('pickerError').textContent='';
-  $('addExerciseStatus').textContent='';
+  const creandoRutina = origenPersonalizador === 'sessions';
+  $('routineNameField').classList.toggle('hidden', !creandoRutina);
+  if (creandoRutina) {
+    $('routineName').value = '';
+  }
+  $('pickerError').textContent = '';
+  $('addExerciseStatus').textContent = '';
   document.querySelectorAll('[data-series]').forEach(x =>
     x.classList.toggle('selected', Number(x.dataset.series) === seriesGoal)
   );
@@ -711,6 +729,9 @@ $('goSessions').addEventListener('click', () => {
 $('sessionsBack').addEventListener('click', () => {
   $('sessionsPage').classList.add('hidden');
   $('principal').classList.remove('hidden');
+});
+$('addSession').addEventListener('click', () => {
+  openCustomize('sessions');
 });
 $('goHistory').addEventListener('click', () => {
   $('principal').classList.add('hidden');
@@ -782,9 +803,11 @@ $('exercisePicker').addEventListener('click',event=>{
 });
 $('cancelCustomize').addEventListener('click',()=>{
   $('library').classList.add('hidden');
-  $('exercisePicker').innerHTML='';
-
-  if (origenPersonalizador === 'setup') {
+  $('exercisePicker').innerHTML = '';
+  $('routineNameField').classList.add('hidden');
+  if (origenPersonalizador === 'sessions') {
+    $('sessionsPage').classList.remove('hidden');
+  } else if (origenPersonalizador === 'setup') {
     $('principal').classList.add('hidden');
     $('setup').classList.remove('hidden');
     updateHome();
@@ -802,29 +825,83 @@ $('addExercise').addEventListener('click',()=>{
  const cb=$(`pick-${e.id}`);if(cb)cb.checked=true;
  $('newExerciseName').value='';$('addExerciseStatus').textContent=`«${name}» añadido. La ficha está preparada; escribe las repeticiones y pulsa «Guardar sesión».`;
 });
-$('saveSession').addEventListener('click',()=>{
- $('pickerError').textContent='';
- const chosen=[];let hasInvalid=false;let firstInvalid=null;
- exercises.forEach(e=>{
-  const id=e.id||e.name, cb=$(`pick-${id}`), qty=$(`qty-${id}`); if(!cb||!cb.checked){clearExerciseError(id);return;}
-  if(!validateExerciseQuantity(e,true)){hasInvalid=true;if(!firstInvalid)firstInvalid=qty;return;}
-  const n=Number(qty.value.trim());
-  chosen.push({...e,quantity:n,unit:quantityUnit(e),hint:quantityHint(e),id});
- });
- if(hasInvalid){if(firstInvalid)firstInvalid.focus();return;}
- if(!chosen.length){$('pickerError').textContent='Selecciona al menos un ejercicio para guardar la sesión.';return;}
- savedConfig = chosen;
- updateHome();
- $('library').classList.add('hidden');
- $('exercisePicker').innerHTML = '';
-
-if (origenPersonalizador === 'setup') {
-  $('principal').classList.add('hidden');
-  $('setup').classList.remove('hidden');
-} else {
-  $('setup').classList.add('hidden');
-  $('principal').classList.remove('hidden');
-}
+$('saveSession').addEventListener('click', async () => {
+  $('pickerError').textContent = '';
+  const creandoRutina = origenPersonalizador === 'sessions';
+  if (creandoRutina && !$('routineName').value.trim()) {
+    $('pickerError').textContent = 'Escribe un nombre para la sesión.';
+    $('routineName').focus();
+    return;
+  }
+  const chosen = [];
+  let hasInvalid = false;
+  let firstInvalid = null;
+  exercises.forEach(e => {
+    const id = e.id || e.name;
+    const cb = $(`pick-${id}`);
+    const qty = $(`qty-${id}`);
+    if (!cb || !cb.checked) {
+      clearExerciseError(id);
+      return;
+    }
+    if (!validateExerciseQuantity(e, true)) {
+      hasInvalid = true;
+      if (!firstInvalid) firstInvalid = qty;
+      return;
+    }
+    const n = Number(qty.value.trim());
+    chosen.push({
+      ...e,
+      quantity: n,
+      unit: quantityUnit(e),
+      hint: quantityHint(e),
+      id,
+      seriesGoal
+    });
+  });
+  if (hasInvalid) {
+    if (firstInvalid) firstInvalid.focus();
+    return;
+  }
+  if (!chosen.length) {
+    $('pickerError').textContent =
+      'Selecciona al menos un ejercicio para guardar la sesión.';
+    return;
+  }
+  const button = $('saveSession');
+  button.disabled = true;
+  try {
+    if (creandoRutina) {
+      $('pickerError').textContent = 'Guardando sesión en Supabase…';
+      await DeporSupabase.saveRoutine(
+        $('routineName').value.trim(),
+        chosen
+      );
+      $('library').classList.add('hidden');
+      $('exercisePicker').innerHTML = '';
+      $('routineNameField').classList.add('hidden');
+      $('sessionsPage').classList.remove('hidden');
+      $('sessionsStatus').textContent =
+        'Sesión guardada correctamente.';
+    } else {
+      savedConfig = chosen;
+      updateHome();
+      $('library').classList.add('hidden');
+      $('exercisePicker').innerHTML = '';
+      if (origenPersonalizador === 'setup') {
+        $('principal').classList.add('hidden');
+        $('setup').classList.remove('hidden');
+      } else {
+        $('setup').classList.add('hidden');
+        $('principal').classList.remove('hidden');
+      }
+    }
+  } catch (err) {
+    $('pickerError').textContent =
+      'No se pudo guardar la sesión: ' + friendlyError(err);
+  } finally {
+    button.disabled = false;
+  }
 });
 $('begin').addEventListener('click',()=>{
  if(!savedConfig.length)return;

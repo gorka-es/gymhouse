@@ -38,6 +38,72 @@
     if (error) throw error;
     return data;
   }
+async function saveRoutine(nombre, ejercicios) {
+  const session = await getSession();
+  if (!session) {
+    throw new Error('Inicia sesión antes de guardar una sesión.');
+  }
+  if (!nombre || !nombre.trim()) {
+    throw new Error('Escribe un nombre para la sesión.');
+  }
+  if (!Array.isArray(ejercicios) || !ejercicios.length) {
+    throw new Error('Selecciona al menos un ejercicio.');
+  }
+  const supabase = getClient();
+  // Crear la rutina
+  const { data: rutina, error: rutinaError } = await supabase
+    .from('rutinas')
+    .insert({
+      user_id: session.user.id,
+      nombre: nombre.trim()
+    })
+    .select('id')
+    .single();
+  if (rutinaError) throw rutinaError;
+  // Preparar los ejercicios asociados
+  const filas = ejercicios.map((ejercicio, index) => {
+    const ejercicioId = Number(ejercicio.dbId);
+    if (!Number.isInteger(ejercicioId) || ejercicioId <= 0) {
+      throw new Error(
+        `No se ha podido identificar el ejercicio «${ejercicio.name}».`
+      );
+    }
+    return {
+      rutina_id: rutina.id,
+      ejercicio_id: ejercicioId,
+      orden: index + 1,
+      series_objetivo: ejercicio.seriesGoal,
+      repeticiones_objetivo:
+        ejercicio.unit === 'repeticiones'
+          ? Number(ejercicio.quantity)
+          : null,
+      duracion_objetivo_segundos:
+        ejercicio.unit === 'segundos'
+          ? Number(ejercicio.quantity)
+          : null
+    };
+  });
+  // Guardar los ejercicios
+  const { error: ejerciciosError } = await supabase
+    .from('rutina_ejercicios')
+    .insert(filas);
+  if (ejerciciosError) {
+    // Intentar eliminar la rutina si falla el guardado de sus ejercicios
+    const { error: rollbackError } = await supabase
+      .from('rutinas')
+      .delete()
+      .eq('id', rutina.id)
+      .eq('user_id', session.user.id);
+    if (rollbackError) {
+      throw new Error(
+        'No se pudieron guardar los ejercicios y tampoco eliminar la rutina creada. ' +
+        ejerciciosError.message + ' ' + rollbackError.message
+      );
+    }
+    throw ejerciciosError;
+  }
+  return rutina.id;
+}
   async function getExercises() {
     const session = await getSession();
     if (!session) throw new Error('Inicia sesión antes de cargar los ejercicios.');
@@ -101,5 +167,5 @@ async function getWorkoutDetails(workoutId) {
     }))
   };
 }
-  global.DeporSupabase = Object.freeze({ getSession, signIn, signOut, getExercises, saveWorkout, getWorkouts, getWorkoutDetails});
+  global.DeporSupabase = Object.freeze({ getSession, signIn, signOut, getExercises, saveWorkout, saveRoutine, getWorkouts, getWorkoutDetails});
 })(window);
