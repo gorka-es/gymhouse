@@ -934,9 +934,36 @@ async function showWorkoutSummary(workoutId) {
     const exerciseCount = new Set(
       series.map(item => String(item.ejercicio_id))
     ).size;
-    description.textContent =
-    `Fecha: ${formattedDate} · Hora de inicio: ${formattedTime} · Estado: ${workout.estado} · Series previstas por ejercicio: ${workout.series_objetivo} · Ejercicios realizados: ${exerciseCount}`;
+    const state = String(workout.estado || 'No disponible');
+    const formattedState = state.charAt(0).toLocaleUpperCase('es') + state.slice(1);
+    description.textContent = `${formattedState} · ${formattedDate} · ${formattedTime}`;
     const details = $('summaryDayDetails');
+    // Estadísticas del entrenamiento
+    const previousStats = $('summaryDayStats');
+    if (previousStats) previousStats.remove();
+    const stats = document.createElement('div');
+    stats.id = 'summaryDayStats';
+    stats.className = 'statrow';
+    stats.style.marginTop = '18px';
+    stats.style.marginBottom = '18px';
+    const seriesStat = document.createElement('div');
+    seriesStat.className = 'stat';
+    const seriesLabel = document.createElement('span');
+    seriesLabel.className = 'muted small';
+    seriesLabel.textContent = 'Series';
+    const seriesValue = document.createElement('strong');
+    seriesValue.textContent = workout.series_objetivo ?? '—';
+    seriesStat.append(seriesLabel, seriesValue);
+    const exerciseStat = document.createElement('div');
+    exerciseStat.className = 'stat';
+    const exerciseLabel = document.createElement('span');
+    exerciseLabel.className = 'muted small';
+    exerciseLabel.textContent = 'Ejercicios';
+    const exerciseValue = document.createElement('strong');
+    exerciseValue.textContent = exerciseCount;
+    exerciseStat.append(exerciseLabel, exerciseValue);
+    stats.append(seriesStat, exerciseStat);
+    details.before(stats);
     details.replaceChildren();
     if (series.length === 0) {
       const emptyMessage = document.createElement('p');
