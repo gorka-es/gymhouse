@@ -1,6 +1,6 @@
 # Entrenador de fuerza en casa
 
-**Versión actual:** `v0.4.0`
+**Versión actual:** `v0.4.1`
 
 Aplicación web en español para preparar y seguir sesiones de fuerza en casa como complemento del entrenamiento de ciclismo. Utiliza Supabase para la autenticación, la carga de la biblioteca de ejercicios y el almacenamiento de los entrenamientos realizados.
 
@@ -159,6 +159,7 @@ Sustituye el marcador del archivo HTML por su nombre real en el repositorio. No 
 
 ## Historial de versiones
 
+- **`v0.4.1`**: corrige un error de navegación al guardar los ejercicios seleccionados para un entrenamiento libre. Ahora la aplicación vuelve a la pantalla de preparación del entrenamiento en lugar de regresar a la pantalla Principal.
 - **`v0.4.0`**: incorpora la gestión de sesiones guardadas en Supabase. Permite crear sesiones con nombre propio, consultar y modificar sus ejercicios, cantidades y series, y entrenar una sesión mediante un resumen previo que permite iniciar el entrenamiento con el sistema existente.
 - **`v0.3.0`**: mejora el resumen de los entrenamientos históricos. Incorpora el almacenamiento y la recuperación del número de series objetivo de cada entrenamiento en Supabase. El resumen muestra el estado, la fecha y hora, el número de series objetivo y la cantidad de ejercicios distintos, con una presentación visual mejorada.
 - **`v0.2.1`**: corrige un error en la visualización del detalle de los entrenamientos históricos que provocaba la duplicación de tarjetas de ejercicios. Ahora cada ejercicio aparece una sola vez, con su resumen de series completadas y el detalle de cada serie.
