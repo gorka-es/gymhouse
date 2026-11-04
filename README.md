@@ -1,6 +1,6 @@
 # Entrenador de fuerza en casa
 
-**Versión actual:** `v0.3.0`
+**Versión actual:** `v0.4.0`
 
 Aplicación web en español para preparar y seguir sesiones de fuerza en casa como complemento del entrenamiento de ciclismo. Utiliza Supabase para la autenticación, la carga de la biblioteca de ejercicios y el almacenamiento de los entrenamientos realizados.
 
@@ -16,6 +16,14 @@ La aplicación se publica como web y necesita conexión a Internet para iniciar 
   - Configurar entre 1 y 5 series por ejercicio.
   - Introducir de 1 a 50 repeticiones por serie para ejercicios por repeticiones.
   - Introducir de 1 a 300 segundos por serie para ejercicios por tiempo.
+- **Gestión de sesiones guardadas:**
+  - Crear sesiones con un nombre propio y una selección de ejercicios.
+  - Guardar las sesiones como plantillas reutilizables en Supabase.
+  - Consultar las sesiones guardadas.
+  - Modificar una sesión existente, incluyendo sus ejercicios, cantidades y series.
+  - Entrenar una sesión guardada mediante una pantalla de resumen previo.
+- **Entrenamiento desde una sesión guardada:** utiliza la configuración de una plantilla para iniciar un entrenamiento con el sistema de seguimiento existente.
+- **Separación entre sesiones y entrenamientos:** las sesiones guardadas funcionan como plantillas reutilizables; cada entrenamiento realizado se registra de forma independiente en el historial.  
 - **Carga de la biblioteca de ejercicios desde Supabase**, consultando `public.ejercicios`.
 - **Guía de entrenamiento** con descripción, instrucciones de ejecución y descanso orientativo para los ejercicios reconocidos.
 - **Seguimiento de series** y resumen final de los ejercicios y las series completadas.
@@ -90,6 +98,13 @@ Los entrenamientos se almacenan mediante la función de guardado configurada en 
 
 La tabla `entrenamientos` incluye el campo `series_objetivo`, que almacena el número de series configurado para cada entrenamiento. Este dato se guarda al registrar la sesión y se recupera al consultar el detalle de un entrenamiento histórico.
 
+Las sesiones guardadas se almacenan en las tablas `rutinas` y `rutina_ejercicios`:
+
+- `rutinas`: almacena las sesiones creadas por cada usuario, incluyendo su nombre y propietario.
+- `rutina_ejercicios`: relaciona cada sesión con los ejercicios seleccionados y almacena su orden, número de series y cantidad objetivo de repeticiones o tiempo.
+
+Las sesiones pertenecen al usuario autenticado y se recuperan desde Supabase para su consulta, modificación y entrenamiento.
+
 **Seguridad de las claves:** no introduzcas nunca una clave `service_role` ni una clave `secret` en archivos que se sirven al navegador. La URL del proyecto y la clave publicable están destinadas al uso en cliente; el acceso a los datos debe protegerse con las políticas de seguridad de Supabase (RLS) y los permisos apropiados.
 
 No es necesario habilitar el registro público ni el acceso anónimo para utilizar una cuenta personal ya creada.
@@ -99,15 +114,16 @@ No es necesario habilitar el registro público ni el acceso anónimo para utiliz
 1. Abre la aplicación desde su URL HTTPS o desde un servidor local.
 2. Si la aplicación solicita iniciar sesión, introduce el correo electrónico y la contraseña de la cuenta personal de Supabase.
 3. Espera a que se cargue la biblioteca de ejercicios.
-4. En la pantalla Principal, selecciona **Entrenamiento libre** para preparar una sesión o **Sesiones** para configurar la selección de ejercicios.
-5. Marca los ejercicios que quieras incluir.
-6. Configura la cantidad por serie: de 1 a 50 repeticiones o de 1 a 300 segundos en ejercicios por tiempo.
-7. Selecciona entre 1 y 5 series.
-8. Guarda la configuración y vuelve a la pantalla correspondiente.
-9. Inicia el entrenamiento y sigue las indicaciones de cada ejercicio.
-10. Registra las series realizadas durante la sesión.
-11. Al finalizar, consulta el resumen y copia su contenido si quieres compartirlo.
-12. Los entrenamientos guardados se registran en Supabase, incluidos los que terminan antes de completarse cuando se registra esa circunstancia.
+4. En la pantalla Principal, selecciona **Entrenamiento libre** para preparar una sesión sin plantilla o **Sesiones** para gestionar las sesiones guardadas.
+5. Desde **Sesiones**, puedes añadir una sesión nueva, modificar una existente o entrenar una sesión guardada.
+6. Al crear o modificar una sesión, selecciona los ejercicios que quieras incluir.
+7. Configura la cantidad por serie: de 1 a 50 repeticiones o de 1 a 300 segundos en ejercicios por tiempo.
+8. Selecciona entre 1 y 5 series y guarda la sesión.
+9. Para entrenar una sesión guardada, selecciónala en **Entrenar sesión** y revisa el resumen previo.
+10. Pulsa **Entrenar** para comenzar y sigue las indicaciones de cada ejercicio.
+11. Registra las series realizadas durante el entrenamiento.
+12. Al finalizar, consulta el resumen y copia su contenido si quieres compartirlo.
+13. Los entrenamientos guardados se registran en Supabase, incluidos los que terminan antes de completarse cuando se registra esa circunstancia.
 
 Los nombres exactos de los botones pueden variar si cambia la interfaz. La biblioteca remota de ejercicios es de solo lectura desde la interfaz.
 
@@ -120,6 +136,8 @@ Los nombres exactos de los botones pueden variar si cambia la interfaz. La bibli
 - Si no se cargan los ejercicios, comprueba primero la URL y la clave publicable de `supabase-config.js`; después revisa la sesión de Supabase Auth y las políticas RLS y permisos correspondientes.
 - La aplicación es una guía básica y no sustituye la valoración de un profesional sanitario o del entrenamiento.
 - Revisa las instrucciones de los ejercicios y adapta la sesión a tu nivel.
+- Al entrenar una sesión guardada, el sistema actual utiliza el objetivo de series del primer ejercicio como referencia común para el entrenamiento.
+- Los entrenamientos iniciados desde una sesión guardada siguen utilizando el nombre predeterminado del sistema de entrenamiento actual, no el nombre de la plantilla.
 
 ## Estructura del proyecto
 
@@ -141,6 +159,7 @@ Sustituye el marcador del archivo HTML por su nombre real en el repositorio. No 
 
 ## Historial de versiones
 
+- **`v0.4.0`**: incorpora la gestión de sesiones guardadas en Supabase. Permite crear sesiones con nombre propio, consultar y modificar sus ejercicios, cantidades y series, y entrenar una sesión mediante un resumen previo que permite iniciar el entrenamiento con el sistema existente.
 - **`v0.3.0`**: mejora el resumen de los entrenamientos históricos. Incorpora el almacenamiento y la recuperación del número de series objetivo de cada entrenamiento en Supabase. El resumen muestra el estado, la fecha y hora, el número de series objetivo y la cantidad de ejercicios distintos, con una presentación visual mejorada.
 - **`v0.2.1`**: corrige un error en la visualización del detalle de los entrenamientos históricos que provocaba la duplicación de tarjetas de ejercicios. Ahora cada ejercicio aparece una sola vez, con su resumen de series completadas y el detalle de cada serie.
 - **`v0.2.0`**: incorpora el historial de entrenamientos guardados en Supabase y la consulta de sus detalles, con ejercicios y series registradas. Mejora el diseño de las tarjetas del historial y del resumen de cada entrenamiento, con una presentación más clara y coherente con la identidad visual de la aplicación.
