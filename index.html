@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Entrenador de fuerza en casa · v0.3.0</title>
+<title>Entrenador de fuerza en casa · v0.4.0</title>
 <style>
 :root{--bg:#f4f6f8;--card:#fff;--ink:#18212f;--muted:#647184;--accent:#176b57;--accent2:#e0f2ec;--line:#dce3e9;--warn:#fff3d8}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -441,7 +441,7 @@ textarea{
 <main>
 <header class="top">
   <h1>Entrenador de fuerza en casa</h1>
-  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.3.0 · CONECTADA A SUPABASE</p>
+  <p>Rutina Full Body · Pretemporada de ciclismo · Peso corporal</p><p style="margin-top:10px;font-size:.82rem;font-weight:800;color:#d5e8e2">VERSIÓN v0.4.0 · CONECTADA A SUPABASE</p>
 </header>
 
 <section class="panel" id="connectionPanel" aria-labelledby="connectionTitle">
@@ -491,7 +491,6 @@ textarea{
   </div>
 </section>
 
-
 <section class="panel hidden" id="setup">
   <div class="eyebrow">Entrenamiento libre</div>
   <h2>Tu sesión preparada</h2>
@@ -507,8 +506,17 @@ textarea{
 </section>
 
 <section class="panel hidden" id="library">
-  <div class="eyebrow">Sesiones · Personalizar sesión · v0.3.0</div>
+  <div class="eyebrow">Sesiones · Personalizar sesión · v0.4.0</div>
   <h2>Elige ejercicios y cantidades</h2>
+  <div id="routineNameField" class="customform" style="margin-top:12px">
+  <label for="routineName">Nombre de la sesión</label>
+  <input
+    id="routineName"
+    type="text"
+    maxlength="80"
+    placeholder="Ej. Full Body A"
+  >
+</div>
   <p class="muted">Marca los ejercicios que quieras hacer, escribe tus repeticiones (máximo 50) o segundos por serie (máximo 300) y selecciona el número de series.</p>
   <p class="small muted">Puedes eliminar cualquier ejercicio con «Eliminar de biblioteca». Si estaba en tu sesión guardada, también se quitará de ella.</p>
   <div class="label" style="margin-top:16px">Número de series</div>
@@ -600,6 +608,59 @@ textarea{
   </div>
   <p class="small muted" id="copyStatus" aria-live="polite"></p>
 </section>
+
+<section class="panel hidden" id="sessionsPage" aria-labelledby="sessionsTitle">
+  <div class="eyebrow">Gestión de sesiones</div>
+  <h2 id="sessionsTitle">Sesiones</h2>
+  <p class="muted">Elige qué quieres hacer con tus sesiones guardadas.</p>
+  <p class="small muted" id="sessionsStatus" aria-live="polite"></p>
+  <div class="row" style="margin-top:18px">
+    <button class="primary" id="addSession">Añadir sesión</button>
+    <button class="secondary" id="editSession">Modificar sesión</button>
+    <button class="secondary" id="trainSession">Entrenar sesión</button>
+  </div>
+  <div class="row" style="margin-top:18px">
+    <button class="secondary" id="sessionsBack">Volver</button>
+  </div>
+</section>
+
+<section class="panel hidden" id="editSessionsPage" aria-labelledby="editSessionsTitle">
+  <div class="eyebrow">Gestión de sesiones</div>
+  <h2 id="editSessionsTitle">Modificar sesión</h2>
+  <p class="muted">Selecciona la sesión que quieres modificar.</p>
+  <div id="routineList">
+    <p class="muted">Cargando sesiones...</p>
+  </div>
+  <p class="small muted" id="editSessionsStatus" aria-live="polite"></p>
+  <div class="row" style="margin-top:18px">
+    <button class="secondary" id="editSessionsBack" type="button">Volver</button>
+  </div>
+</section>
+
+<section class="panel hidden" id="trainSessionsPage" aria-labelledby="trainSessionsTitle">
+  <div class="eyebrow">Entrenamientos</div>
+  <h2 id="trainSessionsTitle">Entrenar sesión</h2>
+  <p class="muted">Selecciona la sesión que quieres entrenar.</p>
+  <div id="trainRoutineList">
+    <p class="muted">Cargando sesiones...</p>
+  </div>
+  <p class="small muted" id="trainSessionsStatus" aria-live="polite"></p>
+  <div class="row" style="margin-top:18px">
+    <button class="secondary" id="trainSessionsBack" type="button">Volver</button>
+  </div>
+</section>
+
+<section class="panel hidden" id="trainingSummaryPage" aria-labelledby="trainingSummaryTitle">
+  <div class="eyebrow">Entrenamiento</div>
+  <h2 id="trainingSummaryTitle">Resumen de la sesión</h2>
+  <p class="muted" id="trainingSummaryDescription"></p>
+  <div id="trainingSummaryList"></div>
+  <div class="row" style="margin-top:18px">
+    <button class="secondary" id="trainingSummaryBack" type="button">Volver</button>
+    <button class="primary" id="startRoutineWorkout" type="button">Entrenar</button>
+  </div>
+</section>
+
 <p class="footer">Prioriza la técnica y deja algunas repeticiones en reserva. Si aparece dolor o la técnica se deteriora, detente.</p>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -641,17 +702,33 @@ function inferExercise(name){
  return {id:'custom-'+(nextCustomId++),name,...info,custom:true};
 }
 function makePicker(){
- const old={};
- document.querySelectorAll('#exercisePicker .pickcard').forEach(card=>{
-   const cb=card.querySelector('input[type=checkbox]'), qty=card.querySelector('input[type=number]');
-   if(cb&&qty) old[cb.dataset.exerciseId]={checked:cb.checked,qty:qty.value};
- });
- $('exercisePicker').innerHTML=exercises.map(e=>{
-  const id=e.id||e.name; const prior=old[id]||savedConfig.find(s=>s.id===id)||{};
-  const unit=quantityUnit(e), hint=quantityHint(e), checked=prior.checked!==undefined?prior.checked:savedConfig.some(s=>s.id===id);
-  const qty=prior.qty!==undefined?prior.qty:(savedConfig.find(s=>s.id===id)?.quantity??'');
-  return `<article class="pickcard" data-exercise-card="${escapeHtml(id)}"><div class="pickhead"><input type="checkbox" data-exercise-id="${escapeHtml(id)}" id="pick-${escapeHtml(id)}" ${checked?'checked':''} aria-label="Seleccionar ${escapeHtml(e.name)}"><div><div class="picktitle">${escapeHtml(e.name)}</div><div class="pickmeta">${escapeHtml(e.type)} · ${escapeHtml(e.desc)}</div></div></div><div class="pickcontrols"><label for="qty-${escapeHtml(id)}">${unit==='segundos'?'Segundos':'Repeticiones'} por serie:</label><input data-quantity-id="${escapeHtml(id)}" id="qty-${escapeHtml(id)}" type="number" min="1" max="${quantityMax(e)}" step="1" inputmode="numeric" placeholder="1–${quantityMax(e)}" value="${qty??''}"><span class="pickmeta">${escapeHtml(hint)}</span></div><p class="small muted" style="margin:8px 0 0 31px">${escapeHtml(e.rest)}</p><p class="pick-error hidden" data-error-for="${escapeHtml(id)}" aria-live="polite"></p><div class="pickdelete"><button class="danger" type="button" data-delete-exercise-id="${escapeHtml(id)}" aria-label="Eliminar ${escapeHtml(e.name)} de la biblioteca">Eliminar de biblioteca</button></div></article>`;
- }).join('');
+  const old = {};
+  document.querySelectorAll('#exercisePicker .pickcard').forEach(card => {
+    const cb = card.querySelector('input[type=checkbox]');
+    const qty = card.querySelector('input[type=number]');
+    if (cb && qty) {
+      old[cb.dataset.exerciseId] = {
+        checked: cb.checked,
+        qty: qty.value
+      };
+    }
+  });
+  const config = origenPersonalizador === 'editRoutine'
+    ? editingRoutineConfig
+    : savedConfig;
+  $('exercisePicker').innerHTML = exercises.map(e => {
+    const id = e.id || e.name;
+    const prior = old[id] || config.find(s => s.id === id) || {};
+    const unit = quantityUnit(e);
+    const hint = quantityHint(e);
+    const checked = prior.checked !== undefined
+      ? prior.checked
+      : config.some(s => s.id === id);
+    const qty = prior.qty !== undefined
+      ? prior.qty
+      : (config.find(s => s.id === id)?.quantity ?? '');
+    return `<article class="pickcard" data-exercise-card="${escapeHtml(id)}"><div class="pickhead"><input type="checkbox" data-exercise-id="${escapeHtml(id)}" id="pick-${escapeHtml(id)}" ${checked?'checked':''} aria-label="Seleccionar ${escapeHtml(e.name)}"><div><div class="picktitle">${escapeHtml(e.name)}</div><div class="pickmeta">${escapeHtml(e.type)} · ${escapeHtml(e.desc)}</div></div></div><div class="pickcontrols"><label for="qty-${escapeHtml(id)}">${unit==='segundos'?'Segundos':'Repeticiones'} por serie:</label><input data-quantity-id="${escapeHtml(id)}" id="qty-${escapeHtml(id)}" type="number" min="1" max="${quantityMax(e)}" step="1" inputmode="numeric" placeholder="1–${quantityMax(e)}" value="${qty??''}"><span class="pickmeta">${escapeHtml(hint)}</span></div><p class="small muted" style="margin:8px 0 0 31px">${escapeHtml(e.rest)}</p><p class="pick-error hidden" data-error-for="${escapeHtml(id)}" aria-live="polite"></p><div class="pickdelete"><button class="danger" type="button" data-delete-exercise-id="${escapeHtml(id)}" aria-label="Eliminar ${escapeHtml(e.name)} de la biblioteca">Eliminar de biblioteca</button></div></article>`;
+  }).join('');
 }
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
 function updateHome(){
@@ -663,19 +740,31 @@ function updateHome(){
  $('homeExercises').innerHTML=savedConfig.map(e=>`<div class="home-item"><div><strong>${escapeHtml(e.name)}</strong><span>${escapeHtml(e.quantity+' '+e.unit+(e.unit==='repeticiones'?' '+e.hint:''))} por serie</span></div><span>${seriesGoal} ${seriesGoal===1?'serie':'series'}</span></div>`).join('');
 }
 let origenPersonalizador = 'principal';
-function openCustomize(){
-  origenPersonalizador = $('setup').classList.contains('hidden')
-  ? 'principal'
-  : 'setup';
+function openCustomize(origenForzado = null){
+  origenPersonalizador = origenForzado || (
+    $('setup').classList.contains('hidden')
+      ? 'principal'
+      : 'setup'
+  );
   $('principal').classList.add('hidden');
   $('historyPage').classList.add('hidden');
   $('summaryDayPage').classList.add('hidden');
   $('setup').classList.add('hidden');
+  $('sessionsPage').classList.add('hidden');
   $('library').classList.remove('hidden');
   $('workout').classList.add('hidden');
   $('summary').classList.add('hidden');
-  $('pickerError').textContent='';
-  $('addExerciseStatus').textContent='';
+  const creandoRutina = origenPersonalizador === 'sessions';
+  const modificandoRutina = origenPersonalizador === 'editRoutine';
+  $('routineNameField').classList.toggle(
+    'hidden',
+    !creandoRutina && !modificandoRutina
+  );
+  if (creandoRutina) {
+    $('routineName').value = '';
+  }
+  $('pickerError').textContent = '';
+  $('addExerciseStatus').textContent = '';
   document.querySelectorAll('[data-series]').forEach(x =>
     x.classList.toggle('selected', Number(x.dataset.series) === seriesGoal)
   );
@@ -689,7 +778,242 @@ $('goFreeWorkout').addEventListener('click',()=>{
   $('summaryDayPage').classList.add('hidden');
   $('setup').classList.remove('hidden'); 
   updateHome(); });
-$('goSessions').addEventListener('click',openCustomize);
+$('goSessions').addEventListener('click', () => {
+  $('principal').classList.add('hidden');
+  $('sessionsPage').classList.remove('hidden');
+});
+$('sessionsBack').addEventListener('click', () => {
+  $('sessionsPage').classList.add('hidden');
+  $('principal').classList.remove('hidden');
+});
+$('addSession').addEventListener('click', () => {
+  openCustomize('sessions');
+});
+let editingRoutineId = null;
+let editingRoutineConfig = [];
+let trainingRoutineConfig = [];
+let trainingRoutineName = '';
+$('editSession').addEventListener('click', () => {
+  $('sessionsPage').classList.add('hidden');
+  $('editSessionsPage').classList.remove('hidden');
+  loadRoutineList();
+});
+$('editSessionsBack').addEventListener('click', () => {
+  $('editSessionsPage').classList.add('hidden');
+  $('sessionsPage').classList.remove('hidden');
+});
+$('trainSession').addEventListener('click', () => {
+  $('sessionsPage').classList.add('hidden');
+  $('trainSessionsPage').classList.remove('hidden');
+  loadTrainingRoutineList();
+});
+$('trainSessionsBack').addEventListener('click', () => {
+  $('trainSessionsPage').classList.add('hidden');
+  $('sessionsPage').classList.remove('hidden');
+});
+$('trainingSummaryBack').addEventListener('click', () => {
+  $('trainingSummaryPage').classList.add('hidden');
+  $('trainSessionsPage').classList.remove('hidden');
+});
+$('startRoutineWorkout').addEventListener('click', () => {
+  if (!trainingRoutineConfig.length) return;
+  selectedExercises = trainingRoutineConfig.map(e => ({ ...e }));
+  seriesGoal = selectedExercises[0].seriesGoal;
+  completed = Array(selectedExercises.length).fill(0);
+  visited = Array(selectedExercises.length).fill(false);
+  idx = 0;
+  active = false;
+  workoutStartedAt = new Date().toISOString();
+  workoutSaved = false;
+  saveInProgress = false;
+  $('saveStatus').textContent = '';
+  $('saveCompleted').disabled = false;
+  $('showIncomplete').classList.remove('hidden');
+  $('incompletePanel').classList.add('hidden');
+  selectedIncompleteReason = '';
+  document.querySelectorAll('[data-reason]').forEach(b =>
+    b.classList.remove('selected')
+  );
+  $('confirmIncomplete').disabled = true;
+  $('trainingSummaryPage').classList.add('hidden');
+  $('workout').classList.remove('hidden');
+  render();
+});
+async function loadRoutineList() {
+  const list = $('routineList');
+  const status = $('editSessionsStatus');
+  list.replaceChildren();
+  status.textContent = 'Cargando sesiones...';
+  try {
+    const routines = await DeporSupabase.getRoutines();
+    if (!routines.length) {
+      list.innerHTML = '<p class="muted">Todavía no tienes sesiones guardadas.</p>';
+      status.textContent = '';
+      return;
+    }
+    routines.forEach(routine => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'workout-history-card';
+      const info = document.createElement('div');
+      info.className = 'workout-history-info';
+      const name = document.createElement('p');
+      name.className = 'workout-history-name';
+      name.textContent = routine.nombre;
+      const date = document.createElement('p');
+      date.className = 'workout-history-date';
+      date.textContent = routine.created_at
+        ? new Date(routine.created_at).toLocaleDateString('es-ES')
+        : 'Fecha no disponible';
+      info.append(name, date);
+      const arrow = document.createElement('span');
+      arrow.className = 'workout-history-chevron';
+      arrow.textContent = '›';
+      button.append(info, arrow);
+      button.addEventListener('click', () => {
+        loadRoutineForEditing(routine.id);
+      });
+      list.appendChild(button);
+    });
+    status.textContent = '';
+  } catch (err) {
+    status.textContent =
+      'No se pudieron cargar las sesiones: ' + friendlyError(err);
+  }
+}
+async function loadTrainingRoutineList() {
+  const list = $('trainRoutineList');
+  const status = $('trainSessionsStatus');
+  list.replaceChildren();
+  status.textContent = 'Cargando sesiones...';
+  try {
+    const routines = await DeporSupabase.getRoutines();
+    if (!routines.length) {
+      list.innerHTML =
+        '<p class="muted">Todavía no tienes sesiones guardadas.</p>';
+      status.textContent = '';
+      return;
+    }
+    routines.forEach(routine => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'workout-history-card';
+      const info = document.createElement('div');
+      info.className = 'workout-history-info';
+      const name = document.createElement('p');
+      name.className = 'workout-history-name';
+      name.textContent = routine.nombre;
+      const date = document.createElement('p');
+      date.className = 'workout-history-date';
+      date.textContent = routine.created_at
+        ? new Date(routine.created_at).toLocaleDateString('es-ES')
+        : 'Fecha no disponible';
+      info.append(name, date);
+      const arrow = document.createElement('span');
+      arrow.className = 'workout-history-chevron';
+      arrow.textContent = '›';
+      button.append(info, arrow);
+      button.addEventListener('click', () => {
+        loadRoutineForTraining(routine.id);
+      });
+      list.appendChild(button);
+    });
+    status.textContent = '';
+  } catch (err) {
+    status.textContent =
+      'No se pudieron cargar las sesiones: ' + friendlyError(err);
+  }
+}
+async function loadRoutineForTraining(routineId) {
+  const status = $('trainSessionsStatus');
+  status.textContent = 'Cargando sesión...';
+  try {
+    const result = await DeporSupabase.getRoutineDetails(routineId);
+    trainingRoutineConfig = result.items.map(item => {
+      const exercise = exercises.find(
+        e => Number(e.dbId) === Number(item.ejercicio_id)
+      );
+      if (!exercise) {
+        throw new Error(
+          'No se ha encontrado un ejercicio de esta sesión en la biblioteca.'
+        );
+      }
+      const unit = quantityUnit(exercise);
+      return {
+        ...exercise,
+        id: exercise.id || exercise.name,
+        quantity: unit === 'segundos'
+          ? item.duracion_objetivo_segundos
+          : item.repeticiones_objetivo,
+        unit,
+        hint: quantityHint(exercise),
+        seriesGoal: Number(item.series_objetivo)
+      };
+    });
+    if (!trainingRoutineConfig.length) {
+      throw new Error('Esta sesión no contiene ejercicios.');
+    }
+    trainingRoutineName = result.routine.nombre;
+    $('trainingSummaryTitle').textContent = trainingRoutineName;
+    $('trainingSummaryDescription').textContent =
+      'Revisa los ejercicios y sus objetivos antes de comenzar.';
+    $('trainingSummaryList').innerHTML = trainingRoutineConfig.map(e => `
+      <div class="summaryitem">
+        <strong>${escapeHtml(e.name)}</strong>
+        <p>
+          ${e.quantity} ${escapeHtml(e.unit)}
+          ${e.unit === 'repeticiones' ? escapeHtml(' ' + e.hint) : ''}
+          · ${e.seriesGoal} ${e.seriesGoal === 1 ? 'serie' : 'series'}
+        </p>
+      </div>
+    `).join('');
+    $('trainSessionsPage').classList.add('hidden');
+    $('trainingSummaryPage').classList.remove('hidden');
+    status.textContent = '';
+  } catch (err) {
+    status.textContent =
+      'No se pudo cargar la sesión: ' + friendlyError(err);
+  }
+}
+async function loadRoutineForEditing(routineId) {
+  const status = $('editSessionsStatus');
+  status.textContent = 'Cargando sesión...';
+  try {
+    const result = await DeporSupabase.getRoutineDetails(routineId);
+    editingRoutineId = routineId;
+    editingRoutineConfig = result.items.map(item => {
+      const exercise = exercises.find(
+        e => Number(e.dbId) === Number(item.ejercicio_id)
+      );
+      if (!exercise) {
+        throw new Error(
+          'No se ha encontrado un ejercicio de esta sesión en la biblioteca.'
+        );
+      }
+      const unit = quantityUnit(exercise);
+      return {
+        ...exercise,
+        id: exercise.id || exercise.name,
+        quantity: unit === 'segundos'
+          ? item.duracion_objetivo_segundos
+          : item.repeticiones_objetivo,
+        unit,
+        hint: quantityHint(exercise),
+        seriesGoal: item.series_objetivo
+      };
+    });
+    if (!editingRoutineConfig.length) {
+      throw new Error('Esta sesión no contiene ejercicios.');
+    }
+    seriesGoal = Number(editingRoutineConfig[0].seriesGoal) || 3;
+    $('routineName').value = result.routine.nombre;
+    $('editSessionsPage').classList.add('hidden');
+    openCustomize('editRoutine');
+  } catch (err) {
+    status.textContent =
+      'No se pudo cargar la sesión: ' + friendlyError(err);
+  }
+}
 $('goHistory').addEventListener('click', () => {
   $('principal').classList.add('hidden');
   $('historyPage').classList.remove('hidden');
@@ -760,9 +1084,13 @@ $('exercisePicker').addEventListener('click',event=>{
 });
 $('cancelCustomize').addEventListener('click',()=>{
   $('library').classList.add('hidden');
-  $('exercisePicker').innerHTML='';
-
-  if (origenPersonalizador === 'setup') {
+  $('exercisePicker').innerHTML = '';
+  $('routineNameField').classList.add('hidden');
+  if (origenPersonalizador === 'sessions') {
+  $('sessionsPage').classList.remove('hidden');
+  } else if (origenPersonalizador === 'editRoutine') {
+    $('editSessionsPage').classList.remove('hidden');
+  } else if (origenPersonalizador === 'setup') {
     $('principal').classList.add('hidden');
     $('setup').classList.remove('hidden');
     updateHome();
@@ -780,29 +1108,98 @@ $('addExercise').addEventListener('click',()=>{
  const cb=$(`pick-${e.id}`);if(cb)cb.checked=true;
  $('newExerciseName').value='';$('addExerciseStatus').textContent=`«${name}» añadido. La ficha está preparada; escribe las repeticiones y pulsa «Guardar sesión».`;
 });
-$('saveSession').addEventListener('click',()=>{
- $('pickerError').textContent='';
- const chosen=[];let hasInvalid=false;let firstInvalid=null;
- exercises.forEach(e=>{
-  const id=e.id||e.name, cb=$(`pick-${id}`), qty=$(`qty-${id}`); if(!cb||!cb.checked){clearExerciseError(id);return;}
-  if(!validateExerciseQuantity(e,true)){hasInvalid=true;if(!firstInvalid)firstInvalid=qty;return;}
-  const n=Number(qty.value.trim());
-  chosen.push({...e,quantity:n,unit:quantityUnit(e),hint:quantityHint(e),id});
- });
- if(hasInvalid){if(firstInvalid)firstInvalid.focus();return;}
- if(!chosen.length){$('pickerError').textContent='Selecciona al menos un ejercicio para guardar la sesión.';return;}
- savedConfig = chosen;
- updateHome();
- $('library').classList.add('hidden');
- $('exercisePicker').innerHTML = '';
-
-if (origenPersonalizador === 'setup') {
-  $('principal').classList.add('hidden');
-  $('setup').classList.remove('hidden');
-} else {
-  $('setup').classList.add('hidden');
-  $('principal').classList.remove('hidden');
-}
+$('saveSession').addEventListener('click', async () => {
+  $('pickerError').textContent = '';
+  const creandoRutina = origenPersonalizador === 'sessions';
+  const modificandoRutina = origenPersonalizador === 'editRoutine';
+  if ((creandoRutina || modificandoRutina) && !$('routineName').value.trim()) {
+    $('pickerError').textContent = 'Escribe un nombre para la sesión.';
+    $('routineName').focus();
+    return;
+  }
+  const chosen = [];
+  let hasInvalid = false;
+  let firstInvalid = null;
+  exercises.forEach(e => {
+    const id = e.id || e.name;
+    const cb = $(`pick-${id}`);
+    const qty = $(`qty-${id}`);
+    if (!cb || !cb.checked) {
+      clearExerciseError(id);
+      return;
+    }
+    if (!validateExerciseQuantity(e, true)) {
+      hasInvalid = true;
+      if (!firstInvalid) firstInvalid = qty;
+      return;
+    }
+    const n = Number(qty.value.trim());
+    chosen.push({
+      ...e,
+      quantity: n,
+      unit: quantityUnit(e),
+      hint: quantityHint(e),
+      id,
+      seriesGoal
+    });
+  });
+  if (hasInvalid) {
+    if (firstInvalid) firstInvalid.focus();
+    return;
+  }
+  if (!chosen.length) {
+    $('pickerError').textContent =
+      'Selecciona al menos un ejercicio para guardar la sesión.';
+    return;
+  }
+  const button = $('saveSession');
+  button.disabled = true;
+  try {
+    if (creandoRutina) {
+      $('pickerError').textContent = 'Guardando sesión en Supabase…';
+      await DeporSupabase.saveRoutine(
+        $('routineName').value.trim(),
+        chosen
+      );
+      $('library').classList.add('hidden');
+      $('exercisePicker').innerHTML = '';
+      $('routineNameField').classList.add('hidden');
+      $('sessionsPage').classList.remove('hidden');
+      $('sessionsStatus').textContent =
+        'Sesión guardada correctamente.';
+    } else if (modificandoRutina) {
+      $('pickerError').textContent = 'Guardando modificaciones…';
+      await DeporSupabase.updateRoutine(
+        editingRoutineId,
+        $('routineName').value.trim(),
+        chosen
+      );
+      $('library').classList.add('hidden');
+      $('exercisePicker').innerHTML = '';
+      $('routineNameField').classList.add('hidden');
+      $('editSessionsPage').classList.remove('hidden');
+      await loadRoutineList();
+      $('editSessionsStatus').textContent =
+        'Sesión modificada correctamente.';
+    } else {
+      savedConfig = chosen;
+      updateHome();
+      $('library').classList.add('hidden');
+      $('exercisePicker').innerHTML = '';
+      if (origenPersonalizador === 'setup') {
+        $('principal').classList.add('hidden');
+        $('setup').classList.remove('hidden');
+      } else {
+        $('setup').classList.add('hidden');
+        $('principal').classList.remove('hidden');
+      }
+    }
+  } catch (err) {
+    $('pickerError').textContent =
+      'No se pudo guardar la sesión: ' + friendlyError(err);
+  } finally {
+    button.disabled = false;
+  }
 });
 $('begin').addEventListener('click',()=>{
  if(!savedConfig.length)return;
@@ -1068,7 +1465,8 @@ async function showWorkoutSummary(workoutId) {
     description.textContent =
       error.message || 'Comprueba la conexión con Supabase.';
   }
-}async function loadWorkoutHistory() {
+}
+async function loadWorkoutHistory() {
   const list = $('workoutList');
   list.className = 'workout-history-list';
   list.textContent = 'Cargando entrenamientos...';
