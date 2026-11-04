@@ -625,6 +625,19 @@ textarea{
   </div>
 </section>
 
+<section class="panel hidden" id="editSessionsPage" aria-labelledby="editSessionsTitle">
+  <div class="eyebrow">Gestión de sesiones</div>
+  <h2 id="editSessionsTitle">Modificar sesión</h2>
+  <p class="muted">Selecciona la sesión que quieres modificar.</p>
+  <div id="routineList">
+    <p class="muted">Cargando sesiones...</p>
+  </div>
+  <p class="small muted" id="editSessionsStatus" aria-live="polite"></p>
+  <div class="row" style="margin-top:18px">
+    <button class="secondary" id="editSessionsBack" type="button">Volver</button>
+  </div>
+</section>
+
 <p class="footer">Prioriza la técnica y deja algunas repeticiones en reserva. Si aparece dolor o la técnica se deteriora, detente.</p>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -666,17 +679,33 @@ function inferExercise(name){
  return {id:'custom-'+(nextCustomId++),name,...info,custom:true};
 }
 function makePicker(){
- const old={};
- document.querySelectorAll('#exercisePicker .pickcard').forEach(card=>{
-   const cb=card.querySelector('input[type=checkbox]'), qty=card.querySelector('input[type=number]');
-   if(cb&&qty) old[cb.dataset.exerciseId]={checked:cb.checked,qty:qty.value};
- });
- $('exercisePicker').innerHTML=exercises.map(e=>{
-  const id=e.id||e.name; const prior=old[id]||savedConfig.find(s=>s.id===id)||{};
-  const unit=quantityUnit(e), hint=quantityHint(e), checked=prior.checked!==undefined?prior.checked:savedConfig.some(s=>s.id===id);
-  const qty=prior.qty!==undefined?prior.qty:(savedConfig.find(s=>s.id===id)?.quantity??'');
-  return `<article class="pickcard" data-exercise-card="${escapeHtml(id)}"><div class="pickhead"><input type="checkbox" data-exercise-id="${escapeHtml(id)}" id="pick-${escapeHtml(id)}" ${checked?'checked':''} aria-label="Seleccionar ${escapeHtml(e.name)}"><div><div class="picktitle">${escapeHtml(e.name)}</div><div class="pickmeta">${escapeHtml(e.type)} · ${escapeHtml(e.desc)}</div></div></div><div class="pickcontrols"><label for="qty-${escapeHtml(id)}">${unit==='segundos'?'Segundos':'Repeticiones'} por serie:</label><input data-quantity-id="${escapeHtml(id)}" id="qty-${escapeHtml(id)}" type="number" min="1" max="${quantityMax(e)}" step="1" inputmode="numeric" placeholder="1–${quantityMax(e)}" value="${qty??''}"><span class="pickmeta">${escapeHtml(hint)}</span></div><p class="small muted" style="margin:8px 0 0 31px">${escapeHtml(e.rest)}</p><p class="pick-error hidden" data-error-for="${escapeHtml(id)}" aria-live="polite"></p><div class="pickdelete"><button class="danger" type="button" data-delete-exercise-id="${escapeHtml(id)}" aria-label="Eliminar ${escapeHtml(e.name)} de la biblioteca">Eliminar de biblioteca</button></div></article>`;
- }).join('');
+  const old = {};
+  document.querySelectorAll('#exercisePicker .pickcard').forEach(card => {
+    const cb = card.querySelector('input[type=checkbox]');
+    const qty = card.querySelector('input[type=number]');
+    if (cb && qty) {
+      old[cb.dataset.exerciseId] = {
+        checked: cb.checked,
+        qty: qty.value
+      };
+    }
+  });
+  const config = origenPersonalizador === 'editRoutine'
+    ? editingRoutineConfig
+    : savedConfig;
+  $('exercisePicker').innerHTML = exercises.map(e => {
+    const id = e.id || e.name;
+    const prior = old[id] || config.find(s => s.id === id) || {};
+    const unit = quantityUnit(e);
+    const hint = quantityHint(e);
+    const checked = prior.checked !== undefined
+      ? prior.checked
+      : config.some(s => s.id === id);
+    const qty = prior.qty !== undefined
+      ? prior.qty
+      : (config.find(s => s.id === id)?.quantity ?? '');
+    return `<article class="pickcard" data-exercise-card="${escapeHtml(id)}"><div class="pickhead"><input type="checkbox" data-exercise-id="${escapeHtml(id)}" id="pick-${escapeHtml(id)}" ${checked?'checked':''} aria-label="Seleccionar ${escapeHtml(e.name)}"><div><div class="picktitle">${escapeHtml(e.name)}</div><div class="pickmeta">${escapeHtml(e.type)} · ${escapeHtml(e.desc)}</div></div></div><div class="pickcontrols"><label for="qty-${escapeHtml(id)}">${unit==='segundos'?'Segundos':'Repeticiones'} por serie:</label><input data-quantity-id="${escapeHtml(id)}" id="qty-${escapeHtml(id)}" type="number" min="1" max="${quantityMax(e)}" step="1" inputmode="numeric" placeholder="1–${quantityMax(e)}" value="${qty??''}"><span class="pickmeta">${escapeHtml(hint)}</span></div><p class="small muted" style="margin:8px 0 0 31px">${escapeHtml(e.rest)}</p><p class="pick-error hidden" data-error-for="${escapeHtml(id)}" aria-live="polite"></p><div class="pickdelete"><button class="danger" type="button" data-delete-exercise-id="${escapeHtml(id)}" aria-label="Eliminar ${escapeHtml(e.name)} de la biblioteca">Eliminar de biblioteca</button></div></article>`;
+  }).join('');
 }
 function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
 function updateHome(){
@@ -703,7 +732,11 @@ function openCustomize(origenForzado = null){
   $('workout').classList.add('hidden');
   $('summary').classList.add('hidden');
   const creandoRutina = origenPersonalizador === 'sessions';
-  $('routineNameField').classList.toggle('hidden', !creandoRutina);
+  const modificandoRutina = origenPersonalizador === 'editRoutine';
+  $('routineNameField').classList.toggle(
+    'hidden',
+    !creandoRutina && !modificandoRutina
+  );
   if (creandoRutina) {
     $('routineName').value = '';
   }
@@ -733,6 +766,98 @@ $('sessionsBack').addEventListener('click', () => {
 $('addSession').addEventListener('click', () => {
   openCustomize('sessions');
 });
+let editingRoutineId = null;
+let editingRoutineConfig = [];
+$('editSession').addEventListener('click', () => {
+  $('sessionsPage').classList.add('hidden');
+  $('editSessionsPage').classList.remove('hidden');
+  loadRoutineList();
+});
+$('editSessionsBack').addEventListener('click', () => {
+  $('editSessionsPage').classList.add('hidden');
+  $('sessionsPage').classList.remove('hidden');
+});
+async function loadRoutineList() {
+  const list = $('routineList');
+  const status = $('editSessionsStatus');
+  list.replaceChildren();
+  status.textContent = 'Cargando sesiones...';
+  try {
+    const routines = await DeporSupabase.getRoutines();
+    if (!routines.length) {
+      list.innerHTML = '<p class="muted">Todavía no tienes sesiones guardadas.</p>';
+      status.textContent = '';
+      return;
+    }
+    routines.forEach(routine => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'workout-history-card';
+      const info = document.createElement('div');
+      info.className = 'workout-history-info';
+      const name = document.createElement('p');
+      name.className = 'workout-history-name';
+      name.textContent = routine.nombre;
+      const date = document.createElement('p');
+      date.className = 'workout-history-date';
+      date.textContent = routine.created_at
+        ? new Date(routine.created_at).toLocaleDateString('es-ES')
+        : 'Fecha no disponible';
+      info.append(name, date);
+      const arrow = document.createElement('span');
+      arrow.className = 'workout-history-chevron';
+      arrow.textContent = '›';
+      button.append(info, arrow);
+      button.addEventListener('click', () => {
+        loadRoutineForEditing(routine.id);
+      });
+      list.appendChild(button);
+    });
+    status.textContent = '';
+  } catch (err) {
+    status.textContent =
+      'No se pudieron cargar las sesiones: ' + friendlyError(err);
+  }
+}
+async function loadRoutineForEditing(routineId) {
+  const status = $('editSessionsStatus');
+  status.textContent = 'Cargando sesión...';
+  try {
+    const result = await DeporSupabase.getRoutineDetails(routineId);
+    editingRoutineId = routineId;
+    editingRoutineConfig = result.items.map(item => {
+      const exercise = exercises.find(
+        e => Number(e.dbId) === Number(item.ejercicio_id)
+      );
+      if (!exercise) {
+        throw new Error(
+          'No se ha encontrado un ejercicio de esta sesión en la biblioteca.'
+        );
+      }
+      const unit = quantityUnit(exercise);
+      return {
+        ...exercise,
+        id: exercise.id || exercise.name,
+        quantity: unit === 'segundos'
+          ? item.duracion_objetivo_segundos
+          : item.repeticiones_objetivo,
+        unit,
+        hint: quantityHint(exercise),
+        seriesGoal: item.series_objetivo
+      };
+    });
+    if (!editingRoutineConfig.length) {
+      throw new Error('Esta sesión no contiene ejercicios.');
+    }
+    seriesGoal = Number(editingRoutineConfig[0].seriesGoal) || 3;
+    $('routineName').value = result.routine.nombre;
+    $('editSessionsPage').classList.add('hidden');
+    openCustomize('editRoutine');
+  } catch (err) {
+    status.textContent =
+      'No se pudo cargar la sesión: ' + friendlyError(err);
+  }
+}
 $('goHistory').addEventListener('click', () => {
   $('principal').classList.add('hidden');
   $('historyPage').classList.remove('hidden');
@@ -806,7 +931,9 @@ $('cancelCustomize').addEventListener('click',()=>{
   $('exercisePicker').innerHTML = '';
   $('routineNameField').classList.add('hidden');
   if (origenPersonalizador === 'sessions') {
-    $('sessionsPage').classList.remove('hidden');
+  $('sessionsPage').classList.remove('hidden');
+  } else if (origenPersonalizador === 'editRoutine') {
+    $('editSessionsPage').classList.remove('hidden');
   } else if (origenPersonalizador === 'setup') {
     $('principal').classList.add('hidden');
     $('setup').classList.remove('hidden');
@@ -828,7 +955,8 @@ $('addExercise').addEventListener('click',()=>{
 $('saveSession').addEventListener('click', async () => {
   $('pickerError').textContent = '';
   const creandoRutina = origenPersonalizador === 'sessions';
-  if (creandoRutina && !$('routineName').value.trim()) {
+  const modificandoRutina = origenPersonalizador === 'editRoutine';
+  if ((creandoRutina || modificandoRutina) && !$('routineName').value.trim()) {
     $('pickerError').textContent = 'Escribe un nombre para la sesión.';
     $('routineName').focus();
     return;
@@ -883,6 +1011,20 @@ $('saveSession').addEventListener('click', async () => {
       $('sessionsPage').classList.remove('hidden');
       $('sessionsStatus').textContent =
         'Sesión guardada correctamente.';
+    } else if (modificandoRutina) {
+      $('pickerError').textContent = 'Guardando modificaciones…';
+      await DeporSupabase.updateRoutine(
+        editingRoutineId,
+        $('routineName').value.trim(),
+        chosen
+      );
+      $('library').classList.add('hidden');
+      $('exercisePicker').innerHTML = '';
+      $('routineNameField').classList.add('hidden');
+      $('editSessionsPage').classList.remove('hidden');
+      await loadRoutineList();
+      $('editSessionsStatus').textContent =
+        'Sesión modificada correctamente.';
     } else {
       savedConfig = chosen;
       updateHome();

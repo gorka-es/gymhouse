@@ -38,72 +38,158 @@
     if (error) throw error;
     return data;
   }
-async function saveRoutine(nombre, ejercicios) {
-  const session = await getSession();
-  if (!session) {
-    throw new Error('Inicia sesión antes de guardar una sesión.');
-  }
-  if (!nombre || !nombre.trim()) {
-    throw new Error('Escribe un nombre para la sesión.');
-  }
-  if (!Array.isArray(ejercicios) || !ejercicios.length) {
-    throw new Error('Selecciona al menos un ejercicio.');
-  }
-  const supabase = getClient();
-  // Crear la rutina
-  const { data: rutina, error: rutinaError } = await supabase
-    .from('rutinas')
-    .insert({
-      user_id: session.user.id,
-      nombre: nombre.trim()
-    })
-    .select('id')
-    .single();
-  if (rutinaError) throw rutinaError;
-  // Preparar los ejercicios asociados
-  const filas = ejercicios.map((ejercicio, index) => {
-    const ejercicioId = Number(ejercicio.dbId);
-    if (!Number.isInteger(ejercicioId) || ejercicioId <= 0) {
-      throw new Error(
-        `No se ha podido identificar el ejercicio «${ejercicio.name}».`
-      );
+  async function saveRoutine(nombre, ejercicios) {
+    const session = await getSession();
+    if (!session) {
+      throw new Error('Inicia sesión antes de guardar una sesión.');
     }
-    return {
-      rutina_id: rutina.id,
-      ejercicio_id: ejercicioId,
-      orden: index + 1,
-      series_objetivo: ejercicio.seriesGoal,
-      repeticiones_objetivo:
-        ejercicio.unit === 'repeticiones'
-          ? Number(ejercicio.quantity)
-          : null,
-      duracion_objetivo_segundos:
-        ejercicio.unit === 'segundos'
-          ? Number(ejercicio.quantity)
-          : null
-    };
-  });
-  // Guardar los ejercicios
-  const { error: ejerciciosError } = await supabase
-    .from('rutina_ejercicios')
-    .insert(filas);
-  if (ejerciciosError) {
-    // Intentar eliminar la rutina si falla el guardado de sus ejercicios
-    const { error: rollbackError } = await supabase
+    if (!nombre || !nombre.trim()) {
+      throw new Error('Escribe un nombre para la sesión.');
+    }
+    if (!Array.isArray(ejercicios) || !ejercicios.length) {
+      throw new Error('Selecciona al menos un ejercicio.');
+    }
+    const supabase = getClient();
+    // Crear la rutina
+    const { data: rutina, error: rutinaError } = await supabase
       .from('rutinas')
-      .delete()
-      .eq('id', rutina.id)
-      .eq('user_id', session.user.id);
-    if (rollbackError) {
-      throw new Error(
-        'No se pudieron guardar los ejercicios y tampoco eliminar la rutina creada. ' +
-        ejerciciosError.message + ' ' + rollbackError.message
-      );
+      .insert({
+        user_id: session.user.id,
+        nombre: nombre.trim()
+      })
+      .select('id')
+      .single();
+    if (rutinaError) throw rutinaError;
+    // Preparar los ejercicios asociados
+    const filas = ejercicios.map((ejercicio, index) => {
+      const ejercicioId = Number(ejercicio.dbId);
+      if (!Number.isInteger(ejercicioId) || ejercicioId <= 0) {
+        throw new Error(
+          `No se ha podido identificar el ejercicio «${ejercicio.name}».`
+        );
+      }
+      return {
+        rutina_id: rutina.id,
+        ejercicio_id: ejercicioId,
+        orden: index + 1,
+        series_objetivo: ejercicio.seriesGoal,
+        repeticiones_objetivo:
+          ejercicio.unit === 'repeticiones'
+            ? Number(ejercicio.quantity)
+            : null,
+        duracion_objetivo_segundos:
+          ejercicio.unit === 'segundos'
+            ? Number(ejercicio.quantity)
+            : null
+      };
+    });
+    // Guardar los ejercicios
+    const { error: ejerciciosError } = await supabase
+      .from('rutina_ejercicios')
+      .insert(filas);
+    if (ejerciciosError) {
+      // Intentar eliminar la rutina si falla el guardado de sus ejercicios
+      const { error: rollbackError } = await supabase
+        .from('rutinas')
+        .delete()
+        .eq('id', rutina.id)
+        .eq('user_id', session.user.id);
+      if (rollbackError) {
+        throw new Error(
+          'No se pudieron guardar los ejercicios y tampoco eliminar la rutina creada. ' +
+          ejerciciosError.message + ' ' + rollbackError.message
+        );
+      }
+      throw ejerciciosError;
     }
-    throw ejerciciosError;
+    return rutina.id;
   }
-  return rutina.id;
-}
+  async function getRoutines() {
+    const session = await getSession();
+    if (!session) {
+      throw new Error('Inicia sesión para consultar tus sesiones.');
+    }
+
+    const { data, error } = await getClient()
+      .from('rutinas')
+      .select('id,nombre,created_at')
+      .eq('user_id', session.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
+  async function getRoutineDetails(routineId) {
+    const session = await getSession();
+    if (!session) {
+      throw new Error('Inicia sesión para consultar la sesión.');
+    }
+    const { data: routine, error: routineError } = await getClient()
+      .from('rutinas')
+      .select('id,nombre')
+      .eq('id', routineId)
+      .eq('user_id', session.user.id)
+      .single();
+    if (routineError) throw routineError;
+    const { data: items, error: itemsError } = await getClient()
+      .from('rutina_ejercicios')
+      .select('ejercicio_id,orden,series_objetivo,repeticiones_objetivo,duracion_objetivo_segundos')
+      .eq('rutina_id', routineId)
+      .order('orden', { ascending: true });
+    if (itemsError) throw itemsError;
+    return { routine, items: items || [] };
+  }
+  async function updateRoutine(routineId, nombre, ejercicios) {
+    const session = await getSession();
+    if (!session) {
+      throw new Error('Inicia sesión para modificar una sesión.');
+    }
+    if (!nombre || !nombre.trim()) {
+      throw new Error('Escribe un nombre para la sesión.');
+    }
+    if (!Array.isArray(ejercicios) || !ejercicios.length) {
+      throw new Error('Selecciona al menos un ejercicio.');
+    }
+    const supabase = getClient();
+    const { error: routineError } = await supabase
+      .from('rutinas')
+      .update({ nombre: nombre.trim() })
+      .eq('id', routineId)
+      .eq('user_id', session.user.id);
+    if (routineError) throw routineError;
+    const filas = ejercicios.map((ejercicio, index) => {
+      const ejercicioId = Number(ejercicio.dbId);
+      if (!Number.isInteger(ejercicioId) || ejercicioId <= 0) {
+        throw new Error(
+          `No se ha podido identificar el ejercicio «${ejercicio.name}».`
+        );
+      }
+      return {
+        rutina_id: routineId,
+        ejercicio_id: ejercicioId,
+        orden: index + 1,
+        series_objetivo: ejercicio.seriesGoal,
+        repeticiones_objetivo:
+          ejercicio.unit === 'repeticiones'
+            ? Number(ejercicio.quantity)
+            : null,
+        duracion_objetivo_segundos:
+          ejercicio.unit === 'segundos'
+            ? Number(ejercicio.quantity)
+            : null
+      };
+    });
+    const { error: deleteError } = await supabase
+      .from('rutina_ejercicios')
+      .delete()
+      .eq('rutina_id', routineId);
+    if (deleteError) throw deleteError;
+    const { error: insertError } = await supabase
+      .from('rutina_ejercicios')
+      .insert(filas);
+    if (insertError) throw insertError;
+    return routineId;
+  }
   async function getExercises() {
     const session = await getSession();
     if (!session) throw new Error('Inicia sesión antes de cargar los ejercicios.');
@@ -123,49 +209,63 @@ async function saveRoutine(nombre, ejercicios) {
     .order('fecha_inicio', { ascending: false });
   if (error) throw error;
   return data || [];
-}
-async function getWorkoutDetails(workoutId) {
-  const session = await getSession();
-  if (!session) {
-    throw new Error('Inicia sesión para consultar el entrenamiento.');
   }
-  const { data: workout, error: workoutError } = await getClient()
-    .from('entrenamientos')
-    .select('id,nombre,estado,fecha_inicio,fecha_fin,motivo_incompleto,series_objetivo')
-    .eq('id', workoutId)
-    .eq('user_id', session.user.id)
-    .single();
-  if (workoutError) throw workoutError;
-  console.log('ENTRENAMIENTO RECUPERADO:', workout);
-  const { data: series, error: seriesError } = await getClient()
-    .from('entrenamiento_series')
-    .select('id,ejercicio_id,numero_serie,repeticiones,duracion_segundos,peso_kg,completada')
-    .eq('entrenamiento_id', workoutId)
-    .order('ejercicio_id', { ascending: true })
-    .order('numero_serie', { ascending: true });
-  if (seriesError) throw seriesError;
-  const exerciseIds = [...new Set((series || []).map(s => s.ejercicio_id))];
-  let exercises = [];
-  if (exerciseIds.length) {
-    const { data, error } = await getClient()
-      .from('ejercicios')
-      .select('id,nombre,tipo')
-      .in('id', exerciseIds);
+  async function getWorkoutDetails(workoutId) {
+    const session = await getSession();
+    if (!session) {
+      throw new Error('Inicia sesión para consultar el entrenamiento.');
+    }
+    const { data: workout, error: workoutError } = await getClient()
+      .from('entrenamientos')
+      .select('id,nombre,estado,fecha_inicio,fecha_fin,motivo_incompleto,series_objetivo')
+      .eq('id', workoutId)
+      .eq('user_id', session.user.id)
+      .single();
+    if (workoutError) throw workoutError;
+    console.log('ENTRENAMIENTO RECUPERADO:', workout);
+    const { data: series, error: seriesError } = await getClient()
+      .from('entrenamiento_series')
+      .select('id,ejercicio_id,numero_serie,repeticiones,duracion_segundos,peso_kg,completada')
+      .eq('entrenamiento_id', workoutId)
+      .order('ejercicio_id', { ascending: true })
+      .order('numero_serie', { ascending: true });
+    if (seriesError) throw seriesError;
+    const exerciseIds = [...new Set((series || []).map(s => s.ejercicio_id))];
+    let exercises = [];
+    if (exerciseIds.length) {
+      const { data, error } = await getClient()
+        .from('ejercicios')
+        .select('id,nombre,tipo')
+        .in('id', exerciseIds);
 
-    if (error) throw error;
-    exercises = data || [];
+      if (error) throw error;
+      exercises = data || [];
+    }
+    const exerciseNames = new Map(
+      exercises.map(exercise => [String(exercise.id), exercise.nombre])
+    );
+    return {
+      workout,
+      series: (series || []).map(item => ({
+        ...item,
+        ejercicio_nombre:
+          exerciseNames.get(String(item.ejercicio_id)) || 'Ejercicio sin nombre'
+      }))
+    };
   }
-  const exerciseNames = new Map(
-    exercises.map(exercise => [String(exercise.id), exercise.nombre])
-  );
-  return {
-    workout,
-    series: (series || []).map(item => ({
-      ...item,
-      ejercicio_nombre:
-        exerciseNames.get(String(item.ejercicio_id)) || 'Ejercicio sin nombre'
-    }))
-  };
-}
-  global.DeporSupabase = Object.freeze({ getSession, signIn, signOut, getExercises, saveWorkout, saveRoutine, getWorkouts, getWorkoutDetails});
+  global.DeporSupabase = Object.freeze({
+    getSession,
+    signIn,
+    signOut,
+    getExercises,
+    saveWorkout,
+    saveRoutine,
+    getRoutines,
+    getRoutineDetails,
+    updateRoutine,
+    getWorkouts,
+    getWorkoutDetails
+  });
 })(window);
+
+
