@@ -435,6 +435,141 @@ textarea{
 #connectionStatus {
   display: none;
 }
+
+/* Pantalla de entrenamiento */
+.training-header {
+  margin-bottom: 24px;
+}
+
+.training-title {
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  overflow-wrap: anywhere;
+  margin: 6px 0 22px;
+}
+
+.training-progress-block {
+  margin: 20px 0;
+}
+
+.training-progress-label {
+  display: block;
+  font-weight: 650;
+  margin-bottom: 9px;
+}
+
+.training-progress-track {
+  height: 12px;
+  background: #e2e8ed;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.training-progress-fill {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #087653, #80b9a3);
+  border-radius: 99px;
+  transition: width .25s ease;
+}
+
+.training-current {
+  text-align: center;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  margin-top: 26px;
+}
+
+.training-current h2 {
+  font-size: clamp(1.7rem, 5vw, 2.3rem);
+  margin: 8px 0 20px;
+}
+
+.training-dose {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 14px;
+  background: var(--accent2);
+  color: var(--accent);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.training-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.training-actions button {
+  min-height: 64px;
+  font-size: 1rem;
+}
+
+.training-next {
+  background: #edf7f3;
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 26px;
+}
+
+.training-next h3 {
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.training-next-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+}
+
+.training-next-icon {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border-radius: 50%;
+  background: #dce9ec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  font-size: 1.5rem;
+}
+
+.training-next-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.training-next-info {
+  min-width: 0;
+}
+
+.training-next-info strong {
+  display: block;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.training-next-info span {
+  color: var(--muted);
+  font-size: .92rem;
+}
+
+.training-finish {
+  width: 100%;
+  min-height: 64px;
+  margin-top: 24px;
+  font-size: 1.05rem;
+}
+
+@media(max-width:480px) {
+  .training-actions {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
 <body>
@@ -540,33 +675,61 @@ textarea{
 </section>
 
 <section class="panel hidden" id="workout">
-  <div class="row" style="justify-content:space-between">
-    <span class="eyebrow" id="exerciseCount">Ejercicio 1 de 7</span>
-    <span class="pill" id="category">Principal</span>
-  </div>
-  <div class="progressline"><div class="progressfill" id="progress"></div></div>
-  <div class="exercisegrid">
-    <div>
-      <h2 id="exerciseName">Sentadillas</h2>
-      <p id="dose" class="muted">2 × 10 repeticiones</p>
-      <p id="description"></p>
-      <div class="cue"><strong>Claves de ejecución</strong><ul class="steps" id="cues"></ul></div>
-      <p class="small muted" id="rest"></p>
-    </div>
-    <div>
-      <div class="statrow">
-        <div class="stat"><span class="muted small">Series objetivo</span><strong id="target">3</strong></div>
-        <div class="stat"><span class="muted small">Completadas</span><strong id="done">0</strong></div>
+  <div class="training-header">
+    <div class="eyebrow">Entrenamiento</div>
+    <h2 class="training-title" id="trainingWorkoutName">
+      Nombre del entrenamiento
+    </h2>
+    <div class="training-progress-block">
+      <span class="training-progress-label">Progreso total</span>
+      <div class="training-progress-track">
+        <div class="training-progress-fill" id="trainingTotalProgress"></div>
       </div>
-      <div class="seriesbig" id="seriesStatus">Pulsa «Empezar serie» cuando estés listo.</div>
+    </div>
+    <div class="training-progress-block">
+      <span class="training-progress-label">Progreso del ejercicio</span>
+      <div class="training-progress-track">
+        <div class="training-progress-fill" id="trainingExerciseProgress"></div>
+      </div>
     </div>
   </div>
-  <div class="row" style="margin-top:18px">
-    <button class="primary" id="startSet">Empezar serie</button>
-    <button class="secondary" id="nextSet" disabled>Siguiente serie</button>
-    <button class="secondary" id="finishExercise" disabled>Finalizar ejercicio</button>
+  <div class="training-current">
+    <h2 id="trainingCurrentExercise">Nombre del ejercicio</h2>
+    <div class="training-dose" id="trainingCurrentDose">
+      12 repeticiones
+    </div>
+    <div class="training-actions">
+      <button class="secondary" id="trainingFinishSet" type="button">
+        ✓ Terminar serie
+      </button>
+      <button class="primary" id="trainingFinishExercise" type="button">
+        » Finalizar ejercicio
+      </button>
+    </div>
   </div>
-  <p class="small muted" style="margin-bottom:0">Al pulsar «Siguiente serie» confirmas que has terminado la serie actual. En la última serie, «Finalizar ejercicio» la registra como completada y continúa.</p>
+  <div class="training-next">
+    <h3>Siguientes ejercicios</h3>
+    <div id="trainingNextExercises">
+      <div class="training-next-item">
+        <div class="training-next-icon">🏋️</div>
+        <div class="training-next-info">
+          <strong>Ejercicio siguiente</strong>
+          <span>12 repeticiones · 3 series</span>
+        </div>
+      </div>
+      <div class="training-next-item">
+        <div class="training-next-icon">🏃</div>
+        <div class="training-next-info">
+          <strong>Segundo ejercicio</strong>
+          <span>12 repeticiones · 3 series</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="primary training-finish" id="trainingFinishWorkout" type="button">
+    ⚑ Finalizar entrenamiento
+  </button>
+
 </section>
 
 <section class="panel hidden" id="summary">
@@ -667,859 +830,733 @@ textarea{
 <script src="supabase-config.js"></script>
 <script src="supabase-connection.js"></script>
 <script>
-const exerciseGuides = [
- {name:"Sentadillas",type:"Principal",dose:"10 repeticiones por serie",desc:"Trabaja piernas y glúteos manteniendo el tronco estable.",cues:["Pies aproximadamente a la anchura de los hombros.","Lleva la cadera atrás y flexiona las rodillas de forma controlada.","Mantén toda la planta del pie apoyada y las rodillas alineadas con los pies.","Sube empujando el suelo, sin rebotes."],rest:"Descanso orientativo: 2–3 min entre series.",svg:"squat"},
- {name:"Flexiones",type:"Principal",dose:"10 repeticiones por serie",desc:"Fortalece pecho, hombros, tríceps y estabilidad del tronco.",cues:["Manos algo más abiertas que los hombros.","Mantén cabeza, espalda y cadera alineadas.","Baja el pecho de forma controlada, con los codos en diagonal.","Si pierdes la técnica, apoya las rodillas o reduce las repeticiones."],rest:"Descanso orientativo: 2–3 min entre series.",svg:"push"},
- {name:"Zancadas hacia atrás",type:"Principal",dose:"8 repeticiones por pierna y serie",desc:"Ejercicio unilateral para piernas, glúteos y equilibrio.",cues:["Da un paso hacia atrás y baja verticalmente con control.","Mantén el pie delantero completamente apoyado.","La rodilla delantera sigue la dirección de los dedos del pie.","Vuelve al inicio empujando con la pierna delantera; completa ambos lados."],rest:"Una serie incluye las repeticiones de ambas piernas. Descansa 2–3 min.",svg:"lunge"},
- {name:"Puente de glúteo a una pierna",type:"Principal",dose:"8 repeticiones por pierna y serie",desc:"Activa glúteos y ayuda a controlar la pelvis.",cues:["Túmbate boca arriba, una rodilla flexionada y el otro pie elevado.","Aprieta el glúteo y eleva la pelvis sin arquear la zona lumbar.","Mantén la pelvis nivelada y baja lentamente.","Completa ambos lados con el mismo control."],rest:"Una serie incluye ambas piernas. Descansa 2–3 min.",svg:"bridge"},
- {name:"Plancha frontal",type:"Extra · Core",dose:"20–30 segundos por serie",desc:"Entrena la estabilidad del tronco sin mover la espalda.",cues:["Apoya antebrazos y puntas de los pies.","Forma una línea recta entre cabeza, cadera y tobillos.","Aprieta abdomen y glúteos y respira con normalidad.","Termina la serie si la cadera cae o se eleva demasiado."],rest:"Descanso orientativo: 45–60 s.",svg:"plank"},
- {name:"Dead bug",type:"Extra · Core",dose:"6–8 repeticiones por lado y serie",desc:"Ejercicio de control abdominal coordinando brazos y piernas.",cues:["Túmbate boca arriba con brazos hacia el techo y rodillas a 90°.","Mantén la zona lumbar suavemente apoyada en el suelo.","Extiende despacio brazo y pierna contrarios sin perder la posición.","Vuelve al centro y alterna lados; reduce el recorrido si arqueas la espalda."],rest:"Una repetición por lado. Descanso orientativo: 45–60 s.",svg:"deadbug"},
- {name:"Elevaciones de gemelos (puntillas)",type:"Extra · Gemelos",dose:"12–15 repeticiones por serie",desc:"Fortalece los gemelos con un movimiento lento y controlado.",cues:["Ponte de pie, con los pies separados a la anchura de las caderas.","Sujétate ligeramente a una pared o silla estable si necesitas equilibrio.","Sube los talones, pausa un instante y baja despacio.","Evita balancearte; usa un escalón solo si es estable y seguro."],rest:"Descanso orientativo: 45–60 s.",svg:"calf"}
-];
-let exercises = []; // Se rellena desde public.ejercicios tras iniciar sesión.
-let seriesGoal=3, idx=0, active=false, workoutStartedAt=null;
-let selectedExercises=[], completed=[], visited=[];
-let savedConfig=[];
-let nextCustomId=1;
-const $=id=>document.getElementById(id);
-function quantityUnit(e){return e.unitType==='time'||e.svg==='plank'||/plancha/i.test(e.name)?'segundos':'repeticiones';}
-function quantityMax(e){return quantityUnit(e)==='segundos'?300:50;}
-function quantityHint(e){
- if(e.svg==='lunge'||e.svg==='bridge'||e.hint==='por pierna y serie') return 'por pierna y serie';
- if(e.svg==='deadbug'||e.hint==='por lado y serie') return 'por lado y serie';
- if(e.svg==='plank') return 'duración por serie';
- return e.hint||'por serie';
-}
-function inferExercise(name){
- const n=name.toLowerCase();
- let info={type:'Personalizado',dose:'',desc:`Ejercicio personalizado: ${name}. Realiza el movimiento con control, sin dolor y adaptando el recorrido a tu capacidad.`,cues:['Empieza en una posición estable y cómoda.','Realiza el movimiento lentamente, sin rebotes.','Mantén el tronco estable y respira con normalidad.','Detén la serie si aparece dolor o pierdes la técnica.'],rest:'Descanso orientativo: 60–90 s; aumenta si lo necesitas.',svg:'generic',hint:'por serie'};
- if(/bird\s?dog|perro.?caza|extensión alterna/.test(n)) info={...info,type:'Extra · Core',desc:'Entrena la estabilidad del tronco extendiendo brazo y pierna contrarios.',cues:['Colócate a cuatro apoyos, con manos bajo hombros y rodillas bajo caderas.','Extiende brazo y pierna contrarios sin girar la pelvis.','Mantén el abdomen activo y evita arquear la espalda.','Vuelve despacio y alterna los lados.'],rest:'Una repetición por lado. Descanso orientativo: 45–60 s.',hint:'por lado y serie'};
- else if(/sentadilla búlgara|sentadilla bulgara/.test(n)) info={...info,type:'Principal',desc:'Ejercicio unilateral de piernas y glúteos con el pie trasero apoyado en una superficie estable.',cues:['Usa una silla o escalón firme que no pueda deslizarse.','Coloca el pie trasero apoyado y el delantero lo bastante adelantado.','Baja despacio manteniendo el equilibrio y la rodilla alineada con el pie.','Haz ambos lados y reduce la profundidad si pierdes estabilidad.'],rest:'Una serie incluye ambas piernas. Descanso orientativo: 2–3 min.',hint:'por pierna y serie'};
- else if(/superman|extensión lumbar|extension lumbar/.test(n)) info={...info,type:'Extra · Espalda',desc:'Trabajo suave de la musculatura posterior del tronco, con un recorrido pequeño y controlado.',cues:['Túmbate boca abajo y mantén el cuello alineado.','Eleva ligeramente brazos o piernas sin forzar la zona lumbar.','Evita buscar altura; prima la sensación de control.','Baja despacio y detente si molesta la espalda.'],rest:'Descanso orientativo: 45–60 s.'};
- else if(/mountain climber|escalador/.test(n)) info={...info,type:'Extra · Core',desc:'Movimiento dinámico desde posición de plancha que combina estabilidad del tronco y trabajo cardiovascular.',cues:['Colócate en plancha alta con manos bajo hombros.','Acerca una rodilla al pecho sin elevar demasiado la cadera.','Alterna las piernas a un ritmo que puedas controlar.','Reduce la velocidad o eleva las manos sobre una superficie estable si lo necesitas.'],rest:'Descanso orientativo: 45–90 s.'};
- else if(/puente de glúteo|puente gluteo/.test(n)) info={...info,type:'Principal',desc:'Activa los glúteos elevando la pelvis desde el suelo.',cues:['Túmbate boca arriba con las rodillas flexionadas.','Apoya los pies y aprieta los glúteos para elevar la pelvis.','Evita arquear la zona lumbar y baja despacio.','Mantén las rodillas alineadas con los pies.'],rest:'Descanso orientativo: 2–3 min.'};
- else if(/plancha/.test(n)) info={...info,type:'Extra · Core',desc:'Ejercicio isométrico de estabilidad del tronco.',cues:['Mantén cabeza, tronco y pelvis alineados.','Activa abdomen y glúteos sin contener la respiración.','No dejes caer ni eleves demasiado la cadera.','Termina la serie antes de perder la postura.'],rest:'Descanso orientativo: 45–60 s.',svg:'plank'};
- return {id:'custom-'+(nextCustomId++),name,...info,custom:true};
-}
-function makePicker(){
-  const old = {};
-  document.querySelectorAll('#exercisePicker .pickcard').forEach(card => {
-    const cb = card.querySelector('input[type=checkbox]');
-    const qty = card.querySelector('input[type=number]');
-    if (cb && qty) {
-      old[cb.dataset.exerciseId] = {
-        checked: cb.checked,
-        qty: qty.value
-      };
+  const exerciseGuides = [
+  {name:"Sentadillas",type:"Principal",dose:"10 repeticiones por serie",desc:"Trabaja piernas y glúteos manteniendo el tronco estable.",cues:["Pies aproximadamente a la anchura de los hombros.","Lleva la cadera atrás y flexiona las rodillas de forma controlada.","Mantén toda la planta del pie apoyada y las rodillas alineadas con los pies.","Sube empujando el suelo, sin rebotes."],rest:"Descanso orientativo: 2–3 min entre series.",svg:"squat"},
+  {name:"Flexiones",type:"Principal",dose:"10 repeticiones por serie",desc:"Fortalece pecho, hombros, tríceps y estabilidad del tronco.",cues:["Manos algo más abiertas que los hombros.","Mantén cabeza, espalda y cadera alineadas.","Baja el pecho de forma controlada, con los codos en diagonal.","Si pierdes la técnica, apoya las rodillas o reduce las repeticiones."],rest:"Descanso orientativo: 2–3 min entre series.",svg:"push"},
+  {name:"Zancadas hacia atrás",type:"Principal",dose:"8 repeticiones por pierna y serie",desc:"Ejercicio unilateral para piernas, glúteos y equilibrio.",cues:["Da un paso hacia atrás y baja verticalmente con control.","Mantén el pie delantero completamente apoyado.","La rodilla delantera sigue la dirección de los dedos del pie.","Vuelve al inicio empujando con la pierna delantera; completa ambos lados."],rest:"Una serie incluye las repeticiones de ambas piernas. Descansa 2–3 min.",svg:"lunge"},
+  {name:"Puente de glúteo a una pierna",type:"Principal",dose:"8 repeticiones por pierna y serie",desc:"Activa glúteos y ayuda a controlar la pelvis.",cues:["Túmbate boca arriba, una rodilla flexionada y el otro pie elevado.","Aprieta el glúteo y eleva la pelvis sin arquear la zona lumbar.","Mantén la pelvis nivelada y baja lentamente.","Completa ambos lados con el mismo control."],rest:"Una serie incluye ambas piernas. Descansa 2–3 min.",svg:"bridge"},
+  {name:"Plancha frontal",type:"Extra · Core",dose:"20–30 segundos por serie",desc:"Entrena la estabilidad del tronco sin mover la espalda.",cues:["Apoya antebrazos y puntas de los pies.","Forma una línea recta entre cabeza, cadera y tobillos.","Aprieta abdomen y glúteos y respira con normalidad.","Termina la serie si la cadera cae o se eleva demasiado."],rest:"Descanso orientativo: 45–60 s.",svg:"plank"},
+  {name:"Dead bug",type:"Extra · Core",dose:"6–8 repeticiones por lado y serie",desc:"Ejercicio de control abdominal coordinando brazos y piernas.",cues:["Túmbate boca arriba con brazos hacia el techo y rodillas a 90°.","Mantén la zona lumbar suavemente apoyada en el suelo.","Extiende despacio brazo y pierna contrarios sin perder la posición.","Vuelve al centro y alterna lados; reduce el recorrido si arqueas la espalda."],rest:"Una repetición por lado. Descanso orientativo: 45–60 s.",svg:"deadbug"},
+  {name:"Elevaciones de gemelos (puntillas)",type:"Extra · Gemelos",dose:"12–15 repeticiones por serie",desc:"Fortalece los gemelos con un movimiento lento y controlado.",cues:["Ponte de pie, con los pies separados a la anchura de las caderas.","Sujétate ligeramente a una pared o silla estable si necesitas equilibrio.","Sube los talones, pausa un instante y baja despacio.","Evita balancearte; usa un escalón solo si es estable y seguro."],rest:"Descanso orientativo: 45–60 s.",svg:"calf"}
+  ];
+  let exercises = []; // Se rellena desde public.ejercicios tras iniciar sesión.
+  let seriesGoal=3, idx=0, active=false, workoutStartedAt=null;
+  let selectedExercises=[], completed=[], visited=[];
+  let savedConfig=[];
+  let nextCustomId=1;
+  const $=id=>document.getElementById(id);
+  function quantityUnit(e){return e.unitType==='time'||e.svg==='plank'||/plancha/i.test(e.name)?'segundos':'repeticiones';}
+  function quantityMax(e){return quantityUnit(e)==='segundos'?300:50;}
+  function quantityHint(e){
+  if(e.svg==='lunge'||e.svg==='bridge'||e.hint==='por pierna y serie') return 'por pierna y serie';
+  if(e.svg==='deadbug'||e.hint==='por lado y serie') return 'por lado y serie';
+  if(e.svg==='plank') return 'duración por serie';
+  return e.hint||'por serie';
+  }
+  function inferExercise(name){
+  const n=name.toLowerCase();
+  let info={type:'Personalizado',dose:'',desc:`Ejercicio personalizado: ${name}. Realiza el movimiento con control, sin dolor y adaptando el recorrido a tu capacidad.`,cues:['Empieza en una posición estable y cómoda.','Realiza el movimiento lentamente, sin rebotes.','Mantén el tronco estable y respira con normalidad.','Detén la serie si aparece dolor o pierdes la técnica.'],rest:'Descanso orientativo: 60–90 s; aumenta si lo necesitas.',svg:'generic',hint:'por serie'};
+  if(/bird\s?dog|perro.?caza|extensión alterna/.test(n)) info={...info,type:'Extra · Core',desc:'Entrena la estabilidad del tronco extendiendo brazo y pierna contrarios.',cues:['Colócate a cuatro apoyos, con manos bajo hombros y rodillas bajo caderas.','Extiende brazo y pierna contrarios sin girar la pelvis.','Mantén el abdomen activo y evita arquear la espalda.','Vuelve despacio y alterna los lados.'],rest:'Una repetición por lado. Descanso orientativo: 45–60 s.',hint:'por lado y serie'};
+  else if(/sentadilla búlgara|sentadilla bulgara/.test(n)) info={...info,type:'Principal',desc:'Ejercicio unilateral de piernas y glúteos con el pie trasero apoyado en una superficie estable.',cues:['Usa una silla o escalón firme que no pueda deslizarse.','Coloca el pie trasero apoyado y el delantero lo bastante adelantado.','Baja despacio manteniendo el equilibrio y la rodilla alineada con el pie.','Haz ambos lados y reduce la profundidad si pierdes estabilidad.'],rest:'Una serie incluye ambas piernas. Descanso orientativo: 2–3 min.',hint:'por pierna y serie'};
+  else if(/superman|extensión lumbar|extension lumbar/.test(n)) info={...info,type:'Extra · Espalda',desc:'Trabajo suave de la musculatura posterior del tronco, con un recorrido pequeño y controlado.',cues:['Túmbate boca abajo y mantén el cuello alineado.','Eleva ligeramente brazos o piernas sin forzar la zona lumbar.','Evita buscar altura; prima la sensación de control.','Baja despacio y detente si molesta la espalda.'],rest:'Descanso orientativo: 45–60 s.'};
+  else if(/mountain climber|escalador/.test(n)) info={...info,type:'Extra · Core',desc:'Movimiento dinámico desde posición de plancha que combina estabilidad del tronco y trabajo cardiovascular.',cues:['Colócate en plancha alta con manos bajo hombros.','Acerca una rodilla al pecho sin elevar demasiado la cadera.','Alterna las piernas a un ritmo que puedas controlar.','Reduce la velocidad o eleva las manos sobre una superficie estable si lo necesitas.'],rest:'Descanso orientativo: 45–90 s.'};
+  else if(/puente de glúteo|puente gluteo/.test(n)) info={...info,type:'Principal',desc:'Activa los glúteos elevando la pelvis desde el suelo.',cues:['Túmbate boca arriba con las rodillas flexionadas.','Apoya los pies y aprieta los glúteos para elevar la pelvis.','Evita arquear la zona lumbar y baja despacio.','Mantén las rodillas alineadas con los pies.'],rest:'Descanso orientativo: 2–3 min.'};
+  else if(/plancha/.test(n)) info={...info,type:'Extra · Core',desc:'Ejercicio isométrico de estabilidad del tronco.',cues:['Mantén cabeza, tronco y pelvis alineados.','Activa abdomen y glúteos sin contener la respiración.','No dejes caer ni eleves demasiado la cadera.','Termina la serie antes de perder la postura.'],rest:'Descanso orientativo: 45–60 s.',svg:'plank'};
+  return {id:'custom-'+(nextCustomId++),name,...info,custom:true};
+  }
+  function makePicker(){
+    const old = {};
+    document.querySelectorAll('#exercisePicker .pickcard').forEach(card => {
+      const cb = card.querySelector('input[type=checkbox]');
+      const qty = card.querySelector('input[type=number]');
+      if (cb && qty) {
+        old[cb.dataset.exerciseId] = {
+          checked: cb.checked,
+          qty: qty.value
+        };
+      }
+    });
+    const config = origenPersonalizador === 'editRoutine'
+      ? editingRoutineConfig
+      : savedConfig;
+    $('exercisePicker').innerHTML = exercises.map(e => {
+      const id = e.id || e.name;
+      const prior = old[id] || config.find(s => s.id === id) || {};
+      const unit = quantityUnit(e);
+      const hint = quantityHint(e);
+      const checked = prior.checked !== undefined
+        ? prior.checked
+        : config.some(s => s.id === id);
+      const qty = prior.qty !== undefined
+        ? prior.qty
+        : (config.find(s => s.id === id)?.quantity ?? '');
+      return `<article class="pickcard" data-exercise-card="${escapeHtml(id)}"><div class="pickhead"><input type="checkbox" data-exercise-id="${escapeHtml(id)}" id="pick-${escapeHtml(id)}" ${checked?'checked':''} aria-label="Seleccionar ${escapeHtml(e.name)}"><div><div class="picktitle">${escapeHtml(e.name)}</div><div class="pickmeta">${escapeHtml(e.type)} · ${escapeHtml(e.desc)}</div></div></div><div class="pickcontrols"><label for="qty-${escapeHtml(id)}">${unit==='segundos'?'Segundos':'Repeticiones'} por serie:</label><input data-quantity-id="${escapeHtml(id)}" id="qty-${escapeHtml(id)}" type="number" min="1" max="${quantityMax(e)}" step="1" inputmode="numeric" placeholder="1–${quantityMax(e)}" value="${qty??''}"><span class="pickmeta">${escapeHtml(hint)}</span></div><p class="small muted" style="margin:8px 0 0 31px">${escapeHtml(e.rest)}</p><p class="pick-error hidden" data-error-for="${escapeHtml(id)}" aria-live="polite"></p><div class="pickdelete"><button class="danger" type="button" data-delete-exercise-id="${escapeHtml(id)}" aria-label="Eliminar ${escapeHtml(e.name)} de la biblioteca">Eliminar de biblioteca</button></div></article>`;
+    }).join('');
+  }
+  function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+  function updateHome(){
+  $('begin').disabled=savedConfig.length===0;
+  $('homeSeries').textContent=seriesGoal;
+  $('homeCount').textContent=savedConfig.length;
+  if(!savedConfig.length){$('homeIntro').textContent='Aún no hay una sesión guardada. Entra en «Personalizar sesión» para elegir ejercicios y cantidades.';$('homeExercises').innerHTML='<p class="muted">Todavía no has guardado ejercicios. Pulsa «Personalizar sesión» para preparar tu rutina.</p>';return;}
+  $('homeIntro').textContent='Esta es tu sesión guardada. Pulsa «Iniciar» para comenzar o «Personalizar sesión» para cambiarla.';
+  $('homeExercises').innerHTML=savedConfig.map(e=>`<div class="home-item"><div><strong>${escapeHtml(e.name)}</strong><span>${escapeHtml(e.quantity+' '+e.unit+(e.unit==='repeticiones'?' '+e.hint:''))} por serie</span></div><span>${seriesGoal} ${seriesGoal===1?'serie':'series'}</span></div>`).join('');
+  }
+  let origenPersonalizador = 'principal';
+  function openCustomize(origenForzado = null){
+    origenPersonalizador = origenForzado || (
+      $('setup').classList.contains('hidden')
+        ? 'principal'
+        : 'setup'
+    );
+    $('principal').classList.add('hidden');
+    $('historyPage').classList.add('hidden');
+    $('summaryDayPage').classList.add('hidden');
+    $('setup').classList.add('hidden');
+    $('sessionsPage').classList.add('hidden');
+    $('library').classList.remove('hidden');
+    $('workout').classList.add('hidden');
+    $('summary').classList.add('hidden');
+    const creandoRutina = origenPersonalizador === 'sessions';
+    const modificandoRutina = origenPersonalizador === 'editRoutine';
+    $('routineNameField').classList.toggle(
+      'hidden',
+      !creandoRutina && !modificandoRutina
+    );
+    if (creandoRutina) {
+      $('routineName').value = '';
+    }
+    $('pickerError').textContent = '';
+    $('addExerciseStatus').textContent = '';
+    document.querySelectorAll('[data-series]').forEach(x =>
+      x.classList.toggle('selected', Number(x.dataset.series) === seriesGoal)
+    );
+    makePicker();
+  }
+  document.querySelectorAll('[data-series]').forEach(b=>b.addEventListener('click',()=>{seriesGoal=Number(b.dataset.series);document.querySelectorAll('[data-series]').forEach(x=>x.classList.toggle('selected',x===b));}));
+  $('customize').addEventListener('click',openCustomize);
+  $('goFreeWorkout').addEventListener('click',()=>{ 
+    $('principal').classList.add('hidden'); 
+    $('historyPage').classList.add('hidden'); 
+    $('summaryDayPage').classList.add('hidden');
+    $('setup').classList.remove('hidden'); 
+    updateHome(); });
+  $('goSessions').addEventListener('click', () => {
+    $('principal').classList.add('hidden');
+    $('sessionsPage').classList.remove('hidden');
+  });
+  $('sessionsBack').addEventListener('click', () => {
+    $('sessionsPage').classList.add('hidden');
+    $('principal').classList.remove('hidden');
+  });
+  $('addSession').addEventListener('click', () => {
+    openCustomize('sessions');
+  });
+  let editingRoutineId = null;
+  let editingRoutineConfig = [];
+  let trainingRoutineConfig = [];
+  let trainingRoutineName = '';
+  $('editSession').addEventListener('click', () => {
+    $('sessionsPage').classList.add('hidden');
+    $('editSessionsPage').classList.remove('hidden');
+    loadRoutineList();
+  });
+  $('editSessionsBack').addEventListener('click', () => {
+    $('editSessionsPage').classList.add('hidden');
+    $('sessionsPage').classList.remove('hidden');
+  });
+  $('trainSession').addEventListener('click', () => {
+    $('sessionsPage').classList.add('hidden');
+    $('trainSessionsPage').classList.remove('hidden');
+    loadTrainingRoutineList();
+  });
+  $('trainSessionsBack').addEventListener('click', () => {
+    $('trainSessionsPage').classList.add('hidden');
+    $('sessionsPage').classList.remove('hidden');
+  });
+  $('trainingSummaryBack').addEventListener('click', () => {
+    $('trainingSummaryPage').classList.add('hidden');
+    $('trainSessionsPage').classList.remove('hidden');
+  });
+  $('startRoutineWorkout').addEventListener('click', () => {
+    if (!trainingRoutineConfig.length) return;
+    $('trainingWorkoutName').textContent = trainingRoutineName;
+    selectedExercises = trainingRoutineConfig.map(e => ({ ...e }));
+    seriesGoal = selectedExercises[0].seriesGoal;
+    completed = Array(selectedExercises.length).fill(0);
+    visited = Array(selectedExercises.length).fill(false);
+    idx = 0;
+    active = false;
+    workoutStartedAt = new Date().toISOString();
+    workoutSaved = false;
+    saveInProgress = false;
+    $('saveStatus').textContent = '';
+    $('saveCompleted').disabled = false;
+    $('showIncomplete').classList.remove('hidden');
+    $('incompletePanel').classList.add('hidden');
+    selectedIncompleteReason = '';
+    document.querySelectorAll('[data-reason]').forEach(b =>
+      b.classList.remove('selected')
+    );
+    $('confirmIncomplete').disabled = true;
+    $('trainingSummaryPage').classList.add('hidden');
+    $('workout').classList.remove('hidden');
+    render();
+  });
+  async function loadRoutineList() {
+    const list = $('routineList');
+    const status = $('editSessionsStatus');
+    list.replaceChildren();
+    status.textContent = 'Cargando sesiones...';
+    try {
+      const routines = await DeporSupabase.getRoutines();
+      if (!routines.length) {
+        list.innerHTML = '<p class="muted">Todavía no tienes sesiones guardadas.</p>';
+        status.textContent = '';
+        return;
+      }
+      routines.forEach(routine => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'workout-history-card';
+        const info = document.createElement('div');
+        info.className = 'workout-history-info';
+        const name = document.createElement('p');
+        name.className = 'workout-history-name';
+        name.textContent = routine.nombre;
+        const date = document.createElement('p');
+        date.className = 'workout-history-date';
+        date.textContent = routine.created_at
+          ? new Date(routine.created_at).toLocaleDateString('es-ES')
+          : 'Fecha no disponible';
+        info.append(name, date);
+        const arrow = document.createElement('span');
+        arrow.className = 'workout-history-chevron';
+        arrow.textContent = '›';
+        button.append(info, arrow);
+        button.addEventListener('click', () => {
+          loadRoutineForEditing(routine.id);
+        });
+        list.appendChild(button);
+      });
+      status.textContent = '';
+    } catch (err) {
+      status.textContent =
+        'No se pudieron cargar las sesiones: ' + friendlyError(err);
+    }
+  }
+  async function loadTrainingRoutineList() {
+    const list = $('trainRoutineList');
+    const status = $('trainSessionsStatus');
+    list.replaceChildren();
+    status.textContent = 'Cargando sesiones...';
+    try {
+      const routines = await DeporSupabase.getRoutines();
+      if (!routines.length) {
+        list.innerHTML =
+          '<p class="muted">Todavía no tienes sesiones guardadas.</p>';
+        status.textContent = '';
+        return;
+      }
+      routines.forEach(routine => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'workout-history-card';
+        const info = document.createElement('div');
+        info.className = 'workout-history-info';
+        const name = document.createElement('p');
+        name.className = 'workout-history-name';
+        name.textContent = routine.nombre;
+        const date = document.createElement('p');
+        date.className = 'workout-history-date';
+        date.textContent = routine.created_at
+          ? new Date(routine.created_at).toLocaleDateString('es-ES')
+          : 'Fecha no disponible';
+        info.append(name, date);
+        const arrow = document.createElement('span');
+        arrow.className = 'workout-history-chevron';
+        arrow.textContent = '›';
+        button.append(info, arrow);
+        button.addEventListener('click', () => {
+          loadRoutineForTraining(routine.id);
+        });
+        list.appendChild(button);
+      });
+      status.textContent = '';
+    } catch (err) {
+      status.textContent =
+        'No se pudieron cargar las sesiones: ' + friendlyError(err);
+    }
+  }
+  async function loadRoutineForTraining(routineId) {
+    const status = $('trainSessionsStatus');
+    status.textContent = 'Cargando sesión...';
+    try {
+      const result = await DeporSupabase.getRoutineDetails(routineId);
+      trainingRoutineConfig = result.items.map(item => {
+        const exercise = exercises.find(
+          e => Number(e.dbId) === Number(item.ejercicio_id)
+        );
+        if (!exercise) {
+          throw new Error(
+            'No se ha encontrado un ejercicio de esta sesión en la biblioteca.'
+          );
+        }
+        const unit = quantityUnit(exercise);
+        return {
+          ...exercise,
+          id: exercise.id || exercise.name,
+          quantity: unit === 'segundos'
+            ? item.duracion_objetivo_segundos
+            : item.repeticiones_objetivo,
+          unit,
+          hint: quantityHint(exercise),
+          seriesGoal: Number(item.series_objetivo)
+        };
+      });
+      if (!trainingRoutineConfig.length) {
+        throw new Error('Esta sesión no contiene ejercicios.');
+      }
+      trainingRoutineName = result.routine.nombre;
+      $('trainingSummaryTitle').textContent = trainingRoutineName;
+      $('trainingSummaryDescription').textContent =
+        'Revisa los ejercicios y sus objetivos antes de comenzar.';
+      $('trainingSummaryList').innerHTML = trainingRoutineConfig.map(e => `
+        <div class="summaryitem">
+          <strong>${escapeHtml(e.name)}</strong>
+          <p>
+            ${e.quantity} ${escapeHtml(e.unit)}
+            ${e.unit === 'repeticiones' ? escapeHtml(' ' + e.hint) : ''}
+            · ${e.seriesGoal} ${e.seriesGoal === 1 ? 'serie' : 'series'}
+          </p>
+        </div>
+      `).join('');
+      $('trainSessionsPage').classList.add('hidden');
+      $('trainingSummaryPage').classList.remove('hidden');
+      status.textContent = '';
+    } catch (err) {
+      status.textContent =
+        'No se pudo cargar la sesión: ' + friendlyError(err);
+    }
+  }
+  async function loadRoutineForEditing(routineId) {
+    const status = $('editSessionsStatus');
+    status.textContent = 'Cargando sesión...';
+    try {
+      const result = await DeporSupabase.getRoutineDetails(routineId);
+      editingRoutineId = routineId;
+      editingRoutineConfig = result.items.map(item => {
+        const exercise = exercises.find(
+          e => Number(e.dbId) === Number(item.ejercicio_id)
+        );
+        if (!exercise) {
+          throw new Error(
+            'No se ha encontrado un ejercicio de esta sesión en la biblioteca.'
+          );
+        }
+        const unit = quantityUnit(exercise);
+        return {
+          ...exercise,
+          id: exercise.id || exercise.name,
+          quantity: unit === 'segundos'
+            ? item.duracion_objetivo_segundos
+            : item.repeticiones_objetivo,
+          unit,
+          hint: quantityHint(exercise),
+          seriesGoal: item.series_objetivo
+        };
+      });
+      if (!editingRoutineConfig.length) {
+        throw new Error('Esta sesión no contiene ejercicios.');
+      }
+      seriesGoal = Number(editingRoutineConfig[0].seriesGoal) || 3;
+      $('routineName').value = result.routine.nombre;
+      $('editSessionsPage').classList.add('hidden');
+      openCustomize('editRoutine');
+    } catch (err) {
+      status.textContent =
+        'No se pudo cargar la sesión: ' + friendlyError(err);
+    }
+  }
+  $('goHistory').addEventListener('click', () => {
+    $('principal').classList.add('hidden');
+    $('historyPage').classList.remove('hidden');
+    loadWorkoutHistory();
+  });
+  $('historyBack').addEventListener('click', () => {
+    $('historyPage').classList.add('hidden');
+    $('principal').classList.remove('hidden');
+  });
+  $('summaryDayBack').addEventListener('click', () => {
+    $('summaryDayPage').classList.add('hidden');
+    $('historyPage').classList.remove('hidden');
+  });
+  $('freeBack').addEventListener('click',()=>{ $('setup').classList.add('hidden'); $('principal').classList.remove('hidden'); });
+  function clearExerciseError(id){
+  const card=document.querySelector(`#exercisePicker [data-exercise-card=\"${CSS.escape(id)}\"]`);
+  if(!card)return;
+  card.classList.remove('invalid');
+  const error=card.querySelector('[data-error-for]');
+  if(error){error.textContent='';error.classList.add('hidden');}
+  }
+  function validateExerciseQuantity(exercise, showError){
+  const id=exercise.id||exercise.name, qty=$(`qty-${id}`), card=document.querySelector(`#exercisePicker [data-exercise-card=\"${CSS.escape(id)}\"]`);
+  if(!qty||!card)return true;
+  const raw=qty.value.trim(), n=Number(raw), max=quantityMax(exercise);
+  const valid=!!raw&&Number.isInteger(n)&&n>=1&&n<=max;
+  if(valid){clearExerciseError(id);return true;}
+  if(showError){
+    card.classList.add('invalid');
+    const error=card.querySelector('[data-error-for]');
+    if(error){error.textContent=`Escribe una cantidad válida entre 1 y ${max} ${quantityUnit(exercise)==='segundos'?'segundos':'repeticiones'}.`;error.classList.remove('hidden');}
+  }
+  return false;
+  }
+  $('exercisePicker').addEventListener('input',event=>{
+  const input=event.target.closest('input[data-quantity-id]');
+  if(!input)return;
+  const exercise=exercises.find(e=>(e.id||e.name)===input.dataset.quantityId);
+  if(!exercise)return;
+  if(input.value!==''){
+    const max=quantityMax(exercise), value=Number(input.value);
+    if(value>max)input.value=String(max);
+    if(value<0)input.value='';
+  }
+  const card=input.closest('[data-exercise-card]');
+  if(card?.classList.contains('invalid'))validateExerciseQuantity(exercise,true);
+  });
+  $('exercisePicker').addEventListener('change',event=>{
+  const checkbox=event.target.closest('input[type=checkbox][data-exercise-id]');
+  if(!checkbox)return;
+  if(!checkbox.checked)clearExerciseError(checkbox.dataset.exerciseId);
+  });
+  $('exercisePicker').addEventListener('click',event=>{
+  const button=event.target.closest('[data-delete-exercise-id]');
+  if(!button)return;
+  const id=button.dataset.deleteExerciseId;
+  const exercise=exercises.find(e=>(e.id||e.name)===id);
+  if(!exercise)return;
+  $('addExerciseStatus').textContent='La biblioteca de Supabase es de solo lectura en esta versión; no se ha eliminado ningún ejercicio.';return;
+  const ok=window.confirm(`¿Quieres eliminar «${exercise.name}» de la biblioteca? Se quitará también de la sesión guardada si estaba incluida.`);
+  if(!ok)return;
+  exercises.splice(exercises.indexOf(exercise),1);
+  savedConfig=savedConfig.filter(e=>(e.id||e.name)!==id);
+  makePicker();
+  updateHome();
+  $('addExerciseStatus').textContent=`«${exercise.name}» se ha eliminado de la biblioteca.`;
+  $('pickerError').textContent='';
+  });
+  $('cancelCustomize').addEventListener('click',()=>{
+    $('library').classList.add('hidden');
+    $('exercisePicker').innerHTML = '';
+    $('routineNameField').classList.add('hidden');
+    if (origenPersonalizador === 'sessions') {
+    $('sessionsPage').classList.remove('hidden');
+    } else if (origenPersonalizador === 'editRoutine') {
+      $('editSessionsPage').classList.remove('hidden');
+    } else if (origenPersonalizador === 'setup') {
+      $('principal').classList.add('hidden');
+      $('setup').classList.remove('hidden');
+      updateHome();
+    } else {
+      $('setup').classList.add('hidden');
+      $('principal').classList.remove('hidden');
     }
   });
-  const config = origenPersonalizador === 'editRoutine'
-    ? editingRoutineConfig
-    : savedConfig;
-  $('exercisePicker').innerHTML = exercises.map(e => {
-    const id = e.id || e.name;
-    const prior = old[id] || config.find(s => s.id === id) || {};
-    const unit = quantityUnit(e);
-    const hint = quantityHint(e);
-    const checked = prior.checked !== undefined
-      ? prior.checked
-      : config.some(s => s.id === id);
-    const qty = prior.qty !== undefined
-      ? prior.qty
-      : (config.find(s => s.id === id)?.quantity ?? '');
-    return `<article class="pickcard" data-exercise-card="${escapeHtml(id)}"><div class="pickhead"><input type="checkbox" data-exercise-id="${escapeHtml(id)}" id="pick-${escapeHtml(id)}" ${checked?'checked':''} aria-label="Seleccionar ${escapeHtml(e.name)}"><div><div class="picktitle">${escapeHtml(e.name)}</div><div class="pickmeta">${escapeHtml(e.type)} · ${escapeHtml(e.desc)}</div></div></div><div class="pickcontrols"><label for="qty-${escapeHtml(id)}">${unit==='segundos'?'Segundos':'Repeticiones'} por serie:</label><input data-quantity-id="${escapeHtml(id)}" id="qty-${escapeHtml(id)}" type="number" min="1" max="${quantityMax(e)}" step="1" inputmode="numeric" placeholder="1–${quantityMax(e)}" value="${qty??''}"><span class="pickmeta">${escapeHtml(hint)}</span></div><p class="small muted" style="margin:8px 0 0 31px">${escapeHtml(e.rest)}</p><p class="pick-error hidden" data-error-for="${escapeHtml(id)}" aria-live="polite"></p><div class="pickdelete"><button class="danger" type="button" data-delete-exercise-id="${escapeHtml(id)}" aria-label="Eliminar ${escapeHtml(e.name)} de la biblioteca">Eliminar de biblioteca</button></div></article>`;
-  }).join('');
+  $('addExercise').addEventListener('click',()=>{
+  $('addExerciseStatus').textContent='En esta versión la biblioteca se carga desde Supabase. La creación de ejercicios se incorporará en una versión posterior.'; return;
+  const name=$('newExerciseName').value.trim();
+  if(!name){$('addExerciseStatus').textContent='Escribe primero el nombre del ejercicio.';return;}
+  if(exercises.some(e=>e.name.toLocaleLowerCase('es')===name.toLocaleLowerCase('es'))){$('addExerciseStatus').textContent='Ya existe un ejercicio con ese nombre.';return;}
+  const e=inferExercise(name);exercises.push(e);makePicker();
+  const cb=$(`pick-${e.id}`);if(cb)cb.checked=true;
+  $('newExerciseName').value='';$('addExerciseStatus').textContent=`«${name}» añadido. La ficha está preparada; escribe las repeticiones y pulsa «Guardar sesión».`;
+  });
+  $('saveSession').addEventListener('click', async () => {
+    $('pickerError').textContent = '';
+    const creandoRutina = origenPersonalizador === 'sessions';
+    const modificandoRutina = origenPersonalizador === 'editRoutine';
+    if ((creandoRutina || modificandoRutina) && !$('routineName').value.trim()) {
+      $('pickerError').textContent = 'Escribe un nombre para la sesión.';
+      $('routineName').focus();
+      return;
+    }
+    const chosen = [];
+    let hasInvalid = false;
+    let firstInvalid = null;
+    exercises.forEach(e => {
+      const id = e.id || e.name;
+      const cb = $(`pick-${id}`);
+      const qty = $(`qty-${id}`);
+      if (!cb || !cb.checked) {
+        clearExerciseError(id);
+        return;
+      }
+      if (!validateExerciseQuantity(e, true)) {
+        hasInvalid = true;
+        if (!firstInvalid) firstInvalid = qty;
+        return;
+      }
+      const n = Number(qty.value.trim());
+      chosen.push({
+        ...e,
+        quantity: n,
+        unit: quantityUnit(e),
+        hint: quantityHint(e),
+        id,
+        seriesGoal
+      });
+    });
+    if (hasInvalid) {
+      if (firstInvalid) firstInvalid.focus();
+      return;
+    }
+    if (!chosen.length) {
+      $('pickerError').textContent =
+        'Selecciona al menos un ejercicio para guardar la sesión.';
+      return;
+    }
+    const button = $('saveSession');
+    button.disabled = true;
+    try {
+      if (creandoRutina) {
+        $('pickerError').textContent = 'Guardando sesión en Supabase…';
+        await DeporSupabase.saveRoutine(
+          $('routineName').value.trim(),
+          chosen
+        );
+        $('library').classList.add('hidden');
+        $('exercisePicker').innerHTML = '';
+        $('routineNameField').classList.add('hidden');
+        $('sessionsPage').classList.remove('hidden');
+        $('sessionsStatus').textContent =
+          'Sesión guardada correctamente.';
+      } else if (modificandoRutina) {
+        $('pickerError').textContent = 'Guardando modificaciones…';
+        await DeporSupabase.updateRoutine(
+          editingRoutineId,
+          $('routineName').value.trim(),
+          chosen
+        );
+        $('library').classList.add('hidden');
+        $('exercisePicker').innerHTML = '';
+        $('routineNameField').classList.add('hidden');
+        $('editSessionsPage').classList.remove('hidden');
+        await loadRoutineList();
+        $('editSessionsStatus').textContent =
+          'Sesión modificada correctamente.';
+      } else {
+        savedConfig = chosen;
+        updateHome();
+        $('library').classList.add('hidden');
+        $('exercisePicker').innerHTML = '';
+        if (origenPersonalizador === 'setup') {
+          $('principal').classList.add('hidden');
+          $('setup').classList.remove('hidden');
+        } else {
+          $('setup').classList.add('hidden');
+          $('principal').classList.remove('hidden');
+        }
+      }
+    } catch (err) {
+      $('pickerError').textContent =
+        'No se pudo guardar la sesión: ' + friendlyError(err);
+    } finally {
+      button.disabled = false;
+    }
+  });
+  $('begin').addEventListener('click',()=>{
+  if(!savedConfig.length)return;
+  selectedExercises=savedConfig.map(e=>({...e}));completed=Array(selectedExercises.length).fill(0);visited=Array(selectedExercises.length).fill(false);idx=0;active=false;workoutStartedAt=new Date().toISOString();workoutSaved=false;saveInProgress=false;$('saveStatus').textContent='';$('saveCompleted').disabled=false;$('showIncomplete').classList.remove('hidden');$('incompletePanel').classList.add('hidden');selectedIncompleteReason='';document.querySelectorAll('[data-reason]').forEach(b=>b.classList.remove('selected'));$('confirmIncomplete').disabled=true;
+  $('principal').classList.add('hidden');$('setup').classList.add('hidden');$('summary').classList.add('hidden');$('workout').classList.remove('hidden');render();
+  $('trainingWorkoutName').textContent = 'Entrenamiento libre';
+  });
+function render() {
+  const e = selectedExercises[idx];
+  if (!e) return;
+  visited[idx] = true;
+  // Nombre y objetivo del ejercicio actual
+  $('trainingCurrentExercise').textContent = e.name;
+
+  $('trainingCurrentDose').textContent =
+    `${e.quantity} ${e.unit}${e.unit === 'repeticiones' ? ' ' + e.hint : ''}`;
+  // Progreso total: series completadas de toda la sesión
+  const totalTarget = seriesGoal * selectedExercises.length;
+  const totalDone = completed.reduce((sum, value) => sum + value, 0);
+  const totalProgress = totalTarget > 0
+    ? (totalDone / totalTarget) * 100
+    : 0;
+  $('trainingTotalProgress').style.width =
+    `${Math.min(100, totalProgress)}%`;
+  // Progreso del ejercicio actual
+  const exerciseProgress = seriesGoal > 0
+    ? (completed[idx] / seriesGoal) * 100
+    : 0;
+  $('trainingExerciseProgress').style.width =
+    `${Math.min(100, exerciseProgress)}%`;
+  // Los dos siguientes ejercicios
+  const nextExercises = selectedExercises.slice(idx + 1, idx + 3);
+  $('trainingNextExercises').innerHTML = nextExercises.length
+    ? nextExercises.map(exercise => `
+        <div class="training-next-item">
+          <div class="training-next-icon" aria-hidden="true">🏋️</div>
+          <div class="training-next-info">
+            <strong>${escapeHtml(exercise.name)}</strong>
+            <span>
+              ${exercise.quantity} ${escapeHtml(exercise.unit)}
+              ${exercise.unit === 'repeticiones'
+                ? escapeHtml(' ' + exercise.hint)
+                : ''}
+              · ${exercise.seriesGoal || seriesGoal}
+              ${(exercise.seriesGoal || seriesGoal) === 1 ? 'serie' : 'series'}
+            </span>
+          </div>
+        </div>
+      `).join('')
+    : '<p class="muted">No hay más ejercicios pendientes.</p>';
+  // Estado de los botones
+  $('trainingFinishSet').disabled = completed[idx] >= seriesGoal;
+  $('trainingFinishExercise').disabled = false;
 }
-function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
-function updateHome(){
- $('begin').disabled=savedConfig.length===0;
- $('homeSeries').textContent=seriesGoal;
- $('homeCount').textContent=savedConfig.length;
- if(!savedConfig.length){$('homeIntro').textContent='Aún no hay una sesión guardada. Entra en «Personalizar sesión» para elegir ejercicios y cantidades.';$('homeExercises').innerHTML='<p class="muted">Todavía no has guardado ejercicios. Pulsa «Personalizar sesión» para preparar tu rutina.</p>';return;}
- $('homeIntro').textContent='Esta es tu sesión guardada. Pulsa «Iniciar» para comenzar o «Personalizar sesión» para cambiarla.';
- $('homeExercises').innerHTML=savedConfig.map(e=>`<div class="home-item"><div><strong>${escapeHtml(e.name)}</strong><span>${escapeHtml(e.quantity+' '+e.unit+(e.unit==='repeticiones'?' '+e.hint:''))} por serie</span></div><span>${seriesGoal} ${seriesGoal===1?'serie':'series'}</span></div>`).join('');
-}
-let origenPersonalizador = 'principal';
-function openCustomize(origenForzado = null){
-  origenPersonalizador = origenForzado || (
-    $('setup').classList.contains('hidden')
-      ? 'principal'
-      : 'setup'
-  );
-  $('principal').classList.add('hidden');
-  $('historyPage').classList.add('hidden');
-  $('summaryDayPage').classList.add('hidden');
-  $('setup').classList.add('hidden');
-  $('sessionsPage').classList.add('hidden');
-  $('library').classList.remove('hidden');
-  $('workout').classList.add('hidden');
-  $('summary').classList.add('hidden');
-  const creandoRutina = origenPersonalizador === 'sessions';
-  const modificandoRutina = origenPersonalizador === 'editRoutine';
-  $('routineNameField').classList.toggle(
-    'hidden',
-    !creandoRutina && !modificandoRutina
-  );
-  if (creandoRutina) {
-    $('routineName').value = '';
-  }
-  $('pickerError').textContent = '';
-  $('addExerciseStatus').textContent = '';
-  document.querySelectorAll('[data-series]').forEach(x =>
-    x.classList.toggle('selected', Number(x.dataset.series) === seriesGoal)
-  );
-  makePicker();
-}
-document.querySelectorAll('[data-series]').forEach(b=>b.addEventListener('click',()=>{seriesGoal=Number(b.dataset.series);document.querySelectorAll('[data-series]').forEach(x=>x.classList.toggle('selected',x===b));}));
-$('customize').addEventListener('click',openCustomize);
-$('goFreeWorkout').addEventListener('click',()=>{ 
-  $('principal').classList.add('hidden'); 
-  $('historyPage').classList.add('hidden'); 
-  $('summaryDayPage').classList.add('hidden');
-  $('setup').classList.remove('hidden'); 
-  updateHome(); });
-$('goSessions').addEventListener('click', () => {
-  $('principal').classList.add('hidden');
-  $('sessionsPage').classList.remove('hidden');
-});
-$('sessionsBack').addEventListener('click', () => {
-  $('sessionsPage').classList.add('hidden');
-  $('principal').classList.remove('hidden');
-});
-$('addSession').addEventListener('click', () => {
-  openCustomize('sessions');
-});
-let editingRoutineId = null;
-let editingRoutineConfig = [];
-let trainingRoutineConfig = [];
-let trainingRoutineName = '';
-$('editSession').addEventListener('click', () => {
-  $('sessionsPage').classList.add('hidden');
-  $('editSessionsPage').classList.remove('hidden');
-  loadRoutineList();
-});
-$('editSessionsBack').addEventListener('click', () => {
-  $('editSessionsPage').classList.add('hidden');
-  $('sessionsPage').classList.remove('hidden');
-});
-$('trainSession').addEventListener('click', () => {
-  $('sessionsPage').classList.add('hidden');
-  $('trainSessionsPage').classList.remove('hidden');
-  loadTrainingRoutineList();
-});
-$('trainSessionsBack').addEventListener('click', () => {
-  $('trainSessionsPage').classList.add('hidden');
-  $('sessionsPage').classList.remove('hidden');
-});
-$('trainingSummaryBack').addEventListener('click', () => {
-  $('trainingSummaryPage').classList.add('hidden');
-  $('trainSessionsPage').classList.remove('hidden');
-});
-$('startRoutineWorkout').addEventListener('click', () => {
-  if (!trainingRoutineConfig.length) return;
-  selectedExercises = trainingRoutineConfig.map(e => ({ ...e }));
-  seriesGoal = selectedExercises[0].seriesGoal;
-  completed = Array(selectedExercises.length).fill(0);
-  visited = Array(selectedExercises.length).fill(false);
-  idx = 0;
-  active = false;
-  workoutStartedAt = new Date().toISOString();
-  workoutSaved = false;
-  saveInProgress = false;
-  $('saveStatus').textContent = '';
-  $('saveCompleted').disabled = false;
-  $('showIncomplete').classList.remove('hidden');
-  $('incompletePanel').classList.add('hidden');
-  selectedIncompleteReason = '';
-  document.querySelectorAll('[data-reason]').forEach(b =>
-    b.classList.remove('selected')
-  );
-  $('confirmIncomplete').disabled = true;
-  $('trainingSummaryPage').classList.add('hidden');
-  $('workout').classList.remove('hidden');
+// Terminar una serie
+$('trainingFinishSet').addEventListener('click', () => {
+  if (completed[idx] >= seriesGoal) return;
+  completed[idx]++;
   render();
 });
-async function loadRoutineList() {
-  const list = $('routineList');
-  const status = $('editSessionsStatus');
-  list.replaceChildren();
-  status.textContent = 'Cargando sesiones...';
-  try {
-    const routines = await DeporSupabase.getRoutines();
-    if (!routines.length) {
-      list.innerHTML = '<p class="muted">Todavía no tienes sesiones guardadas.</p>';
-      status.textContent = '';
-      return;
-    }
-    routines.forEach(routine => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'workout-history-card';
-      const info = document.createElement('div');
-      info.className = 'workout-history-info';
-      const name = document.createElement('p');
-      name.className = 'workout-history-name';
-      name.textContent = routine.nombre;
-      const date = document.createElement('p');
-      date.className = 'workout-history-date';
-      date.textContent = routine.created_at
-        ? new Date(routine.created_at).toLocaleDateString('es-ES')
-        : 'Fecha no disponible';
-      info.append(name, date);
-      const arrow = document.createElement('span');
-      arrow.className = 'workout-history-chevron';
-      arrow.textContent = '›';
-      button.append(info, arrow);
-      button.addEventListener('click', () => {
-        loadRoutineForEditing(routine.id);
-      });
-      list.appendChild(button);
-    });
-    status.textContent = '';
-  } catch (err) {
-    status.textContent =
-      'No se pudieron cargar las sesiones: ' + friendlyError(err);
-  }
-}
-async function loadTrainingRoutineList() {
-  const list = $('trainRoutineList');
-  const status = $('trainSessionsStatus');
-  list.replaceChildren();
-  status.textContent = 'Cargando sesiones...';
-  try {
-    const routines = await DeporSupabase.getRoutines();
-    if (!routines.length) {
-      list.innerHTML =
-        '<p class="muted">Todavía no tienes sesiones guardadas.</p>';
-      status.textContent = '';
-      return;
-    }
-    routines.forEach(routine => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'workout-history-card';
-      const info = document.createElement('div');
-      info.className = 'workout-history-info';
-      const name = document.createElement('p');
-      name.className = 'workout-history-name';
-      name.textContent = routine.nombre;
-      const date = document.createElement('p');
-      date.className = 'workout-history-date';
-      date.textContent = routine.created_at
-        ? new Date(routine.created_at).toLocaleDateString('es-ES')
-        : 'Fecha no disponible';
-      info.append(name, date);
-      const arrow = document.createElement('span');
-      arrow.className = 'workout-history-chevron';
-      arrow.textContent = '›';
-      button.append(info, arrow);
-      button.addEventListener('click', () => {
-        loadRoutineForTraining(routine.id);
-      });
-      list.appendChild(button);
-    });
-    status.textContent = '';
-  } catch (err) {
-    status.textContent =
-      'No se pudieron cargar las sesiones: ' + friendlyError(err);
-  }
-}
-async function loadRoutineForTraining(routineId) {
-  const status = $('trainSessionsStatus');
-  status.textContent = 'Cargando sesión...';
-  try {
-    const result = await DeporSupabase.getRoutineDetails(routineId);
-    trainingRoutineConfig = result.items.map(item => {
-      const exercise = exercises.find(
-        e => Number(e.dbId) === Number(item.ejercicio_id)
-      );
-      if (!exercise) {
-        throw new Error(
-          'No se ha encontrado un ejercicio de esta sesión en la biblioteca.'
-        );
-      }
-      const unit = quantityUnit(exercise);
-      return {
-        ...exercise,
-        id: exercise.id || exercise.name,
-        quantity: unit === 'segundos'
-          ? item.duracion_objetivo_segundos
-          : item.repeticiones_objetivo,
-        unit,
-        hint: quantityHint(exercise),
-        seriesGoal: Number(item.series_objetivo)
-      };
-    });
-    if (!trainingRoutineConfig.length) {
-      throw new Error('Esta sesión no contiene ejercicios.');
-    }
-    trainingRoutineName = result.routine.nombre;
-    $('trainingSummaryTitle').textContent = trainingRoutineName;
-    $('trainingSummaryDescription').textContent =
-      'Revisa los ejercicios y sus objetivos antes de comenzar.';
-    $('trainingSummaryList').innerHTML = trainingRoutineConfig.map(e => `
-      <div class="summaryitem">
-        <strong>${escapeHtml(e.name)}</strong>
-        <p>
-          ${e.quantity} ${escapeHtml(e.unit)}
-          ${e.unit === 'repeticiones' ? escapeHtml(' ' + e.hint) : ''}
-          · ${e.seriesGoal} ${e.seriesGoal === 1 ? 'serie' : 'series'}
-        </p>
-      </div>
-    `).join('');
-    $('trainSessionsPage').classList.add('hidden');
-    $('trainingSummaryPage').classList.remove('hidden');
-    status.textContent = '';
-  } catch (err) {
-    status.textContent =
-      'No se pudo cargar la sesión: ' + friendlyError(err);
-  }
-}
-async function loadRoutineForEditing(routineId) {
-  const status = $('editSessionsStatus');
-  status.textContent = 'Cargando sesión...';
-  try {
-    const result = await DeporSupabase.getRoutineDetails(routineId);
-    editingRoutineId = routineId;
-    editingRoutineConfig = result.items.map(item => {
-      const exercise = exercises.find(
-        e => Number(e.dbId) === Number(item.ejercicio_id)
-      );
-      if (!exercise) {
-        throw new Error(
-          'No se ha encontrado un ejercicio de esta sesión en la biblioteca.'
-        );
-      }
-      const unit = quantityUnit(exercise);
-      return {
-        ...exercise,
-        id: exercise.id || exercise.name,
-        quantity: unit === 'segundos'
-          ? item.duracion_objetivo_segundos
-          : item.repeticiones_objetivo,
-        unit,
-        hint: quantityHint(exercise),
-        seriesGoal: item.series_objetivo
-      };
-    });
-    if (!editingRoutineConfig.length) {
-      throw new Error('Esta sesión no contiene ejercicios.');
-    }
-    seriesGoal = Number(editingRoutineConfig[0].seriesGoal) || 3;
-    $('routineName').value = result.routine.nombre;
-    $('editSessionsPage').classList.add('hidden');
-    openCustomize('editRoutine');
-  } catch (err) {
-    status.textContent =
-      'No se pudo cargar la sesión: ' + friendlyError(err);
-  }
-}
-$('goHistory').addEventListener('click', () => {
-  $('principal').classList.add('hidden');
-  $('historyPage').classList.remove('hidden');
-  loadWorkoutHistory();
-});
-$('historyBack').addEventListener('click', () => {
-  $('historyPage').classList.add('hidden');
-  $('principal').classList.remove('hidden');
-});
-$('summaryDayBack').addEventListener('click', () => {
-  $('summaryDayPage').classList.add('hidden');
-  $('historyPage').classList.remove('hidden');
-});
-$('freeBack').addEventListener('click',()=>{ $('setup').classList.add('hidden'); $('principal').classList.remove('hidden'); });
-function clearExerciseError(id){
- const card=document.querySelector(`#exercisePicker [data-exercise-card=\"${CSS.escape(id)}\"]`);
- if(!card)return;
- card.classList.remove('invalid');
- const error=card.querySelector('[data-error-for]');
- if(error){error.textContent='';error.classList.add('hidden');}
-}
-function validateExerciseQuantity(exercise, showError){
- const id=exercise.id||exercise.name, qty=$(`qty-${id}`), card=document.querySelector(`#exercisePicker [data-exercise-card=\"${CSS.escape(id)}\"]`);
- if(!qty||!card)return true;
- const raw=qty.value.trim(), n=Number(raw), max=quantityMax(exercise);
- const valid=!!raw&&Number.isInteger(n)&&n>=1&&n<=max;
- if(valid){clearExerciseError(id);return true;}
- if(showError){
-  card.classList.add('invalid');
-  const error=card.querySelector('[data-error-for]');
-  if(error){error.textContent=`Escribe una cantidad válida entre 1 y ${max} ${quantityUnit(exercise)==='segundos'?'segundos':'repeticiones'}.`;error.classList.remove('hidden');}
- }
- return false;
-}
-$('exercisePicker').addEventListener('input',event=>{
- const input=event.target.closest('input[data-quantity-id]');
- if(!input)return;
- const exercise=exercises.find(e=>(e.id||e.name)===input.dataset.quantityId);
- if(!exercise)return;
- if(input.value!==''){
-  const max=quantityMax(exercise), value=Number(input.value);
-  if(value>max)input.value=String(max);
-  if(value<0)input.value='';
- }
- const card=input.closest('[data-exercise-card]');
- if(card?.classList.contains('invalid'))validateExerciseQuantity(exercise,true);
-});
-$('exercisePicker').addEventListener('change',event=>{
- const checkbox=event.target.closest('input[type=checkbox][data-exercise-id]');
- if(!checkbox)return;
- if(!checkbox.checked)clearExerciseError(checkbox.dataset.exerciseId);
-});
-$('exercisePicker').addEventListener('click',event=>{
- const button=event.target.closest('[data-delete-exercise-id]');
- if(!button)return;
- const id=button.dataset.deleteExerciseId;
- const exercise=exercises.find(e=>(e.id||e.name)===id);
- if(!exercise)return;
- $('addExerciseStatus').textContent='La biblioteca de Supabase es de solo lectura en esta versión; no se ha eliminado ningún ejercicio.';return;
- const ok=window.confirm(`¿Quieres eliminar «${exercise.name}» de la biblioteca? Se quitará también de la sesión guardada si estaba incluida.`);
- if(!ok)return;
- exercises.splice(exercises.indexOf(exercise),1);
- savedConfig=savedConfig.filter(e=>(e.id||e.name)!==id);
- makePicker();
- updateHome();
- $('addExerciseStatus').textContent=`«${exercise.name}» se ha eliminado de la biblioteca.`;
- $('pickerError').textContent='';
-});
-$('cancelCustomize').addEventListener('click',()=>{
-  $('library').classList.add('hidden');
-  $('exercisePicker').innerHTML = '';
-  $('routineNameField').classList.add('hidden');
-  if (origenPersonalizador === 'sessions') {
-  $('sessionsPage').classList.remove('hidden');
-  } else if (origenPersonalizador === 'editRoutine') {
-    $('editSessionsPage').classList.remove('hidden');
-  } else if (origenPersonalizador === 'setup') {
-    $('principal').classList.add('hidden');
-    $('setup').classList.remove('hidden');
-    updateHome();
+// Finalizar el ejercicio actual y pasar al siguiente
+$('trainingFinishExercise').addEventListener('click', () => {
+  if (idx < selectedExercises.length - 1) {
+    idx++;
+    render();
   } else {
-    $('setup').classList.add('hidden');
-    $('principal').classList.remove('hidden');
+    showSummary();
   }
 });
-$('addExercise').addEventListener('click',()=>{
- $('addExerciseStatus').textContent='En esta versión la biblioteca se carga desde Supabase. La creación de ejercicios se incorporará en una versión posterior.'; return;
- const name=$('newExerciseName').value.trim();
- if(!name){$('addExerciseStatus').textContent='Escribe primero el nombre del ejercicio.';return;}
- if(exercises.some(e=>e.name.toLocaleLowerCase('es')===name.toLocaleLowerCase('es'))){$('addExerciseStatus').textContent='Ya existe un ejercicio con ese nombre.';return;}
- const e=inferExercise(name);exercises.push(e);makePicker();
- const cb=$(`pick-${e.id}`);if(cb)cb.checked=true;
- $('newExerciseName').value='';$('addExerciseStatus').textContent=`«${name}» añadido. La ficha está preparada; escribe las repeticiones y pulsa «Guardar sesión».`;
+// Finalizar el entrenamiento en cualquier momento
+$('trainingFinishWorkout').addEventListener('click', () => {
+  showSummary();
 });
-$('saveSession').addEventListener('click', async () => {
-  $('pickerError').textContent = '';
-  const creandoRutina = origenPersonalizador === 'sessions';
-  const modificandoRutina = origenPersonalizador === 'editRoutine';
-  if ((creandoRutina || modificandoRutina) && !$('routineName').value.trim()) {
-    $('pickerError').textContent = 'Escribe un nombre para la sesión.';
-    $('routineName').focus();
-    return;
+  function showSummary(){
+  $('workout').classList.add('hidden');$('summary').classList.remove('hidden');$('progress').style.width='100%';const totalDone=completed.reduce((a,b)=>a+b,0),totalTarget=seriesGoal*selectedExercises.length;
+  $('sumExercises').textContent=`${visited.filter(Boolean).length}/${selectedExercises.length}`;$('sumSets').textContent=totalDone;$('sumTarget').textContent=totalTarget;
+  $('summaryList').innerHTML=selectedExercises.map((e,i)=>`<div class="summaryitem"><strong>${escapeHtml(e.name)}</strong><p>Objetivo: ${e.quantity} ${e.unit}${e.unit==='repeticiones'?' '+e.hint:''} · ${completed[i]} de ${seriesGoal} series completadas${completed[i]<seriesGoal?' · '+(seriesGoal-completed[i])+' pendientes':' · Completado'}</p></div>`).join('');
+  const date=new Date().toLocaleDateString('es-ES');const lines=[`ENTRENAMIENTO FULL BODY EN CASA — ${date}`,`Series previstas por ejercicio: ${seriesGoal}`,`Total: ${totalDone}/${totalTarget} series completadas`,'',...selectedExercises.map((e,i)=>`- ${e.name}: ${e.quantity} ${e.unit}${e.unit==='repeticiones'?' '+e.hint:''}; ${completed[i]}/${seriesGoal} series completadas${completed[i]<seriesGoal?` (${seriesGoal-completed[i]} pendientes)`:''}`),'','Nota: el resumen registra las series completadas en la aplicación. Añade aquí sensaciones o molestias si las hubo.'];$('report').value=lines.join('\n');
   }
-  const chosen = [];
-  let hasInvalid = false;
-  let firstInvalid = null;
-  exercises.forEach(e => {
-    const id = e.id || e.name;
-    const cb = $(`pick-${id}`);
-    const qty = $(`qty-${id}`);
-    if (!cb || !cb.checked) {
-      clearExerciseError(id);
-      return;
-    }
-    if (!validateExerciseQuantity(e, true)) {
-      hasInvalid = true;
-      if (!firstInvalid) firstInvalid = qty;
-      return;
-    }
-    const n = Number(qty.value.trim());
-    chosen.push({
-      ...e,
-      quantity: n,
-      unit: quantityUnit(e),
-      hint: quantityHint(e),
-      id,
-      seriesGoal
+  $('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('report').value);$('copyStatus').textContent='Resumen copiado. Ya puedes pegarlo en el chat con tu entrenador.';}catch(e){$('report').focus();$('report').select();$('copyStatus').textContent='Selecciona el texto y pulsa Ctrl+C (o Copiar en el móvil).';}});
+  let selectedIncompleteReason='';
+  let saveInProgress=false;
+  let workoutSaved=false;
+  function setSaveControlsDisabled(disabled){['saveCompleted','showIncomplete','confirmIncomplete'].forEach(id=>{const el=$(id);if(el)el.disabled=disabled;});}
+  $('showIncomplete').addEventListener('click',()=>{$('incompletePanel').classList.remove('hidden');$('saveStatus').textContent='Selecciona un motivo para continuar.';});
+  document.querySelectorAll('[data-reason]').forEach(button=>button.addEventListener('click',()=>{selectedIncompleteReason=button.dataset.reason;document.querySelectorAll('[data-reason]').forEach(b=>b.classList.toggle('selected',b===button));$('confirmIncomplete').disabled=false;}));
+  async function saveCurrentWorkout(state, reason=null){
+  if(saveInProgress||workoutSaved)return;
+  if(state==='incompleto'&&!reason){$('saveStatus').textContent='Selecciona un motivo antes de guardar.';return;}
+  saveInProgress=true;setSaveControlsDisabled(true);$('saveStatus').textContent='Guardando entrenamiento y series…';
+  try{
+    const payload={nombre:'Entrenamiento full body en casa',estado:state,motivo_incompleto:reason,series_objetivo:seriesGoal,fecha_inicio:workoutStartedAt||new Date().toISOString(),fecha_fin:new Date().toISOString(),series:[]};
+    selectedExercises.forEach((exercise,i)=>{
+      const id=Number(exercise.dbId||exercise.id);
+      if(!Number.isInteger(id)||id<=0)throw new Error('No se ha podido identificar el ejercicio «'+exercise.name+'» en la base de datos.');
+      const unit=exercise.unit||quantityUnit(exercise);
+      for(let n=1;n<=seriesGoal;n++){
+        payload.series.push({ejercicio_id:id,numero_serie:n,repeticiones:unit==='repeticiones'?Number(exercise.quantity):null,duracion_segundos:unit==='segundos'?Number(exercise.quantity):null,peso_kg:null,completada:n<=completed[i]});
+      }
     });
+    const saved=await DeporSupabase.saveWorkout(payload);
+    workoutSaved=true;
+    $('saveStatus').textContent='Entrenamiento guardado correctamente (n.º '+saved.id+').';
+    $('saveCompleted').textContent=state==='completado'?'Entrenamiento guardado':'Guardar entrenamiento';
+    $('showIncomplete').classList.add('hidden');$('incompletePanel').classList.add('hidden');
+  }catch(err){$('saveStatus').textContent='No se pudo guardar: '+friendlyError(err);}
+  finally{saveInProgress=false;setSaveControlsDisabled(workoutSaved);if(!workoutSaved)$('confirmIncomplete').disabled=!selectedIncompleteReason;}
+  }
+  $('saveCompleted').addEventListener('click',()=>saveCurrentWorkout('completado'));
+  $('confirmIncomplete').addEventListener('click',()=>saveCurrentWorkout('incompleto',selectedIncompleteReason));
+  $('restart').addEventListener('click',()=>{
+    $('summary').classList.add('hidden');
+    $('setup').classList.remove('hidden');
+    $('principal').classList.add('hidden');
+    $('historyPage').classList.add('hidden');
+    $('summaryDayPage').classList.add('hidden');
+    $('workout').classList.add('hidden');
+    $('library').classList.add('hidden');
+    $('copyStatus').textContent='';
+    updateHome();
   });
-  if (hasInvalid) {
-    if (firstInvalid) firstInvalid.focus();
-    return;
-  }
-  if (!chosen.length) {
-    $('pickerError').textContent =
-      'Selecciona al menos un ejercicio para guardar la sesión.';
-    return;
-  }
-  const button = $('saveSession');
-  button.disabled = true;
+  async function bootConnectedApp(){
+  const status=$('connectionStatus');
+  $('principal').classList.add('hidden');$('historyPage').classList.add('hidden');$('summaryDayPage').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden');
   try {
-    if (creandoRutina) {
-      $('pickerError').textContent = 'Guardando sesión en Supabase…';
-      await DeporSupabase.saveRoutine(
-        $('routineName').value.trim(),
-        chosen
-      );
-      $('library').classList.add('hidden');
-      $('exercisePicker').innerHTML = '';
-      $('routineNameField').classList.add('hidden');
-      $('sessionsPage').classList.remove('hidden');
-      $('sessionsStatus').textContent =
-        'Sesión guardada correctamente.';
-    } else if (modificandoRutina) {
-      $('pickerError').textContent = 'Guardando modificaciones…';
-      await DeporSupabase.updateRoutine(
-        editingRoutineId,
-        $('routineName').value.trim(),
-        chosen
-      );
-      $('library').classList.add('hidden');
-      $('exercisePicker').innerHTML = '';
-      $('routineNameField').classList.add('hidden');
-      $('editSessionsPage').classList.remove('hidden');
-      await loadRoutineList();
-      $('editSessionsStatus').textContent =
-        'Sesión modificada correctamente.';
-    } else {
-      savedConfig = chosen;
-      updateHome();
-      $('library').classList.add('hidden');
-      $('exercisePicker').innerHTML = '';
-      if (origenPersonalizador === 'setup') {
-        $('principal').classList.add('hidden');
-        $('setup').classList.remove('hidden');
-      } else {
-        $('setup').classList.add('hidden');
-        $('principal').classList.remove('hidden');
-      }
-    }
+    const session = await DeporSupabase.getSession();
+    if (!session) { status.textContent='Introduce tu correo y contraseña para conectarte.'; return; }
+    await loadDatabaseExercises();
   } catch (err) {
-    $('pickerError').textContent =
-      'No se pudo guardar la sesión: ' + friendlyError(err);
-  } finally {
-    button.disabled = false;
+    status.textContent='No se pudo comprobar la sesión: '+friendlyError(err);
   }
-});
-$('begin').addEventListener('click',()=>{
- if(!savedConfig.length)return;
- selectedExercises=savedConfig.map(e=>({...e}));completed=Array(selectedExercises.length).fill(0);visited=Array(selectedExercises.length).fill(false);idx=0;active=false;workoutStartedAt=new Date().toISOString();workoutSaved=false;saveInProgress=false;$('saveStatus').textContent='';$('saveCompleted').disabled=false;$('showIncomplete').classList.remove('hidden');$('incompletePanel').classList.add('hidden');selectedIncompleteReason='';document.querySelectorAll('[data-reason]').forEach(b=>b.classList.remove('selected'));$('confirmIncomplete').disabled=true;
- $('principal').classList.add('hidden');$('setup').classList.add('hidden');$('summary').classList.add('hidden');$('workout').classList.remove('hidden');render();
-});
-function render(){
- const e=selectedExercises[idx];if(!e)return;
- visited[idx]=true;$('exerciseCount').textContent=`Ejercicio ${idx+1} de ${selectedExercises.length}`;$('progress').style.width=`${(idx/selectedExercises.length)*100}%`;$('category').textContent=e.type;$('exerciseName').textContent=e.name;
- $('dose').textContent=`${seriesGoal} ${seriesGoal===1?'serie':'series'} × ${e.quantity} ${e.unit}${e.unit==='repeticiones'?' '+e.hint:''}`;$('description').textContent=e.desc;$('cues').innerHTML=e.cues.map(c=>`<li>${escapeHtml(c)}</li>`).join('');$('rest').textContent=e.rest;
- $('target').textContent=seriesGoal;$('done').textContent=completed[idx];$('startSet').disabled=active||completed[idx]>=seriesGoal;$('startSet').textContent=completed[idx]===0?'Empezar serie':'Empezar siguiente serie';$('nextSet').disabled=!active||completed[idx]>=seriesGoal-1;$('finishExercise').disabled=!active;
- $('seriesStatus').textContent=active?`Serie ${completed[idx]+1} de ${seriesGoal} en curso · objetivo: ${e.quantity} ${e.unit}.`:(completed[idx]>=seriesGoal?'Ejercicio completado.':`Series completadas: ${completed[idx]} de ${seriesGoal}.`);
-}
-$('startSet').addEventListener('click',()=>{if(completed[idx]<seriesGoal){active=true;render();}});
-$('nextSet').addEventListener('click',()=>{if(!active||completed[idx]>=seriesGoal-1)return;completed[idx]++;active=false;render();});
-$('finishExercise').addEventListener('click',()=>{if(active)completed[idx]++;active=false;if(idx<selectedExercises.length-1){idx++;render();}else showSummary();});
-function showSummary(){
- $('workout').classList.add('hidden');$('summary').classList.remove('hidden');$('progress').style.width='100%';const totalDone=completed.reduce((a,b)=>a+b,0),totalTarget=seriesGoal*selectedExercises.length;
- $('sumExercises').textContent=`${visited.filter(Boolean).length}/${selectedExercises.length}`;$('sumSets').textContent=totalDone;$('sumTarget').textContent=totalTarget;
- $('summaryList').innerHTML=selectedExercises.map((e,i)=>`<div class="summaryitem"><strong>${escapeHtml(e.name)}</strong><p>Objetivo: ${e.quantity} ${e.unit}${e.unit==='repeticiones'?' '+e.hint:''} · ${completed[i]} de ${seriesGoal} series completadas${completed[i]<seriesGoal?' · '+(seriesGoal-completed[i])+' pendientes':' · Completado'}</p></div>`).join('');
- const date=new Date().toLocaleDateString('es-ES');const lines=[`ENTRENAMIENTO FULL BODY EN CASA — ${date}`,`Series previstas por ejercicio: ${seriesGoal}`,`Total: ${totalDone}/${totalTarget} series completadas`,'',...selectedExercises.map((e,i)=>`- ${e.name}: ${e.quantity} ${e.unit}${e.unit==='repeticiones'?' '+e.hint:''}; ${completed[i]}/${seriesGoal} series completadas${completed[i]<seriesGoal?` (${seriesGoal-completed[i]} pendientes)`:''}`),'','Nota: el resumen registra las series completadas en la aplicación. Añade aquí sensaciones o molestias si las hubo.'];$('report').value=lines.join('\n');
-}
-$('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('report').value);$('copyStatus').textContent='Resumen copiado. Ya puedes pegarlo en el chat con tu entrenador.';}catch(e){$('report').focus();$('report').select();$('copyStatus').textContent='Selecciona el texto y pulsa Ctrl+C (o Copiar en el móvil).';}});
-let selectedIncompleteReason='';
-let saveInProgress=false;
-let workoutSaved=false;
-function setSaveControlsDisabled(disabled){['saveCompleted','showIncomplete','confirmIncomplete'].forEach(id=>{const el=$(id);if(el)el.disabled=disabled;});}
-$('showIncomplete').addEventListener('click',()=>{$('incompletePanel').classList.remove('hidden');$('saveStatus').textContent='Selecciona un motivo para continuar.';});
-document.querySelectorAll('[data-reason]').forEach(button=>button.addEventListener('click',()=>{selectedIncompleteReason=button.dataset.reason;document.querySelectorAll('[data-reason]').forEach(b=>b.classList.toggle('selected',b===button));$('confirmIncomplete').disabled=false;}));
-async function saveCurrentWorkout(state, reason=null){
- if(saveInProgress||workoutSaved)return;
- if(state==='incompleto'&&!reason){$('saveStatus').textContent='Selecciona un motivo antes de guardar.';return;}
- saveInProgress=true;setSaveControlsDisabled(true);$('saveStatus').textContent='Guardando entrenamiento y series…';
- try{
-   const payload={nombre:'Entrenamiento full body en casa',estado:state,motivo_incompleto:reason,series_objetivo:seriesGoal,fecha_inicio:workoutStartedAt||new Date().toISOString(),fecha_fin:new Date().toISOString(),series:[]};
-   selectedExercises.forEach((exercise,i)=>{
-     const id=Number(exercise.dbId||exercise.id);
-     if(!Number.isInteger(id)||id<=0)throw new Error('No se ha podido identificar el ejercicio «'+exercise.name+'» en la base de datos.');
-     const unit=exercise.unit||quantityUnit(exercise);
-     for(let n=1;n<=seriesGoal;n++){
-       payload.series.push({ejercicio_id:id,numero_serie:n,repeticiones:unit==='repeticiones'?Number(exercise.quantity):null,duracion_segundos:unit==='segundos'?Number(exercise.quantity):null,peso_kg:null,completada:n<=completed[i]});
-     }
-   });
-   const saved=await DeporSupabase.saveWorkout(payload);
-   workoutSaved=true;
-   $('saveStatus').textContent='Entrenamiento guardado correctamente (n.º '+saved.id+').';
-   $('saveCompleted').textContent=state==='completado'?'Entrenamiento guardado':'Guardar entrenamiento';
-   $('showIncomplete').classList.add('hidden');$('incompletePanel').classList.add('hidden');
- }catch(err){$('saveStatus').textContent='No se pudo guardar: '+friendlyError(err);}
- finally{saveInProgress=false;setSaveControlsDisabled(workoutSaved);if(!workoutSaved)$('confirmIncomplete').disabled=!selectedIncompleteReason;}
-}
-$('saveCompleted').addEventListener('click',()=>saveCurrentWorkout('completado'));
-$('confirmIncomplete').addEventListener('click',()=>saveCurrentWorkout('incompleto',selectedIncompleteReason));
-$('restart').addEventListener('click',()=>{
-  $('summary').classList.add('hidden');
-  $('setup').classList.remove('hidden');
-  $('principal').classList.add('hidden');
-  $('historyPage').classList.add('hidden');
-  $('summaryDayPage').classList.add('hidden');
-  $('workout').classList.add('hidden');
-  $('library').classList.add('hidden');
-  $('copyStatus').textContent='';
-  updateHome();
-});
-async function bootConnectedApp(){
- const status=$('connectionStatus');
- $('principal').classList.add('hidden');$('historyPage').classList.add('hidden');$('summaryDayPage').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden');
- try {
-   const session = await DeporSupabase.getSession();
-   if (!session) { status.textContent='Introduce tu correo y contraseña para conectarte.'; return; }
-   await loadDatabaseExercises();
- } catch (err) {
-   status.textContent='No se pudo comprobar la sesión: '+friendlyError(err);
- }
-}
-function friendlyError(err){
- const msg=String(err?.message||err||'Error desconocido');
- if(/Invalid login credentials/i.test(msg)) return 'Correo o contraseña incorrectos.';
- if(/Failed to fetch|NetworkError|fetch/i.test(msg)) return 'No se pudo conectar. Comprueba la conexión a Internet y la URL de Supabase.';
- if(/PEGA_AQUI|configurar/i.test(msg)) return 'Falta configurar la URL y la clave publicable en supabase-config.js.';
- return msg;
-}
-async function loadDatabaseExercises(){
- const status=$('connectionStatus'); status.textContent='Sesión iniciada. Cargando ejercicios…';
- try {
-   const rows=await DeporSupabase.getExercises();
-   if(!rows.length) throw new Error('La consulta se ha conectado, pero no ha devuelto ejercicios. Revisa los datos y las políticas RLS.');
-   exercises=rows.map(row=>{
-     const guide=exerciseGuides.find(g=>g.name.toLocaleLowerCase('es')===String(row.nombre).toLocaleLowerCase('es')) || inferExercise(row.nombre);
-     return {...guide,id:String(row.id),dbId:row.id,name:row.nombre,unitType:row.tipo==='tiempo'?'time':'repetitions',custom:!exerciseGuides.some(g=>g.name.toLocaleLowerCase('es')===String(row.nombre).toLocaleLowerCase('es'))};
-   });
-   savedConfig=[]; selectedExercises=[]; completed=[]; visited=[];
-   makePicker(); updateHome();
-   $('principal').classList.remove('hidden'); $('setup').classList.add('hidden'); $('loginForm').classList.add('hidden'); $('logoutButton').classList.remove('hidden');
-   status.textContent=`Conexión correcta. ${rows.length} ejercicios cargados desde Supabase.`;
- } catch(err){ status.textContent='Error al cargar ejercicios: '+friendlyError(err); }
-}
-$('loginForm').addEventListener('submit',async event=>{
- event.preventDefault(); const button=$('loginButton'); const status=$('connectionStatus');
- button.disabled=true; status.textContent='Iniciando sesión…';
- try { await DeporSupabase.signIn($('loginEmail').value.trim(),$('loginPassword').value); $('loginPassword').value=''; await loadDatabaseExercises(); }
- catch(err){status.textContent='No se pudo iniciar sesión: '+friendlyError(err);}
- finally{button.disabled=false;}
-});
-$('logoutButton').addEventListener('click',async()=>{
- try {await DeporSupabase.signOut(); exercises=[]; savedConfig=[]; makePicker(); updateHome(); $('principal').classList.add('hidden'); $('historyPage').classList.add('hidden');$('summaryDayPage').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden'); $('connectionPanel').classList.remove('hidden'); $('logoutButton').classList.add('hidden'); $('loginButton').classList.remove('hidden'); $('loginForm').classList.remove('hidden'); $('connectionStatus').textContent='Sesión cerrada.';}
- catch(err){$('connectionStatus').textContent='No se pudo cerrar sesión: '+friendlyError(err);}
-});
-async function showWorkoutSummary(workoutId) {
-  const summaryPage = $('summaryDayPage');
-  const historyPage = $('historyPage');
-  historyPage.classList.add('hidden');
-  summaryPage.classList.remove('hidden');
-  const title = summaryPage.querySelector('h2');
-  const description = summaryPage.querySelector('p.muted');
-  title.textContent = 'Cargando entrenamiento...';
-  description.textContent = 'Consultando los datos guardados.';
+  }
+  function friendlyError(err){
+  const msg=String(err?.message||err||'Error desconocido');
+  if(/Invalid login credentials/i.test(msg)) return 'Correo o contraseña incorrectos.';
+  if(/Failed to fetch|NetworkError|fetch/i.test(msg)) return 'No se pudo conectar. Comprueba la conexión a Internet y la URL de Supabase.';
+  if(/PEGA_AQUI|configurar/i.test(msg)) return 'Falta configurar la URL y la clave publicable en supabase-config.js.';
+  return msg;
+  }
+  async function loadDatabaseExercises(){
+  const status=$('connectionStatus'); status.textContent='Sesión iniciada. Cargando ejercicios…';
   try {
-    const result = await DeporSupabase.getWorkoutDetails(workoutId);
-    const workout = result.workout;
-    const series = result.series;
-    title.textContent = workout.nombre;
-    const startDate = new Date(workout.fecha_inicio);
-    const formattedDate = startDate.toLocaleDateString('es-ES');
-    const formattedTime = startDate.toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit'
+    const rows=await DeporSupabase.getExercises();
+    if(!rows.length) throw new Error('La consulta se ha conectado, pero no ha devuelto ejercicios. Revisa los datos y las políticas RLS.');
+    exercises=rows.map(row=>{
+      const guide=exerciseGuides.find(g=>g.name.toLocaleLowerCase('es')===String(row.nombre).toLocaleLowerCase('es')) || inferExercise(row.nombre);
+      return {...guide,id:String(row.id),dbId:row.id,name:row.nombre,unitType:row.tipo==='tiempo'?'time':'repetitions',custom:!exerciseGuides.some(g=>g.name.toLocaleLowerCase('es')===String(row.nombre).toLocaleLowerCase('es'))};
     });
-    const exerciseCount = new Set(
-      series.map(item => String(item.ejercicio_id))
-    ).size;
-    const state = String(workout.estado || '')
-      .trim()
-      .toLocaleLowerCase('es');
-    const status = document.createElement('span');
-    status.className = 'workout-history-status';
-    if (['completo', 'completado'].includes(state)) {
-      status.classList.add('completed');
-      status.textContent = 'Completado';
-    } else if (state === 'incompleto') {
-      status.classList.add('incomplete');
-      status.textContent = 'Incompleto';
-    } else {
-      status.textContent = workout.estado || 'No disponible';
-    }
-    const dateTime = document.createElement('span');
-    dateTime.textContent = `${formattedDate} · ${formattedTime}`;
-    description.replaceChildren(status, dateTime);
-    description.style.display = 'flex';
-    description.style.alignItems = 'center';
-    description.style.flexWrap = 'wrap';
-    description.style.gap = '8px';
-    const details = $('summaryDayDetails');
-    // Estadísticas del entrenamiento
-    const previousStats = $('summaryDayStats');
-    if (previousStats) previousStats.remove();
-    const stats = document.createElement('div');
-    stats.id = 'summaryDayStats';
-    stats.className = 'statrow';
-    stats.style.textAlign = 'center';
-    stats.style.marginTop = '18px';
-    stats.style.marginBottom = '18px';
-    const seriesStat = document.createElement('div');
-    seriesStat.className = 'stat';
-    seriesStat.style.textAlign = 'center';
-    const seriesLabel = document.createElement('span');
-    seriesLabel.className = 'muted small';
-    seriesLabel.textContent = 'Series';
-    const seriesValue = document.createElement('strong');
-    seriesValue.textContent = workout.series_objetivo ?? '—';
-    seriesStat.append(seriesLabel, seriesValue);
-    const exerciseStat = document.createElement('div');
-    exerciseStat.className = 'stat';
-    exerciseStat.style.textAlign = 'center';
-    const exerciseLabel = document.createElement('span');
-    exerciseLabel.className = 'muted small';
-    exerciseLabel.textContent = 'Ejercicios';
-    const exerciseValue = document.createElement('strong');
-    exerciseValue.textContent = exerciseCount;
-    exerciseStat.append(exerciseLabel, exerciseValue);
-    stats.append(seriesStat, exerciseStat);
-    details.before(stats);
-    details.replaceChildren();
-    if (series.length === 0) {
-      const emptyMessage = document.createElement('p');
-      emptyMessage.className = 'muted';
-      emptyMessage.textContent = 'Este entrenamiento no tiene series registradas.';
-      details.appendChild(emptyMessage);
-    } else {
-    const exercises = new Map();
-    series.forEach(item => {
-      const key = String(item.ejercicio_id);
-      if (!exercises.has(key)) {
-        exercises.set(key, {
-          nombre: item.ejercicio_nombre,
-          series: []
-        });
-      }
-      exercises.get(key).series.push(item);
-    });
-      let exerciseNumber = 0;
-      exercises.forEach(exercise => {
-        exerciseNumber++;
-        const section = document.createElement('div');
-        section.className = 'workout-history-card';
-        section.style.display = 'block';
-        section.style.marginTop = '12px';
-        const heading = document.createElement('h3');
-        heading.textContent = `${exerciseNumber}. ${exercise.nombre}`;
-        heading.style.margin = '0 0 10px';
-        section.appendChild(heading);
-        const completedCount = exercise.series.filter(
-          item => item.completada
-        ).length;
-        const summary = document.createElement('p');
-        summary.className = 'muted';
-        summary.textContent = `Series completadas: ${completedCount}`;
-        summary.style.margin = '0 0 8px';
-        section.appendChild(summary);
-        exercise.series.forEach(item => {
-        const row = document.createElement('div');
-        row.style.display = 'flex';
-        row.style.justifyContent = 'space-between';
-        row.style.alignItems = 'center';
-        row.style.gap = '12px';
-        row.style.padding = '6px 0';
-        const seriesName = document.createElement('span');
-        seriesName.textContent = `Serie ${item.numero_serie}`;
-        const seriesValue = document.createElement('span');
-        seriesValue.style.textAlign = 'right';
-        const values = [];
-        if (item.repeticiones !== null && item.repeticiones !== undefined) {
-          values.push(`${item.repeticiones} repeticiones`);
-        }
-        if (item.duracion_segundos !== null && item.duracion_segundos !== undefined) {
-          values.push(`${item.duracion_segundos} segundos`);
-        }
-        if (item.peso_kg !== null && item.peso_kg !== undefined) {
-          values.push(`${item.peso_kg} kg`);
-        }
-        seriesValue.textContent =
-        values.join(' · ') || 'Sin datos registrados';
-        row.append(seriesName, seriesValue);
-        section.appendChild(row);
+    savedConfig=[]; selectedExercises=[]; completed=[]; visited=[];
+    makePicker(); updateHome();
+    $('principal').classList.remove('hidden'); $('setup').classList.add('hidden'); $('loginForm').classList.add('hidden'); $('logoutButton').classList.remove('hidden');
+    status.textContent=`Conexión correcta. ${rows.length} ejercicios cargados desde Supabase.`;
+  } catch(err){ status.textContent='Error al cargar ejercicios: '+friendlyError(err); }
+  }
+  $('loginForm').addEventListener('submit',async event=>{
+  event.preventDefault(); const button=$('loginButton'); const status=$('connectionStatus');
+  button.disabled=true; status.textContent='Iniciando sesión…';
+  try { await DeporSupabase.signIn($('loginEmail').value.trim(),$('loginPassword').value); $('loginPassword').value=''; await loadDatabaseExercises(); }
+  catch(err){status.textContent='No se pudo iniciar sesión: '+friendlyError(err);}
+  finally{button.disabled=false;}
+  });
+  $('logoutButton').addEventListener('click',async()=>{
+  try {await DeporSupabase.signOut(); exercises=[]; savedConfig=[]; makePicker(); updateHome(); $('principal').classList.add('hidden'); $('historyPage').classList.add('hidden');$('summaryDayPage').classList.add('hidden'); $('setup').classList.add('hidden'); $('library').classList.add('hidden'); $('workout').classList.add('hidden'); $('summary').classList.add('hidden'); $('connectionPanel').classList.remove('hidden'); $('logoutButton').classList.add('hidden'); $('loginButton').classList.remove('hidden'); $('loginForm').classList.remove('hidden'); $('connectionStatus').textContent='Sesión cerrada.';}
+  catch(err){$('connectionStatus').textContent='No se pudo cerrar sesión: '+friendlyError(err);}
+  });
+  async function showWorkoutSummary(workoutId) {
+    const summaryPage = $('summaryDayPage');
+    const historyPage = $('historyPage');
+    historyPage.classList.add('hidden');
+    summaryPage.classList.remove('hidden');
+    const title = summaryPage.querySelector('h2');
+    const description = summaryPage.querySelector('p.muted');
+    title.textContent = 'Cargando entrenamiento...';
+    description.textContent = 'Consultando los datos guardados.';
+    try {
+      const result = await DeporSupabase.getWorkoutDetails(workoutId);
+      const workout = result.workout;
+      const series = result.series;
+      title.textContent = workout.nombre;
+      const startDate = new Date(workout.fecha_inicio);
+      const formattedDate = startDate.toLocaleDateString('es-ES');
+      const formattedTime = startDate.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit'
       });
-      details.appendChild(section);
-    });
-  }
-} catch (error) {
-    console.error('Error al cargar el entrenamiento:', error);
-    title.textContent = 'No se pudo cargar el entrenamiento';
-    description.textContent =
-      error.message || 'Comprueba la conexión con Supabase.';
-  }
-}
-async function loadWorkoutHistory() {
-  const list = $('workoutList');
-  list.className = 'workout-history-list';
-  list.textContent = 'Cargando entrenamientos...';
-  try {
-    const workouts = await DeporSupabase.getWorkouts();
-    list.replaceChildren();
-    if (workouts.length === 0) {
-      const empty = document.createElement('p');
-      empty.className = 'muted';
-      empty.textContent = 'Todavía no hay entrenamientos guardados.';
-      list.appendChild(empty);
-      return;
-    }
-    workouts.forEach(workout => {
-      // Tarjeta del entrenamiento
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = 'workout-history-card';
-      // Icono de mancuerna
-      const iconBox = document.createElement('div');
-      iconBox.className = 'workout-history-icon';
-      iconBox.innerHTML = `
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <g fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round">
-            <path d="m6.5 6.5 11 11"/>
-            <path d="m4 9 5-5"/>
-            <path d="m15 20 5-5"/>
-            <path d="m3 7 4-4 3 3-4 4z"/>
-            <path d="m14 18 4-4 3 3-4 4z"/>
-          </g>
-        </svg>
-      `;
-      // Nombre y fecha
-      const info = document.createElement('div');
-      info.className = 'workout-history-info';
-      const name = document.createElement('p');
-      name.className = 'workout-history-name';
-      name.textContent =
-        workout.nombre || 'Entrenamiento sin nombre';
-      const date = document.createElement('p');
-      date.className = 'workout-history-date';
-      if (workout.fecha_inicio) {
-        const parsedDate = new Date(workout.fecha_inicio);
-        date.textContent = Number.isNaN(parsedDate.getTime())
-          ? 'Fecha no disponible'
-          : parsedDate.toLocaleString('es-ES', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            });
-      } else {
-        date.textContent = 'Fecha no disponible';
-      }
-      info.append(name, date);
-      // Estado: verde si está completado, amarillo si está incompleto
-      const status = document.createElement('span');
-      status.className = 'workout-history-status';
+      const exerciseCount = new Set(
+        series.map(item => String(item.ejercicio_id))
+      ).size;
       const state = String(workout.estado || '')
         .trim()
         .toLocaleLowerCase('es');
+      const status = document.createElement('span');
+      status.className = 'workout-history-status';
       if (['completo', 'completado'].includes(state)) {
         status.classList.add('completed');
         status.textContent = 'Completado';
@@ -1529,28 +1566,212 @@ async function loadWorkoutHistory() {
       } else {
         status.textContent = workout.estado || 'No disponible';
       }
-      // Indicador visual a la derecha
-      const chevron = document.createElement('span');
-      chevron.className = 'workout-history-chevron';
-      chevron.setAttribute('aria-hidden', 'true');
-      chevron.textContent = '›';
-      card.append(iconBox, info, status, chevron);
-      card.addEventListener('click', () => {
-        showWorkoutSummary(workout.id);
+      const dateTime = document.createElement('span');
+      dateTime.textContent = `${formattedDate} · ${formattedTime}`;
+      description.replaceChildren(status, dateTime);
+      description.style.display = 'flex';
+      description.style.alignItems = 'center';
+      description.style.flexWrap = 'wrap';
+      description.style.gap = '8px';
+      const details = $('summaryDayDetails');
+      // Estadísticas del entrenamiento
+      const previousStats = $('summaryDayStats');
+      if (previousStats) previousStats.remove();
+      const stats = document.createElement('div');
+      stats.id = 'summaryDayStats';
+      stats.className = 'statrow';
+      stats.style.textAlign = 'center';
+      stats.style.marginTop = '18px';
+      stats.style.marginBottom = '18px';
+      const seriesStat = document.createElement('div');
+      seriesStat.className = 'stat';
+      seriesStat.style.textAlign = 'center';
+      const seriesLabel = document.createElement('span');
+      seriesLabel.className = 'muted small';
+      seriesLabel.textContent = 'Series';
+      const seriesValue = document.createElement('strong');
+      seriesValue.textContent = workout.series_objetivo ?? '—';
+      seriesStat.append(seriesLabel, seriesValue);
+      const exerciseStat = document.createElement('div');
+      exerciseStat.className = 'stat';
+      exerciseStat.style.textAlign = 'center';
+      const exerciseLabel = document.createElement('span');
+      exerciseLabel.className = 'muted small';
+      exerciseLabel.textContent = 'Ejercicios';
+      const exerciseValue = document.createElement('strong');
+      exerciseValue.textContent = exerciseCount;
+      exerciseStat.append(exerciseLabel, exerciseValue);
+      stats.append(seriesStat, exerciseStat);
+      details.before(stats);
+      details.replaceChildren();
+      if (series.length === 0) {
+        const emptyMessage = document.createElement('p');
+        emptyMessage.className = 'muted';
+        emptyMessage.textContent = 'Este entrenamiento no tiene series registradas.';
+        details.appendChild(emptyMessage);
+      } else {
+      const exercises = new Map();
+      series.forEach(item => {
+        const key = String(item.ejercicio_id);
+        if (!exercises.has(key)) {
+          exercises.set(key, {
+            nombre: item.ejercicio_nombre,
+            series: []
+          });
+        }
+        exercises.get(key).series.push(item);
       });
-      list.appendChild(card);
-    });
+        let exerciseNumber = 0;
+        exercises.forEach(exercise => {
+          exerciseNumber++;
+          const section = document.createElement('div');
+          section.className = 'workout-history-card';
+          section.style.display = 'block';
+          section.style.marginTop = '12px';
+          const heading = document.createElement('h3');
+          heading.textContent = `${exerciseNumber}. ${exercise.nombre}`;
+          heading.style.margin = '0 0 10px';
+          section.appendChild(heading);
+          const completedCount = exercise.series.filter(
+            item => item.completada
+          ).length;
+          const summary = document.createElement('p');
+          summary.className = 'muted';
+          summary.textContent = `Series completadas: ${completedCount}`;
+          summary.style.margin = '0 0 8px';
+          section.appendChild(summary);
+          exercise.series.forEach(item => {
+          const row = document.createElement('div');
+          row.style.display = 'flex';
+          row.style.justifyContent = 'space-between';
+          row.style.alignItems = 'center';
+          row.style.gap = '12px';
+          row.style.padding = '6px 0';
+          const seriesName = document.createElement('span');
+          seriesName.textContent = `Serie ${item.numero_serie}`;
+          const seriesValue = document.createElement('span');
+          seriesValue.style.textAlign = 'right';
+          const values = [];
+          if (item.repeticiones !== null && item.repeticiones !== undefined) {
+            values.push(`${item.repeticiones} repeticiones`);
+          }
+          if (item.duracion_segundos !== null && item.duracion_segundos !== undefined) {
+            values.push(`${item.duracion_segundos} segundos`);
+          }
+          if (item.peso_kg !== null && item.peso_kg !== undefined) {
+            values.push(`${item.peso_kg} kg`);
+          }
+          seriesValue.textContent =
+          values.join(' · ') || 'Sin datos registrados';
+          row.append(seriesName, seriesValue);
+          section.appendChild(row);
+        });
+        details.appendChild(section);
+      });
+    }
   } catch (error) {
-    console.error('Error al cargar el historial:', error);
-    list.className = 'workout-history-list';
-    const message = document.createElement('p');
-    message.className = 'muted';
-    message.textContent =
-      'No se pudo cargar el historial. Comprueba la conexión.';
-    list.replaceChildren(message);
+      console.error('Error al cargar el entrenamiento:', error);
+      title.textContent = 'No se pudo cargar el entrenamiento';
+      description.textContent =
+        error.message || 'Comprueba la conexión con Supabase.';
+    }
   }
-}
-bootConnectedApp();
+  async function loadWorkoutHistory() {
+    const list = $('workoutList');
+    list.className = 'workout-history-list';
+    list.textContent = 'Cargando entrenamientos...';
+    try {
+      const workouts = await DeporSupabase.getWorkouts();
+      list.replaceChildren();
+      if (workouts.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'muted';
+        empty.textContent = 'Todavía no hay entrenamientos guardados.';
+        list.appendChild(empty);
+        return;
+      }
+      workouts.forEach(workout => {
+        // Tarjeta del entrenamiento
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'workout-history-card';
+        // Icono de mancuerna
+        const iconBox = document.createElement('div');
+        iconBox.className = 'workout-history-icon';
+        iconBox.innerHTML = `
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <g fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="m6.5 6.5 11 11"/>
+              <path d="m4 9 5-5"/>
+              <path d="m15 20 5-5"/>
+              <path d="m3 7 4-4 3 3-4 4z"/>
+              <path d="m14 18 4-4 3 3-4 4z"/>
+            </g>
+          </svg>
+        `;
+        // Nombre y fecha
+        const info = document.createElement('div');
+        info.className = 'workout-history-info';
+        const name = document.createElement('p');
+        name.className = 'workout-history-name';
+        name.textContent =
+          workout.nombre || 'Entrenamiento sin nombre';
+        const date = document.createElement('p');
+        date.className = 'workout-history-date';
+        if (workout.fecha_inicio) {
+          const parsedDate = new Date(workout.fecha_inicio);
+          date.textContent = Number.isNaN(parsedDate.getTime())
+            ? 'Fecha no disponible'
+            : parsedDate.toLocaleString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+        } else {
+          date.textContent = 'Fecha no disponible';
+        }
+        info.append(name, date);
+        // Estado: verde si está completado, amarillo si está incompleto
+        const status = document.createElement('span');
+        status.className = 'workout-history-status';
+        const state = String(workout.estado || '')
+          .trim()
+          .toLocaleLowerCase('es');
+        if (['completo', 'completado'].includes(state)) {
+          status.classList.add('completed');
+          status.textContent = 'Completado';
+        } else if (state === 'incompleto') {
+          status.classList.add('incomplete');
+          status.textContent = 'Incompleto';
+        } else {
+          status.textContent = workout.estado || 'No disponible';
+        }
+        // Indicador visual a la derecha
+        const chevron = document.createElement('span');
+        chevron.className = 'workout-history-chevron';
+        chevron.setAttribute('aria-hidden', 'true');
+        chevron.textContent = '›';
+        card.append(iconBox, info, status, chevron);
+        card.addEventListener('click', () => {
+          showWorkoutSummary(workout.id);
+        });
+        list.appendChild(card);
+      });
+    } catch (error) {
+      console.error('Error al cargar el historial:', error);
+      list.className = 'workout-history-list';
+      const message = document.createElement('p');
+      message.className = 'muted';
+      message.textContent =
+        'No se pudo cargar el historial. Comprueba la conexión.';
+      list.replaceChildren(message);
+    }
+  }
+  bootConnectedApp();
 </script>
 </body>
 </html>
